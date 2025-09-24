@@ -118,3 +118,60 @@ h2 {
     color: #FFD700;
     font-weight: bold;
 }
+
+/* --- Social Media --- */
+
+footer {
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+    margin-top: 30px;
+}
+
+footer h2 {
+    color: #FFD700;
+    font-size: 2.5em;
+    border-bottom: 2px solid #FFC107;
+    display: inline-block;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 10px;
+}
+
+.social-icons a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 55px;
+    height: 55px;
+    background-color: transparent;
+    color: #FFFFFF;
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 28px;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    border: 2px solid #FFC107;
+}
+
+.social-icons a:hover {
+    background-color: #FFC107;
+    color: #000000;
+    transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+    footer h2 {
+        font-size: 2em;
+    }
+    .social-icons a {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+}
