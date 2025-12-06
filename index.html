@@ -3,15 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú GOSA</title>
+    <title>Menú GOSA - Food Truck Gourmet</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
+    <!-- Header -->
     <header>
         <img src="images/logo.jpeg" alt="Logo GOSA">
+        <h1 class="main-title">GOSA FOOD TRUCK</h1>
+        <p class="subtitle">Comida Gourmet con Actitud</p>
     </header>
 
+    <!-- Carousel compacto -->
     <div class="swiper-container">
         <div class="swiper-wrapper">
             <div class="swiper-slide">
@@ -41,140 +45,254 @@
         </div>
     </div>
 
+    <!-- Banner promocional -->
     <div class="promotion">
+        <div class="promotion-badge">
+            <i class="fas fa-star"></i>
+            PROMOCIÓN DEL MES
+            <i class="fas fa-star"></i>
+        </div>
         <img src="images/Promocion.jpg" alt="Promoción GOSA" class="promotion-img">
+        <p class="promotion-text">¡Oferta válida todo el mes! No te la pierdas</p>
     </div>
 
+    <!-- Menú con tabs -->
     <main>
-        <h1>Nuestro Menú</h1>
+        <h2 class="menu-title">NUESTRO MENÚ</h2>
 
-        <section class="category">
-            <h2 class="category-title">Entradas</h2>
-            <div class="menu-items-container">
-                <div class="menu-item">
-                    <h3>BACON GOSA</h3>
-                    <p class="ingredients"> UNA GENEROSAS PORCIONES DE PAPA DORADAS BAÑADAS EN QUESO CHEDDAR DERRETIDO Y CORONADAS CON TOCINETA CROCANTE</p>
-                    <p class="price">7.600 COP</p>
-                </div>
-                <div class="menu-item">
-                    <h3>TENDER GOSA</h3>
-                    <p class="ingredients"> CRUGIENTES NUGGETS DE POLLO APANADOS SERVIDAS CON EL TOQUE UNICO DE LA SALSA ARTESANAL DE LA CASA</p>
-                    <p class="price">8.000 COP</p>
-                </div>
-                <div class="menu-item">
-                    <h3>ARITOS GOSA</h3>
-                    <p class="ingredients">CRUGIENTES Y SABROSOS AROS DE CEBOLLA HECHOS AL MEJOR ESTILO GOSA Y ACOMPAÑADOS DE SALSA DE LA CASA ¡TE VAN A ENCANTAR! </p>
-                    <p class="price">7.000 COP</p>
+        <!-- Tabs de navegación -->
+        <div class="tabs-container">
+            <button class="tab-btn active" data-tab="entradas">
+                <i class="fas fa-fire"></i>
+                <span>Entradas</span>
+            </button>
+            <button class="tab-btn" data-tab="perros">
+                <i class="fas fa-hotdog"></i>
+                <span>Perros</span>
+            </button>
+            <button class="tab-btn" data-tab="hamburguesas">
+                <i class="fas fa-hamburger"></i>
+                <span>Hamburguesas</span>
+            </button>
+            <button class="tab-btn" data-tab="salchipapas">
+                <i class="fas fa-drumstick-bite"></i>
+                <span>Salchipapas</span>
+            </button>
+            <button class="tab-btn" data-tab="adicionales">
+                <i class="fas fa-plus-circle"></i>
+                <span>Adicionales</span>
+            </button>
+            <button class="tab-btn" data-tab="agrandados">
+                <i class="fas fa-glass-cheers"></i>
+                <span>Combos</span>
+            </button>
+        </div>
+
+        <!-- Contenido de tabs -->
+        <div class="tabs-content">
+
+            <!-- Tab: Entradas -->
+            <div class="tab-panel active" id="entradas">
+                <div class="menu-grid">
+                    <div class="menu-card">
+                        <div class="card-header">
+                            <h3>BACON GOSA</h3>
+                            <span class="price">$7,600</span>
+                        </div>
+                        <p class="description">Generosas porciones de papa doradas bañadas en queso cheddar derretido y coronadas con tocineta crocante</p>
+                    </div>
+                    <div class="menu-card">
+                        <div class="card-header">
+                            <h3>TENDER GOSA</h3>
+                            <span class="price">$8,000</span>
+                        </div>
+                        <p class="description">Crujientes nuggets de pollo apanados servidos con el toque único de la salsa artesanal de la casa</p>
+                    </div>
+                    <div class="menu-card">
+                        <div class="card-header">
+                            <h3>ARITOS GOSA</h3>
+                            <span class="price">$7,000</span>
+                        </div>
+                        <p class="description">Crujientes y sabrosos aros de cebolla hechos al mejor estilo GOSA y acompañados de salsa de la casa</p>
+                    </div>
                 </div>
             </div>
-        </section>
 
-        <section class="category">
-            <h2 class="category-title">Perros Calientes</h2>
-            <div class="menu-items-container">
-                <div class="menu-item">
-                    <h3>TEXAS BBQ</h3>
-                    <p class="ingredients">EXCLUSIVA SALCHICHA PREMIUM ENVUELTA EN TOCINETA, PAN BRIOCHE ARTESANAL CON QUESO CHEDDAR FUNDIDO Y UN TOQUE DE BRISKET BBQ AHUMADO QUE POTENCIA CADA BOCADO</p>
-                    <p class="price">13.500 COP</p>
-                </div>
-                <div class="menu-item">
-                    <h3>TROPICAL GOSA</h3>
-                    <p class="ingredients">SALCHICHA PREMIUM ENVUELTA EN TOCINETA, PAN BRIOCHE ARTESANAL CON EL CONTRASTE PERFECTO DE PIÑA CARAMELIZADA Y JAMON, CUBIERTA CON PAPA RIPIO CRUGIENTE Y CORONADA OCN QUESO DOBLE CREMA FUNDIDO</p>
-                    <p class="price">12.000 COP</p>
-                </div>
-                <div class="menu-item">
-                    <h3>TRIPLE GOSA</h3>
-                    <p class="ingredients">SALCHICHA PREMIUM ENVUELTA EN TOCINETA, PAN BRIOCHE ARTESANAL ACOMPAÑADO DE CHORIZO A LA PARRILLA, CRUGIENTES CHICHARRONES, PAPA RIPIO DORADA QUESO FUNDIDO Y CEBOLLA FRESCA, REMATANDO CON 1 HUEVO FRITO</p>
-                    <p class="price">14.000 COP</p>
-                </div>    
-                <div class="menu-item">
-                    <h3>PERRO RANCHERO</h3>
-                    <p class="ingredients">SALCHICHA ARTESANAL ENVUELTA EN TOCINETA CROCANTE, PAN BRIOCHE ARTESANAL CORONADA CON PAPA RIPIO DORADITA, QUESO FUNDIDO Y NUESTRA INIGUALABLE SALSA DE LA CASA</p>
-                    <p class="price">10.000 COP</p>
-                </div>
-                <div class="menu-item">
-                    <h3>PERRO BURGUER</h3>
-                    <p class="ingredients">SALCHICHA ARTESANAL ENVUELTA EN TOCINETA CROCANTE, PAN BRIOCHE ARTESANAL, CARNE DE HAMBURGUESA EN TROZOS, QUESO CHEDAR, Y CEBOLLA CRISPY  </p>
-                    <p class="price">14.000 COP</p>
+            <!-- Tab: Perros Calientes -->
+            <div class="tab-panel" id="perros">
+                <div class="menu-grid">
+                    <div class="menu-card featured">
+                        <div class="featured-badge">PREMIUM</div>
+                        <div class="card-header">
+                            <h3>TEXAS BBQ</h3>
+                            <span class="price">$13,500</span>
+                        </div>
+                        <p class="description">Exclusiva salchicha premium envuelta en tocineta, pan brioche artesanal con queso cheddar fundido y brisket BBQ ahumado que potencia cada bocado</p>
+                    </div>
+                    <div class="menu-card">
+                        <div class="card-header">
+                            <h3>TROPICAL GOSA</h3>
+                            <span class="price">$12,000</span>
+                        </div>
+                        <p class="description">Salchicha premium envuelta en tocineta, pan brioche artesanal con piña caramelizada y jamón, cubierta con papa ripio crujiente y queso doble crema fundido</p>
+                    </div>
+                    <div class="menu-card featured">
+                        <div class="featured-badge">POPULAR</div>
+                        <div class="card-header">
+                            <h3>TRIPLE GOSA</h3>
+                            <span class="price">$14,000</span>
+                        </div>
+                        <p class="description">Salchicha premium envuelta en tocineta, pan brioche artesanal con chorizo a la parrilla, chicharrones crujientes, papa ripio, queso fundido, cebolla fresca y 1 huevo frito</p>
+                    </div>
+                    <div class="menu-card">
+                        <div class="card-header">
+                            <h3>PERRO RANCHERO</h3>
+                            <span class="price">$10,000</span>
+                        </div>
+                        <p class="description">Salchicha artesanal envuelta en tocineta crocante, pan brioche artesanal coronado con papa ripio doradita, queso fundido y nuestra inigualable salsa de la casa</p>
+                    </div>
+                    <div class="menu-card">
+                        <div class="card-header">
+                            <h3>PERRO BURGUER</h3>
+                            <span class="price">$14,000</span>
+                        </div>
+                        <p class="description">Salchicha artesanal envuelta en tocineta crocante, pan brioche artesanal, carne de hamburguesa en trozos, queso cheddar y cebolla crispy</p>
+                    </div>
                 </div>
             </div>
-        </section>
 
-        <section class="category">
-            <h2 class="category-title">Hamburguesas</h2>
-            <div class="menu-items-container">
-                <div class="menu-item">
-                    <h3>GOSA BURGUER</h3>
-                    <p class="ingredients">CARNE DE BRISKET MOLIDA, PAPA RIPIO, HUEVO FRITO, VEGETALES FRESCOS Y NUESTRAS SALSAS SECRETAS, CORONADOS EN UN PAN BRIOCHE QUE LO ABRAZA TODO</p>
-                    <p class="price">10.000 COP</p>
-                </div>
-                <div class="menu-item">
-                    <h3>CRISPY GOSA</h3>
-                    <p class="ingredients">PAN BRIOCHE ARTESANAL, CARNE BRISKET MOLIDA, VEGETALES, QUESO MOZARELLA, CEBOLLA CRISPY, TOCINETA Y SALSA BBQ DE LA CASA</p>
-                    <p class="price">13.000 COP</p>
-                </div>
-                <div class="menu-item">
-                    <h3>GOSA CLAUS</h3>
-                    <p class="ingredients">PAN BRIOCHE ROJO SUAVECITO, SALSA DE LA CASA, CARNE ARTESANAL JUGOSA, QUESO AMERICANO DERRETIDO, CEBOLLA CARAMELIZADA EN REDUCCION DE VINAGRE BALSAMICO, TOCINETA CROCANTE. ¡UN SABOR EQUILIBRADO Y PERFECTO PARA DISFRUTAR SIN PENSARLO 2 VECES!</p>
-                    <p class="price">13.000 COP</p>
-                </div>
-                <div class="menu-item">
-                    <h3>GOSA CLAUS DOBLE</h3>
-                    <p class="ingredients">PAN BRIOCHE ROJO SUAVECITO, SALSA DE LA CASA, DOBLE CARNE ARTESANAL JUGOSA, QUESO DOBLE AMERICANO DERRETIDO, CEBOLLA CARAMELIZADA EN REDUCCION DE VINAGRE BALSAMICO, DOBLE SALSA DE TOCINETA CROCANTE. ¡UN MONSTRO DE SABOR PODEROSO BRUTAL Y TOTALMENTE ADICTIVA, LA VERSION GOSA QUE LLEGA A OTRO NIVEL!</p>
-                    <p class="price">17.500 COP</p>
+            <!-- Tab: Hamburguesas -->
+            <div class="tab-panel" id="hamburguesas">
+                <div class="menu-grid">
+                    <div class="menu-card">
+                        <div class="card-header">
+                            <h3>GOSA BURGUER</h3>
+                            <span class="price">$10,000</span>
+                        </div>
+                        <p class="description">Carne de brisket molida, papa ripio, huevo frito, vegetales frescos y nuestras salsas secretas, coronados en un pan brioche que lo abraza todo</p>
+                    </div>
+                    <div class="menu-card">
+                        <div class="card-header">
+                            <h3>CRISPY GOSA</h3>
+                            <span class="price">$13,000</span>
+                        </div>
+                        <p class="description">Pan brioche artesanal, carne brisket molida, vegetales, queso mozzarella, cebolla crispy, tocineta y salsa BBQ de la casa</p>
+                    </div>
+                    <div class="menu-card featured">
+                        <div class="featured-badge">ESPECIAL</div>
+                        <div class="card-header">
+                            <h3>GOSA CLAUS</h3>
+                            <span class="price">$13,000</span>
+                        </div>
+                        <p class="description">Pan brioche rojo suavecito, salsa de la casa, carne artesanal jugosa, queso americano derretido, cebolla caramelizada en reducción de vinagre balsámico y tocineta crocante</p>
+                    </div>
+                    <div class="menu-card featured">
+                        <div class="featured-badge">MONSTRUOSA</div>
+                        <div class="card-header">
+                            <h3>GOSA CLAUS DOBLE</h3>
+                            <span class="price">$17,500</span>
+                        </div>
+                        <p class="description">Pan brioche rojo suavecito, salsa de la casa, doble carne artesanal jugosa, doble queso americano derretido, cebolla caramelizada en reducción de vinagre balsámico y doble tocineta crocante</p>
+                    </div>
                 </div>
             </div>
-        </section>
 
-
-        <section class="category">
-            <h2 class="category-title">Salchipapas</h2>
-            <div class="menu-items-container">
-                <div class="menu-item">
-                    <h3>SALCHI GOSA</h3>
-                    <p class="ingredients">PAPAS GORDITAS CON DOBLE SALCHICHA(POLLO Y RANCHERA), CORONADAS CON UNA MERMELADA DE TOCINETA DULCE-SALADA Y UNA CASCADA CREMOSA DE CHEDDAR FUNDIDO</p>
-                    <p class="price">13.000 COP</p>
-                </div>
-                <div class="menu-item">
-                    <h3>LA GOSA SUPREME -  LA REINA INDISCUTIBLE DE LAS SALCHIPAPAS</h3>
-                    <p class="ingredients">PAPAS A LA FRANCESA CON SALCHICHA DE CERDO Y RANCHERA, CHORIZO JUGOSO Y CARNE BBQ AL PUNTO, ACOMPAÑADAS DE PAPA RIPIO CROCANTE, MAIZ TIERNO Y UN TOQUE CREMOSO DE QUESO DOBLE CREMA, TODO BAÑADO CON NUESTRAS IRRESISTIBLES SALSAS DE LA CASA </p>
-                    <p class="price">25.000 COP</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="category">
-            <h2 class="category-title">Adicionales</h2>
-            <div class="menu-items-container">
-                <div class="menu-item-columns">
-                    <p>QUESO DOBLE CREMA<span>$ 1.500</span></p>
-                    <p>QUESO MOZARELLA<span>$ 1.500</span></p>
-                    <p>QUESO CHEDAR<span>$ 2.000</span></p>
-                    <p>SALCHICHA<span>$ 1.200</span></p>
-                    <p>TOCINETA<span>$ 1.200</span></p>
-                    <p>PAPA PORCION<span>$ 4.000</span></p>
-                    <p>CHORIZO<span>$ 2.000</span></p>
-                    <p>CHICHARRON<span>$ 3.500</span></p>
-                    <p>CARNE DE HAMBURGUESA<span>$ 3.000</span></p>
-                    <p>AGUA<span>$ 1.500</span></p>
+            <!-- Tab: Salchipapas -->
+            <div class="tab-panel" id="salchipapas">
+                <div class="menu-grid">
+                    <div class="menu-card">
+                        <div class="card-header">
+                            <h3>SALCHI GOSA</h3>
+                            <span class="price">$13,000</span>
+                        </div>
+                        <p class="description">Papas gorditas con doble salchicha (pollo y ranchera), coronadas con mermelada de tocineta dulce-salada y una cascada cremosa de cheddar fundido</p>
+                    </div>
+                    <div class="menu-card featured">
+                        <div class="featured-badge">LA REINA</div>
+                        <div class="card-header">
+                            <h3>LA GOSA SUPREME</h3>
+                            <span class="price">$25,000</span>
+                        </div>
+                        <p class="description">Papas a la francesa con salchicha de cerdo y ranchera, chorizo jugoso y carne BBQ al punto, acompañadas de papa ripio crocante, maíz tierno y queso doble crema, todo bañado con nuestras irresistibles salsas de la casa</p>
+                    </div>
                 </div>
             </div>
-        </section>
-        
-        <section class="category">
-            <h2 class="category-title">Agrandados</h2>
-            <div class="menu-items-container">
-                 <div class="menu-item-columns">
-                    <p>PORCION DE PAPA<span>$ 4.000</span></p>
-                    <p>GASEOSA O JUGO <span>$ 2.500</span></p>
-                    <p>EL COMBO<span>$ 5.000</span></p>
+
+            <!-- Tab: Adicionales -->
+            <div class="tab-panel" id="adicionales">
+                <div class="extras-grid">
+                    <div class="extra-item">
+                        <span class="extra-name">Queso Doble Crema</span>
+                        <span class="extra-price">$1,500</span>
+                    </div>
+                    <div class="extra-item">
+                        <span class="extra-name">Queso Mozzarella</span>
+                        <span class="extra-price">$1,500</span>
+                    </div>
+                    <div class="extra-item">
+                        <span class="extra-name">Queso Cheddar</span>
+                        <span class="extra-price">$2,000</span>
+                    </div>
+                    <div class="extra-item">
+                        <span class="extra-name">Salchicha</span>
+                        <span class="extra-price">$1,200</span>
+                    </div>
+                    <div class="extra-item">
+                        <span class="extra-name">Tocineta</span>
+                        <span class="extra-price">$1,200</span>
+                    </div>
+                    <div class="extra-item">
+                        <span class="extra-name">Porción de Papa</span>
+                        <span class="extra-price">$4,000</span>
+                    </div>
+                    <div class="extra-item">
+                        <span class="extra-name">Chorizo</span>
+                        <span class="extra-price">$2,000</span>
+                    </div>
+                    <div class="extra-item">
+                        <span class="extra-name">Chicharrón</span>
+                        <span class="extra-price">$3,500</span>
+                    </div>
+                    <div class="extra-item">
+                        <span class="extra-name">Carne de Hamburguesa</span>
+                        <span class="extra-price">$3,000</span>
+                    </div>
+                    <div class="extra-item">
+                        <span class="extra-name">Agua</span>
+                        <span class="extra-price">$1,500</span>
+                    </div>
                 </div>
             </div>
-        </section>
 
+            <!-- Tab: Agrandados -->
+            <div class="tab-panel" id="agrandados">
+                <div class="combos-grid">
+                    <div class="combo-card">
+                        <i class="fas fa-utensils combo-icon"></i>
+                        <h3>Porción de Papa</h3>
+                        <p class="combo-price">$4,000</p>
+                    </div>
+                    <div class="combo-card">
+                        <i class="fas fa-glass-martini-alt combo-icon"></i>
+                        <h3>Gaseosa o Jugo</h3>
+                        <p class="combo-price">$2,500</p>
+                    </div>
+                    <div class="combo-card featured">
+                        <div class="featured-badge">AHORRA</div>
+                        <i class="fas fa-star combo-icon"></i>
+                        <h3>El Combo Completo</h3>
+                        <p class="combo-description">Papa + Bebida</p>
+                        <p class="combo-price">$5,000</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </main>
+
+    <!-- Footer -->
     <footer>
-        <h2 class="footer-title">SÍGUENOS EN NUESTRAS REDES SOCIALES</h2>
+        <h2 class="footer-title">SÍGUENOS EN NUESTRAS REDES</h2>
         <div class="social-icons">
             <a href="https://www.tiktok.com/@gosa.food.truck?_t=ZS-8zyzniS14KX&_r=1" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
                 <i class="fab fa-tiktok"></i>
@@ -183,24 +301,19 @@
                 <i class="fab fa-instagram"></i>
             </a>
         </div>
+        <p class="footer-text">GOSA Food Truck © 2024 - Comida Gourmet con Actitud</p>
     </footer>
-    <!-- Forzando reconstrucción -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const categoryTitles = document.querySelectorAll('.category-title');
 
-            categoryTitles.forEach(title => {
-                title.addEventListener('click', function() {
-                    this.classList.toggle('active');
-                    const container = this.nextElementSibling;
-                    if (container.style.maxHeight) {
-                        container.style.maxHeight = null;
-                    } else {
-                        container.style.maxHeight = container.scrollHeight + "px";
-                    }
-                });
-            });
-        });
-    </script>
+    <!-- Botón flotante de WhatsApp -->
+    <a href="https://wa.me/573154170484?text=Hola%20GOSA!%20Quiero%20hacer%20un%20pedido"
+       class="whatsapp-float"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Hacer pedido por WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span class="whatsapp-text">Haz tu pedido aquí</span>
+    </a>
+
+    <script src="script.js"></script>
 </body>
 </html>
