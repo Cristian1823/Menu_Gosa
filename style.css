@@ -401,6 +401,35 @@ main {
     font-weight: 400;
 }
 
+/* ========== Opción Doble en Menú ========== */
+.double-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--gray-dark);
+}
+
+.double-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8em;
+    color: var(--gold);
+    letter-spacing: 2px;
+    line-height: 1.2;
+}
+
+.double-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4em;
+    color: var(--white);
+    background: var(--gray-dark);
+    padding: 6px 14px;
+    border-radius: 8px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 /* ========== Extras Grid ========== */
 .extras-grid {
     display: grid;
