@@ -14,7 +14,7 @@
     <!-- Header -->
     <header class="sistema-header">
         <div style="display: flex; align-items: center; gap: 15px;">
-            <img src="images/logo.jpeg" alt="GOSA Logo" class="logo">
+            <img src="Images/logo.jpeg" alt="GOSA Logo" class="logo">
             <h1>TOMAR PEDIDO</h1>
         </div>
         <nav class="header-nav">
@@ -35,7 +35,11 @@
         <!-- Panel del Pedido -->
         <aside class="pedido-panel" id="pedidoPanel">
             <div class="pedido-panel-toggle" onclick="togglePanel()">
-                <i class="fas fa-chevron-up"></i> <span id="toggleText">Ver Pedido</span>
+                <div class="toggle-info">
+                    <i class="fas fa-chevron-up"></i>
+                    <span id="toggleText">Ver Pedido</span>
+                </div>
+                <span id="toggleTotal" class="toggle-total"></span>
             </div>
             <h2 class="pedido-titulo">
                 <i class="fas fa-receipt"></i> Pedido Actual
@@ -172,6 +176,7 @@
             const totalContainer = document.getElementById('pedidoTotal');
             const btnEnviar = document.getElementById('btnEnviar');
             const toggleText = document.getElementById('toggleText');
+            const toggleTotal = document.getElementById('toggleTotal');
 
             if (pedidoActual.length === 0) {
                 container.innerHTML = `
@@ -183,6 +188,7 @@
                 totalContainer.style.display = 'none';
                 btnEnviar.disabled = true;
                 toggleText.textContent = 'Ver Pedido';
+                if (toggleTotal) toggleTotal.textContent = '';
                 return;
             }
 
@@ -210,6 +216,7 @@
             // Actualizar toggle
             const cantidadItems = pedidoActual.reduce((sum, item) => sum + item.cantidad, 0);
             toggleText.textContent = `Pedido (${cantidadItems})`;
+            if (toggleTotal) toggleTotal.textContent = GOSA.formatearPrecio(total);
         }
 
         // ========== ENVIAR PEDIDO ==========
@@ -282,19 +289,12 @@
             pedidoActual = [];
             document.getElementById('pedidoNotas').value = '';
             actualizarPanelPedido();
+            document.getElementById('pedidoPanel').classList.remove('expandido');
         }
 
         // ========== TOGGLE PANEL (MÓVIL) ==========
         function togglePanel() {
-            const panel = document.getElementById('pedidoPanel');
-            panel.classList.toggle('expandido');
-
-            const icon = panel.querySelector('.pedido-panel-toggle i');
-            if (panel.classList.contains('expandido')) {
-                icon.className = 'fas fa-chevron-down';
-            } else {
-                icon.className = 'fas fa-chevron-up';
-            }
+            document.getElementById('pedidoPanel').classList.toggle('expandido');
         }
     </script>
 </body>

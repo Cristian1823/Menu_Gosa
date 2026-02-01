@@ -692,6 +692,12 @@ body {
 }
 
 /* ========== RESPONSIVE ========== */
+
+/* Ocultar toggle en desktop */
+.pedido-panel-toggle {
+    display: none;
+}
+
 @media (max-width: 900px) {
     .sistema-container {
         grid-template-columns: 1fr;
@@ -702,11 +708,14 @@ body {
         bottom: 0;
         left: 0;
         right: 0;
-        max-height: 50vh;
+        max-height: 80vh;
         border-radius: 15px 15px 0 0;
         z-index: 100;
-        transform: translateY(calc(100% - 60px));
-        transition: transform 0.3s ease;
+        transform: translateY(calc(100% - 72px));
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.6);
+        background: rgba(18, 18, 18, 0.98);
+        overflow-y: auto;
     }
 
     .pedido-panel.expandido {
@@ -714,14 +723,50 @@ body {
     }
 
     .pedido-panel-toggle {
-        display: block;
-        text-align: center;
-        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        height: 72px;
         cursor: pointer;
+        border-top: 2px solid var(--gold);
+        position: sticky;
+        top: 0;
+        background: rgba(18, 18, 18, 0.98);
+        z-index: 1;
+    }
+
+    .pedido-panel-toggle i {
+        color: var(--gold);
+        font-size: 1.2em;
+        transition: transform 0.3s ease;
+    }
+
+    .pedido-panel.expandido .pedido-panel-toggle i {
+        transform: rotate(180deg);
+    }
+
+    .toggle-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--white);
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.2em;
+    }
+
+    .toggle-total {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.4em;
+        color: var(--gold);
+    }
+
+    .pedido-titulo {
+        padding-top: 10px;
     }
 
     .productos-section {
-        padding-bottom: 80px;
+        padding-bottom: 90px;
     }
 }
 
@@ -751,7 +796,13 @@ body {
     }
 
     .producto-btn {
-        padding: 12px 8px;
+        padding: 14px 10px;
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
     }
 
     .producto-nombre {
