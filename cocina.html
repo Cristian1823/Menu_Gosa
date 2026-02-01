@@ -110,6 +110,36 @@
         </div>
     </div>
 
+    <!-- Modal Editar Pedido -->
+    <div class="modal-overlay" id="modalEditar" style="display: none;" onclick="cerrarModalOverlay(event)">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <span class="modal-titulo" id="modalTitulo">Editar Pedido</span>
+                <button class="btn-cerrar-modal" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section-title">Productos actuales</div>
+                <div id="modalItems"></div>
+                <div class="modal-section-title" style="margin-top: 15px;">Agregar productos</div>
+                <div id="modalProductos"></div>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-total">
+                    <span>TOTAL:</span>
+                    <span id="modalTotal">$0</span>
+                </div>
+                <div class="modal-botones">
+                    <button class="btn-estado btn-listo" id="btnGuardarEdicion" onclick="guardarEdicion()">
+                        <i class="fas fa-floppy-disk"></i> GUARDAR
+                    </button>
+                    <button class="btn-limpiar" onclick="cerrarModal()" style="margin-top: 0;">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="sistema.js"></script>
     <script>
         // ========== VARIABLES ==========
@@ -277,11 +307,17 @@
                         <button class="btn-estado btn-preparando" onclick="cambiarEstado(${pedido.id}, 'preparando')">
                             <i class="fas fa-fire"></i> PREPARANDO
                         </button>
+                        <button class="btn-editar" onclick="abrirEditar(${pedido.id})">
+                            <i class="fas fa-pen"></i>
+                        </button>
                     `;
                 case 'preparando':
                     return `
                         <button class="btn-estado btn-listo" onclick="cambiarEstado(${pedido.id}, 'listo')">
                             <i class="fas fa-check"></i> LISTO
+                        </button>
+                        <button class="btn-editar" onclick="abrirEditar(${pedido.id})">
+                            <i class="fas fa-pen"></i>
                         </button>
                     `;
                 case 'listo':
@@ -352,6 +388,149 @@
             } catch(e) {
                 console.error('Error calculando tiempo:', e);
                 return 0;
+            }
+        }
+
+        // ========== EDITAR PEDIDO ==========
+        let pedidoEditando = null;
+
+        function abrirEditar(id) {
+            const pedido = pedidosActuales.find(p => p.id === id);
+            if (!pedido) return;
+
+            pedidoEditando = {
+                id: pedido.id,
+                items: pedido.items.map(item => ({...item}))
+            };
+
+            document.getElementById('modalTitulo').textContent = `Editar Pedido #${pedido.id}`;
+            renderizarModalItems();
+            renderizarModalProductos();
+            actualizarModalTotal();
+            document.getElementById('modalEditar').style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalEditar').style.display = 'none';
+            pedidoEditando = null;
+        }
+
+        function cerrarModalOverlay(event) {
+            if (event.target === document.getElementById('modalEditar')) {
+                cerrarModal();
+            }
+        }
+
+        function renderizarModalItems() {
+            const container = document.getElementById('modalItems');
+
+            if (pedidoEditando.items.length === 0) {
+                container.innerHTML = '<p style="color: var(--danger); text-align: center; padding: 10px; font-size: 0.9em;">Agrega al menos un producto</p>';
+                return;
+            }
+
+            container.innerHTML = pedidoEditando.items.map(item => `
+                <div class="pedido-item">
+                    <div class="pedido-item-info">
+                        <div class="pedido-item-nombre">${item.nombre}</div>
+                        <div class="pedido-item-precio">${GOSA.formatearPrecio(item.precio)} c/u</div>
+                    </div>
+                    <div class="pedido-item-controles">
+                        <button class="cantidad-btn menos" onclick="modificarCantidadModal('${item.nombre}', -1)">-</button>
+                        <span class="cantidad-numero">${item.cantidad}</span>
+                        <button class="cantidad-btn mas" onclick="modificarCantidadModal('${item.nombre}', 1)">+</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderizarModalProductos() {
+            const container = document.getElementById('modalProductos');
+            let html = '';
+
+            Object.keys(GOSA.MENU).forEach(categoria => {
+                const productos = GOSA.MENU[categoria];
+                html += `
+                    <div class="categoria-titulo" style="font-size: 1.1em; margin-top: 10px; margin-bottom: 8px; padding-bottom: 5px;">
+                        <i class="fas ${GOSA.CATEGORIAS_ICONOS[categoria]}"></i> ${GOSA.CATEGORIAS_NOMBRES[categoria]}
+                    </div>
+                    <div class="productos-grid modal-productos-grid">
+                        ${productos.map(producto => `
+                            <button class="producto-btn" onclick="agregarProductoModal(event, '${producto.nombre}', ${producto.precio})">
+                                <div class="producto-nombre">${producto.nombre}</div>
+                                <div class="producto-precio">${GOSA.formatearPrecio(producto.precio)}</div>
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function agregarProductoModal(event, nombre, precio) {
+            const existente = pedidoEditando.items.find(i => i.nombre === nombre);
+
+            if (existente) {
+                existente.cantidad++;
+            } else {
+                pedidoEditando.items.push({ nombre, precio, cantidad: 1 });
+            }
+
+            event.currentTarget.classList.add('added');
+            setTimeout(() => event.currentTarget.classList.remove('added'), 300);
+
+            GOSA.vibrar(30);
+            renderizarModalItems();
+            actualizarModalTotal();
+        }
+
+        function modificarCantidadModal(nombre, delta) {
+            const item = pedidoEditando.items.find(i => i.nombre === nombre);
+            if (!item) return;
+
+            item.cantidad += delta;
+            if (item.cantidad <= 0) {
+                pedidoEditando.items = pedidoEditando.items.filter(i => i.nombre !== nombre);
+            }
+
+            GOSA.vibrar(30);
+            renderizarModalItems();
+            actualizarModalTotal();
+        }
+
+        function actualizarModalTotal() {
+            const total = pedidoEditando.items.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            document.getElementById('modalTotal').textContent = GOSA.formatearPrecio(total);
+        }
+
+        async function guardarEdicion() {
+            if (pedidoEditando.items.length === 0) {
+                alert('Agrega al menos un producto antes de guardar');
+                return;
+            }
+
+            const btn = document.getElementById('btnGuardarEdicion');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GUARDANDO...';
+
+            const total = pedidoEditando.items.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+
+            try {
+                const resultado = await GOSA.actualizarPedido(pedidoEditando.id, pedidoEditando.items, total);
+
+                if (resultado.success) {
+                    GOSA.reproducirSonido('success');
+                    cerrarModal();
+                    await cargarPedidos();
+                } else {
+                    throw new Error(resultado.error || 'Error desconocido');
+                }
+            } catch (error) {
+                console.error('Error editando pedido:', error);
+                alert('Error al guardar: ' + error.message);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-floppy-disk"></i> GUARDAR';
             }
         }
 

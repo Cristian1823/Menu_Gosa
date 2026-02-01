@@ -252,6 +252,13 @@
                             `).join('')}
                         </div>
 
+                        <div class="pedido-total">
+                            <div class="total-linea">
+                                <span>TOTAL:</span>
+                                <span>${GOSA.formatearPrecio(pedido.total)}</span>
+                            </div>
+                        </div>
+
                         ${formatearNotas(pedido.notas) ? `
                             <div class="pedido-notas-cocina">
                                 <i class="fas fa-comment"></i> ${formatearNotas(pedido.notas)}

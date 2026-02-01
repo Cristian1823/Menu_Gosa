@@ -193,6 +193,16 @@ async function actualizarEstadoPedido(id, estado) {
     });
 }
 
+// Actualizar items y total de un pedido existente
+async function actualizarPedido(id, items, total) {
+    return await apiPost({
+        action: 'actualizarPedido',
+        id: id,
+        items: items,
+        total: total
+    });
+}
+
 // ========== FUNCIONES DE UTILIDAD ==========
 
 // Formatear precio en pesos colombianos
@@ -357,6 +367,7 @@ window.GOSA = {
     getPedidosPorFecha,
     getResumenDia,
     actualizarEstadoPedido,
+    actualizarPedido,
 
     // Utilidades
     formatearPrecio,
