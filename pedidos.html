@@ -14,12 +14,13 @@
     <!-- Header -->
     <header class="sistema-header">
         <div style="display: flex; align-items: center; gap: 15px;">
-            <img src="Images/logo.jpeg" alt="GOSA Logo" class="logo">
+            <img src="images/logo.jpeg" alt="GOSA Logo" class="logo">
             <h1>TOMAR PEDIDO</h1>
         </div>
         <nav class="header-nav">
             <a href="pedidos.html" class="nav-btn active">Pedidos</a>
             <a href="cocina.html" class="nav-btn">Cocina</a>
+            <a href="domicilio.html" class="nav-btn">Domicilio</a>
             <a href="cierre.html" class="nav-btn">Cierre</a>
             <a href="index.html" class="nav-btn">Menu</a>
         </nav>
@@ -57,7 +58,11 @@
                 </div>
             </div>
             <div class="pedido-notas">
-                <textarea id="pedidoNotas" placeholder="Notas del pedido (sin cebolla, extra salsa, etc.)"></textarea>
+                <label class="domicilio-check" id="domicilioLabel">
+                    <input type="checkbox" id="esDomicilio" onchange="toggleDomicilioCheck()">
+                    <i class="fas fa-motorcycle"></i> Es para domicilio
+                </label>
+                <textarea id="pedidoNotas" placeholder="Notas del pedido (dirección, sin cebolla, etc.)"></textarea>
             </div>
             <button class="btn-enviar" id="btnEnviar" disabled onclick="enviarPedido()">
                 <i class="fas fa-paper-plane"></i> ENVIAR A COCINA
@@ -225,6 +230,8 @@
 
             const btnEnviar = document.getElementById('btnEnviar');
             const notas = document.getElementById('pedidoNotas').value.trim();
+            const esDomicilio = document.getElementById('esDomicilio').checked;
+            const notasFinal = esDomicilio ? `[DOMICILIO] ${notas}` : notas;
 
             // Calcular total
             const total = pedidoActual.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
@@ -241,7 +248,7 @@
             btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
 
             try {
-                const resultado = await GOSA.crearPedido(items, total, notas);
+                const resultado = await GOSA.crearPedido(items, total, notasFinal);
 
                 if (resultado.success) {
                     // Éxito
@@ -267,7 +274,7 @@
                 console.error('Error enviando pedido:', error);
 
                 // Guardar localmente como backup
-                GOSA.guardarPedidoLocal({ items, total, notas });
+                GOSA.guardarPedidoLocal({ items, total, notas: notasFinal });
 
                 btnEnviar.innerHTML = '<i class="fas fa-exclamation-triangle"></i> GUARDADO LOCAL';
                 btnEnviar.style.background = '#ffc107';
@@ -288,8 +295,16 @@
         function limpiarPedido() {
             pedidoActual = [];
             document.getElementById('pedidoNotas').value = '';
+            document.getElementById('esDomicilio').checked = false;
+            document.getElementById('domicilioLabel').classList.remove('activo');
             actualizarPanelPedido();
             document.getElementById('pedidoPanel').classList.remove('expandido');
+        }
+
+        // ========== TOGGLE ESTILO CHECKBOX DOMICILIO ==========
+        function toggleDomicilioCheck() {
+            const label = document.getElementById('domicilioLabel');
+            label.classList.toggle('activo', document.getElementById('esDomicilio').checked);
         }
 
         // ========== TOGGLE PANEL (MÓVIL) ==========
