@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GOSA - Tomar Pedido</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="sistema.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="sistema-header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="Images/logo.jpeg" alt="GOSA Logo" class="logo">
+            <h1>TOMAR PEDIDO</h1>
+        </div>
+        <nav class="header-nav">
+            <a href="pedidos.html" class="nav-btn active">Pedidos</a>
+            <a href="cocina.html" class="nav-btn">Cocina</a>
+            <a href="cierre.html" class="nav-btn">Cierre</a>
+            <a href="index.html" class="nav-btn">Menu</a>
+        </nav>
+    </header>
+
+    <!-- Contenido Principal -->
+    <div class="sistema-container">
+        <!-- Sección de Productos -->
+        <section class="productos-section" id="productosSection">
+            <!-- Se llena con JavaScript -->
+        </section>
+
+        <!-- Panel del Pedido -->
+        <aside class="pedido-panel" id="pedidoPanel">
+            <div class="pedido-panel-toggle" onclick="togglePanel()">
+                <i class="fas fa-chevron-up"></i> <span id="toggleText">Ver Pedido</span>
+            </div>
+            <h2 class="pedido-titulo">
+                <i class="fas fa-receipt"></i> Pedido Actual
+            </h2>
+            <div class="pedido-items" id="pedidoItems">
+                <div class="pedido-vacio">
+                    <i class="fas fa-cart-shopping" style="font-size: 2em; margin-bottom: 10px; display: block;"></i>
+                    Agrega productos al pedido
+                </div>
+            </div>
+            <div class="pedido-total" id="pedidoTotal" style="display: none;">
+                <div class="total-linea">
+                    <span>TOTAL:</span>
+                    <span id="totalValor">$0</span>
+                </div>
+            </div>
+            <div class="pedido-notas">
+                <textarea id="pedidoNotas" placeholder="Notas del pedido (sin cebolla, extra salsa, etc.)"></textarea>
+            </div>
+            <button class="btn-enviar" id="btnEnviar" disabled onclick="enviarPedido()">
+                <i class="fas fa-paper-plane"></i> ENVIAR A COCINA
+            </button>
+            <button class="btn-limpiar" onclick="limpiarPedido()">
+                <i class="fas fa-trash"></i> Limpiar Pedido
+            </button>
+        </aside>
+    </div>
+
+    <script src="sistema.js"></script>
+    <script>
+        // ========== ESTADO DEL PEDIDO ==========
+        let pedidoActual = [];
+
+        // ========== INICIALIZACIÓN ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar configuración
+            if (!GOSA.apiConfigurada()) {
+                GOSA.mostrarConfigPendiente(document.getElementById('productosSection'));
+                return;
+            }
+
+            // Cargar productos
+            cargarProductos();
+
+            // Sincronizar pedidos locales pendientes
+            GOSA.sincronizarPedidosLocales();
+        });
+
+        // ========== CARGAR PRODUCTOS ==========
+        function cargarProductos() {
+            const container = document.getElementById('productosSection');
+            container.innerHTML = '';
+
+            Object.keys(GOSA.MENU).forEach(categoria => {
+                const productos = GOSA.MENU[categoria];
+                const nombreCategoria = GOSA.CATEGORIAS_NOMBRES[categoria];
+                const icono = GOSA.CATEGORIAS_ICONOS[categoria];
+
+                const categoriaHtml = `
+                    <h3 class="categoria-titulo">
+                        <i class="fas ${icono}"></i> ${nombreCategoria}
+                    </h3>
+                    <div class="productos-grid" id="grid-${categoria}">
+                        ${productos.map(producto => `
+                            <button class="producto-btn" data-id="${producto.id}" onclick="agregarProducto('${producto.id}')">
+                                <div class="producto-nombre">${producto.nombre}</div>
+                                <div class="producto-precio">${GOSA.formatearPrecio(producto.precio)}</div>
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+
+                container.innerHTML += categoriaHtml;
+            });
+        }
+
+        // ========== BUSCAR PRODUCTO POR ID ==========
+        function buscarProducto(id) {
+            for (const categoria of Object.values(GOSA.MENU)) {
+                const producto = categoria.find(p => p.id === id);
+                if (producto) return producto;
+            }
+            return null;
+        }
+
+        // ========== AGREGAR PRODUCTO ==========
+        function agregarProducto(id) {
+            const producto = buscarProducto(id);
+            if (!producto) return;
+
+            // Buscar si ya existe en el pedido
+            const existente = pedidoActual.find(item => item.id === id);
+
+            if (existente) {
+                existente.cantidad++;
+            } else {
+                pedidoActual.push({
+                    id: producto.id,
+                    nombre: producto.nombre,
+                    precio: producto.precio,
+                    cantidad: 1
+                });
+            }
+
+            // Feedback visual
+            const btn = document.querySelector(`[data-id="${id}"]`);
+            btn.classList.add('added');
+            setTimeout(() => btn.classList.remove('added'), 300);
+
+            // Vibración
+            GOSA.vibrar();
+
+            actualizarPanelPedido();
+        }
+
+        // ========== MODIFICAR CANTIDAD ==========
+        function modificarCantidad(id, delta) {
+            const item = pedidoActual.find(i => i.id === id);
+            if (!item) return;
+
+            item.cantidad += delta;
+
+            if (item.cantidad <= 0) {
+                pedidoActual = pedidoActual.filter(i => i.id !== id);
+            }
+
+            GOSA.vibrar(30);
+            actualizarPanelPedido();
+        }
+
+        // ========== ACTUALIZAR PANEL ==========
+        function actualizarPanelPedido() {
+            const container = document.getElementById('pedidoItems');
+            const totalContainer = document.getElementById('pedidoTotal');
+            const btnEnviar = document.getElementById('btnEnviar');
+            const toggleText = document.getElementById('toggleText');
+
+            if (pedidoActual.length === 0) {
+                container.innerHTML = `
+                    <div class="pedido-vacio">
+                        <i class="fas fa-cart-shopping" style="font-size: 2em; margin-bottom: 10px; display: block;"></i>
+                        Agrega productos al pedido
+                    </div>
+                `;
+                totalContainer.style.display = 'none';
+                btnEnviar.disabled = true;
+                toggleText.textContent = 'Ver Pedido';
+                return;
+            }
+
+            // Generar lista de items
+            container.innerHTML = pedidoActual.map(item => `
+                <div class="pedido-item">
+                    <div class="pedido-item-info">
+                        <div class="pedido-item-nombre">${item.nombre}</div>
+                        <div class="pedido-item-precio">${GOSA.formatearPrecio(item.precio)} c/u</div>
+                    </div>
+                    <div class="pedido-item-controles">
+                        <button class="cantidad-btn menos" onclick="modificarCantidad('${item.id}', -1)">-</button>
+                        <span class="cantidad-numero">${item.cantidad}</span>
+                        <button class="cantidad-btn mas" onclick="modificarCantidad('${item.id}', 1)">+</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Calcular total
+            const total = pedidoActual.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            document.getElementById('totalValor').textContent = GOSA.formatearPrecio(total);
+            totalContainer.style.display = 'block';
+            btnEnviar.disabled = false;
+
+            // Actualizar toggle
+            const cantidadItems = pedidoActual.reduce((sum, item) => sum + item.cantidad, 0);
+            toggleText.textContent = `Pedido (${cantidadItems})`;
+        }
+
+        // ========== ENVIAR PEDIDO ==========
+        async function enviarPedido() {
+            if (pedidoActual.length === 0) return;
+
+            const btnEnviar = document.getElementById('btnEnviar');
+            const notas = document.getElementById('pedidoNotas').value.trim();
+
+            // Calcular total
+            const total = pedidoActual.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+
+            // Preparar items para enviar
+            const items = pedidoActual.map(item => ({
+                nombre: item.nombre,
+                cantidad: item.cantidad,
+                precio: item.precio
+            }));
+
+            // Deshabilitar botón
+            btnEnviar.disabled = true;
+            btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
+
+            try {
+                const resultado = await GOSA.crearPedido(items, total, notas);
+
+                if (resultado.success) {
+                    // Éxito
+                    GOSA.vibrar(200);
+                    GOSA.reproducirSonido('success');
+
+                    btnEnviar.innerHTML = '<i class="fas fa-check"></i> PEDIDO ENVIADO!';
+                    btnEnviar.style.background = '#28a745';
+
+                    // Mostrar número de pedido
+                    alert(`Pedido #${resultado.id} enviado a cocina!`);
+
+                    // Limpiar después de 2 segundos
+                    setTimeout(() => {
+                        limpiarPedido();
+                        btnEnviar.innerHTML = '<i class="fas fa-paper-plane"></i> ENVIAR A COCINA';
+                        btnEnviar.style.background = '';
+                    }, 2000);
+                } else {
+                    throw new Error(resultado.error || 'Error desconocido');
+                }
+            } catch (error) {
+                console.error('Error enviando pedido:', error);
+
+                // Guardar localmente como backup
+                GOSA.guardarPedidoLocal({ items, total, notas });
+
+                btnEnviar.innerHTML = '<i class="fas fa-exclamation-triangle"></i> GUARDADO LOCAL';
+                btnEnviar.style.background = '#ffc107';
+                btnEnviar.style.color = '#000';
+
+                alert('Error de conexión. El pedido se guardó localmente y se sincronizará cuando haya conexión.');
+
+                setTimeout(() => {
+                    limpiarPedido();
+                    btnEnviar.innerHTML = '<i class="fas fa-paper-plane"></i> ENVIAR A COCINA';
+                    btnEnviar.style.background = '';
+                    btnEnviar.style.color = '';
+                }, 3000);
+            }
+        }
+
+        // ========== LIMPIAR PEDIDO ==========
+        function limpiarPedido() {
+            pedidoActual = [];
+            document.getElementById('pedidoNotas').value = '';
+            actualizarPanelPedido();
+        }
+
+        // ========== TOGGLE PANEL (MÓVIL) ==========
+        function togglePanel() {
+            const panel = document.getElementById('pedidoPanel');
+            panel.classList.toggle('expandido');
+
+            const icon = panel.querySelector('.pedido-panel-toggle i');
+            if (panel.classList.contains('expandido')) {
+                icon.className = 'fas fa-chevron-down';
+            } else {
+                icon.className = 'fas fa-chevron-up';
+            }
+        }
+    </script>
+</body>
+</html>

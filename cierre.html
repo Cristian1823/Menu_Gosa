@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GOSA - Cierre de Caja</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="sistema.css">
+    <style>
+        .btn-imprimir {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            border-radius: 8px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-imprimir:hover {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .cierre-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .pedidos-lista {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--gray-dark);
+            margin-top: 25px;
+        }
+
+        .pedidos-lista h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5em;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        .pedido-row {
+            display: grid;
+            grid-template-columns: 80px 100px 1fr 120px 100px;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-dark);
+            align-items: center;
+        }
+
+        .pedido-row:last-child {
+            border-bottom: none;
+        }
+
+        .pedido-row.header {
+            font-family: 'Bebas Neue', sans-serif;
+            color: var(--gold);
+            font-size: 1.1em;
+        }
+
+        .pedido-items-mini {
+            font-size: 0.9em;
+            color: var(--gray-light);
+        }
+
+        .estado-badge {
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            text-align: center;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        .estado-badge.entregado,
+        .estado-badge.listo {
+            background: rgba(40, 167, 69, 0.3);
+            color: #28a745;
+        }
+
+        .estado-badge.pendiente {
+            background: rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+        }
+
+        .estado-badge.preparando {
+            background: rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+        }
+
+        .estado-badge.cancelado {
+            background: rgba(108, 117, 125, 0.3);
+            color: #6c757d;
+        }
+
+        @media (max-width: 768px) {
+            .pedido-row {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+
+            .pedido-row.header {
+                display: none;
+            }
+
+            .pedido-row > div::before {
+                font-family: 'Bebas Neue', sans-serif;
+                color: var(--gold);
+                margin-right: 10px;
+            }
+
+            .pedido-row > div:nth-child(1)::before { content: 'Pedido: '; }
+            .pedido-row > div:nth-child(2)::before { content: 'Hora: '; }
+            .pedido-row > div:nth-child(3)::before { content: 'Items: '; }
+            .pedido-row > div:nth-child(4)::before { content: 'Total: '; }
+        }
+
+        @media print {
+            .pedido-row {
+                grid-template-columns: 60px 80px 1fr 100px 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="sistema-header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="Images/logo.jpeg" alt="GOSA Logo" class="logo">
+            <h1><i class="fas fa-cash-register"></i> CIERRE DE CAJA</h1>
+        </div>
+        <nav class="header-nav">
+            <a href="pedidos.html" class="nav-btn">Pedidos</a>
+            <a href="cocina.html" class="nav-btn">Cocina</a>
+            <a href="cierre.html" class="nav-btn active">Cierre</a>
+            <a href="index.html" class="nav-btn">Menu</a>
+        </nav>
+    </header>
+
+    <!-- Contenido -->
+    <div class="cierre-container">
+        <!-- Selector de fecha -->
+        <div class="cierre-header">
+            <div class="cierre-fecha">
+                <label for="fechaConsulta">Fecha:</label>
+                <input type="date" id="fechaConsulta">
+                <button class="btn-consultar" onclick="consultarDia()">
+                    <i class="fas fa-search"></i> Consultar
+                </button>
+                <button class="btn-consultar" onclick="verTodos()" style="background: var(--gold); color: var(--black);">
+                    <i class="fas fa-list"></i> Ver Todos
+                </button>
+            </div>
+            <button class="btn-imprimir" onclick="window.print()">
+                <i class="fas fa-print"></i> Imprimir
+            </button>
+        </div>
+
+        <!-- Título de fecha -->
+        <h2 id="tituloFecha" style="font-family: 'Bebas Neue'; color: var(--gold); margin-bottom: 20px;"></h2>
+
+        <!-- Resumen -->
+        <div class="resumen-cards" id="resumenCards">
+            <!-- Se llena con JavaScript -->
+        </div>
+
+        <!-- Productos Vendidos -->
+        <div class="productos-vendidos" id="productosVendidos">
+            <h2><i class="fas fa-chart-bar"></i> Productos Vendidos</h2>
+            <div id="tablaProductos">
+                <p class="sin-datos">Selecciona una fecha para ver el resumen</p>
+            </div>
+        </div>
+
+        <!-- Lista de Pedidos -->
+        <div class="pedidos-lista" id="pedidosLista" style="display: none;">
+            <h2><i class="fas fa-list"></i> Detalle de Pedidos</h2>
+            <div id="listaPedidos"></div>
+        </div>
+    </div>
+
+    <script src="sistema.js"></script>
+    <script>
+        // ========== INICIALIZACIÓN ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar configuración
+            if (!GOSA.apiConfigurada()) {
+                GOSA.mostrarConfigPendiente(document.querySelector('.cierre-container'));
+                return;
+            }
+
+            // Establecer fecha de hoy
+            document.getElementById('fechaConsulta').value = GOSA.fechaHoy();
+
+            // Consultar automáticamente - ver todos
+            verTodos();
+        });
+
+        // ========== VER TODOS LOS PEDIDOS ==========
+        async function verTodos() {
+            document.getElementById('resumenCards').innerHTML = '<div class="loading">Consultando</div>';
+            document.getElementById('tablaProductos').innerHTML = '';
+            document.getElementById('pedidosLista').style.display = 'none';
+
+            try {
+                const resultado = await GOSA.getPedidosHoy();
+
+                if (resultado.error) {
+                    throw new Error(resultado.error);
+                }
+
+                const pedidos = resultado.pedidos || [];
+
+                // Calcular resumen manualmente
+                let totalVentas = 0;
+                let productosCantidad = {};
+                let productosIngreso = {};
+
+                pedidos.forEach(p => {
+                    if (p.estado !== 'cancelado') {
+                        totalVentas += p.total;
+                        p.items.forEach(item => {
+                            if (!productosCantidad[item.nombre]) {
+                                productosCantidad[item.nombre] = 0;
+                                productosIngreso[item.nombre] = 0;
+                            }
+                            productosCantidad[item.nombre] += item.cantidad;
+                            productosIngreso[item.nombre] += item.precio * item.cantidad;
+                        });
+                    }
+                });
+
+                const productos = Object.keys(productosCantidad).map(nombre => ({
+                    nombre: nombre,
+                    cantidad: productosCantidad[nombre],
+                    ingreso: productosIngreso[nombre]
+                })).sort((a, b) => b.cantidad - a.cantidad);
+
+                const resumen = {
+                    totalVentas: totalVentas,
+                    cantidadPedidos: pedidos.length,
+                    ticketPromedio: pedidos.length > 0 ? Math.round(totalVentas / pedidos.length) : 0,
+                    productos: productos
+                };
+
+                document.getElementById('tituloFecha').textContent = 'Todos los Pedidos';
+
+                renderizarResumen(resumen);
+                renderizarProductos(resumen.productos);
+                renderizarPedidos(pedidos);
+
+            } catch (error) {
+                console.error('Error consultando:', error);
+                document.getElementById('resumenCards').innerHTML = `
+                    <div class="mensaje error">Error: ${error.message}</div>
+                `;
+            }
+        }
+
+        // ========== CONSULTAR DÍA ==========
+        async function consultarDia() {
+            const fecha = document.getElementById('fechaConsulta').value;
+
+            if (!fecha) {
+                alert('Selecciona una fecha');
+                return;
+            }
+
+            // Mostrar loading
+            document.getElementById('resumenCards').innerHTML = '<div class="loading">Consultando</div>';
+            document.getElementById('tablaProductos').innerHTML = '';
+            document.getElementById('pedidosLista').style.display = 'none';
+
+            try {
+                // Obtener resumen
+                const resumen = await GOSA.getResumenDia(fecha);
+
+                if (resumen.error) {
+                    throw new Error(resumen.error);
+                }
+
+                // Obtener pedidos del día
+                const pedidos = await GOSA.getPedidosPorFecha(fecha);
+
+                // Mostrar título
+                document.getElementById('tituloFecha').textContent = GOSA.formatearFecha(fecha);
+
+                // Renderizar resumen
+                renderizarResumen(resumen);
+
+                // Renderizar productos
+                renderizarProductos(resumen.productos);
+
+                // Renderizar lista de pedidos
+                renderizarPedidos(pedidos.pedidos || []);
+
+            } catch (error) {
+                console.error('Error consultando:', error);
+                document.getElementById('resumenCards').innerHTML = `
+                    <div class="mensaje error">Error: ${error.message}</div>
+                `;
+            }
+        }
+
+        // ========== RENDERIZAR RESUMEN ==========
+        function renderizarResumen(resumen) {
+            const container = document.getElementById('resumenCards');
+
+            container.innerHTML = `
+                <div class="resumen-card destacado">
+                    <div class="resumen-valor">${GOSA.formatearPrecio(resumen.totalVentas)}</div>
+                    <div class="resumen-label">Total Vendido</div>
+                </div>
+                <div class="resumen-card">
+                    <div class="resumen-valor">${resumen.cantidadPedidos}</div>
+                    <div class="resumen-label">Pedidos</div>
+                </div>
+                <div class="resumen-card">
+                    <div class="resumen-valor">${GOSA.formatearPrecio(resumen.ticketPromedio)}</div>
+                    <div class="resumen-label">Ticket Promedio</div>
+                </div>
+                <div class="resumen-card">
+                    <div class="resumen-valor">${resumen.productos.length}</div>
+                    <div class="resumen-label">Productos Diferentes</div>
+                </div>
+            `;
+        }
+
+        // ========== RENDERIZAR PRODUCTOS ==========
+        function renderizarProductos(productos) {
+            const container = document.getElementById('tablaProductos');
+
+            if (!productos || productos.length === 0) {
+                container.innerHTML = '<p class="sin-datos">No hay productos vendidos en esta fecha</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <table class="productos-tabla">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Ingreso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${productos.map(p => `
+                            <tr>
+                                <td>${p.nombre}</td>
+                                <td>${p.cantidad}</td>
+                                <td>${GOSA.formatearPrecio(p.ingreso)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // ========== FORMATEAR HORA ==========
+        function formatearHora(hora) {
+            if (!hora) return '--:--';
+            if (hora.match && hora.match(/^\d{2}:\d{2}(:\d{2})?$/)) {
+                return hora.substring(0, 5);
+            }
+            if (hora.includes && (hora.includes('GMT') || hora.includes('T'))) {
+                try {
+                    const d = new Date(hora);
+                    return d.toTimeString().substring(0, 5);
+                } catch(e) {
+                    return '--:--';
+                }
+            }
+            return String(hora).substring(0, 5);
+        }
+
+        // ========== RENDERIZAR PEDIDOS ==========
+        function renderizarPedidos(pedidos) {
+            const container = document.getElementById('pedidosLista');
+            const lista = document.getElementById('listaPedidos');
+
+            if (!pedidos || pedidos.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+
+            // Ordenar por ID
+            pedidos.sort((a, b) => a.id - b.id);
+
+            lista.innerHTML = `
+                <div class="pedido-row header">
+                    <div>Pedido</div>
+                    <div>Hora</div>
+                    <div>Items</div>
+                    <div>Total</div>
+                    <div>Estado</div>
+                </div>
+                ${pedidos.map(p => `
+                    <div class="pedido-row">
+                        <div>#${p.id}</div>
+                        <div>${formatearHora(p.hora)}</div>
+                        <div class="pedido-items-mini">
+                            ${p.items.map(i => `${i.cantidad}x ${i.nombre}`).join(', ')}
+                        </div>
+                        <div>${GOSA.formatearPrecio(p.total)}</div>
+                        <div>
+                            <span class="estado-badge ${p.estado}">${p.estado}</span>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+    </script>
+</body>
+</html>
