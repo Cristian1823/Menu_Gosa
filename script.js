@@ -170,38 +170,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('🎉 ¡GOSA POWER ACTIVATED! 🎉');
     }
 
-    // ========== Swipe gestures para mobile ==========
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    const tabsContent = document.querySelector('.tabs-content');
-
-    tabsContent.addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    tabsContent.addEventListener('touchend', function(e) {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, { passive: true });
-
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
-
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0) {
-                // Swipe izquierda - siguiente tab
-                currentTabIndex = (currentTabIndex + 1) % tabButtons.length;
-                tabButtons[currentTabIndex].click();
-            } else {
-                // Swipe derecha - tab anterior
-                currentTabIndex = (currentTabIndex - 1 + tabButtons.length) % tabButtons.length;
-                tabButtons[currentTabIndex].click();
-            }
-        }
-    }
-
     // ========== Animación de atención para WhatsApp ==========
     setTimeout(() => {
         const whatsappBtn = document.querySelector('.whatsapp-float');
@@ -238,6 +206,5 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('%c🍔 GOSA Food Truck - Menú Digital 🍔', 'color: #FFD700; font-size: 20px; font-weight: bold;');
     console.log('%cDesarrollado con ❤️ para GOSA', 'color: #E0E0E0; font-size: 12px;');
     console.log('%c💡 Tip: Usa las flechas ← → para navegar entre categorías', 'color: #FFC107; font-style: italic;');
-    console.log('%c💡 Tip: Desliza en móvil para cambiar de categoría', 'color: #FFC107; font-style: italic;');
     console.log('%c📱 Tip: Haz clic en el botón de WhatsApp para hacer tu pedido', 'color: #25D366; font-style: italic;');
 });
