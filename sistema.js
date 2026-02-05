@@ -15,6 +15,7 @@ const MENU = {
     perros: [
         { id: 'p1', nombre: 'Perro Ranchero', precio: 10000 },
         { id: 'p2', nombre: 'Tropical Gosa', precio: 12000 },
+        { id: 'p6', nombre: 'Gosa Dulcin', precio: 12500 },
         { id: 'p3', nombre: 'Texas BBQ', precio: 13500 },
         { id: 'p4', nombre: 'Perro Burguer', precio: 14000 },
         { id: 'p5', nombre: 'Triple Gosa', precio: 14000 }

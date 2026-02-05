@@ -8,6 +8,7 @@ Este es un sitio web completo para **GOSA Food Truck**, un negocio de comida rá
 2. **Sistema de Pedidos** - Para toma de pedidos en el punto de venta
 3. **Panel de Cocina** - Para que el cocinero vea y gestione pedidos
 4. **Cierre de Caja** - Resumen de ventas y estadísticas del día
+5. **Panel de Domicilio** - Para gestionar pedidos de entrega a domicilio
 
 ## Tecnologías Utilizadas
 
@@ -30,6 +31,7 @@ Gosa/
 │
 ├── pedidos.html            # Sistema de toma de pedidos (cajero)
 ├── cocina.html             # Panel de cocina (cocinero)
+├── domicilio.html          # Panel de domicilio (entrega)
 ├── cierre.html             # Cierre de caja (administrador)
 ├── sistema.js              # Lógica del sistema de pedidos
 ├── sistema.css             # Estilos del sistema de pedidos
@@ -227,9 +229,10 @@ const observer = new IntersectionObserver(function(entries) {
 ### Perros Calientes
 1. Perro Ranchero: $10,000
 2. Tropical Gosa: $12,000
-3. Texas BBQ: $13,500 ⭐ **PREMIUM**
-4. Perro Burguer: $14,000
-5. Triple Gosa: $14,000 ⭐ **POPULAR**
+3. Gosa Dulcin: $12,500
+4. Texas BBQ: $13,500 ⭐ **PREMIUM**
+5. Perro Burguer: $14,000
+6. Triple Gosa: $14,000 ⭐ **POPULAR**
 
 ### Hamburguesas (con opciones dobles)
 1. Gosa Burguer: $10,000 → Doble: $14,500
@@ -273,6 +276,7 @@ const observer = new IntersectionObserver(function(entries) {
    - Schema markup para restaurante
 
 3. **Funcionalidades Adicionales**
+   - Protección con PIN de 4 dígitos para páginas del sistema (pedidos, cocina, domicilio, cierre)
    - Sistema de pedidos online integrado
    - Carrito de compras virtual
    - Modo oscuro/claro toggle
@@ -362,6 +366,52 @@ const observer = new IntersectionObserver(function(entries) {
 - **Ubicación:** Debajo de la descripción de cada hamburguesa (index.html)
 - **Estilos CSS:** `.double-option`, `.double-name`, `.double-price` (style.css:404-431)
 
+## Sistema de Pedidos
+
+### Backend (Google Sheets + Apps Script)
+- **Almacenamiento:** Google Sheets, hoja "Pedidos"
+- **Columnas:** ID | Fecha | Hora | Items (JSON) | Total | Estado | Notas
+- **Comunicación:** JSONP (inyección de script tag) para evitar CORS
+- **Estados del pedido:** `pendiente` → `preparando` → `listo` → `entregado`
+- **API Actions disponibles:**
+  - `nuevoPedido` — Crea un pedido nuevo (appends row)
+  - `actualizarEstado` — Cambia el estado (columna 6)
+  - `actualizarPedido` — Actualiza items y total de un pedido existente (columnas 4 y 5)
+  - `getPendientes` — Retorna pedidos con estado pendiente/preparando
+  - `getHoy` — Retorna todos los pedidos
+  - `getPorFecha` — Retorna pedidos de una fecha específica
+  - `getResumen` — Resumen de ventas por día (totales, productos vendidos)
+- **Configuración:** La URL de la web app de Apps Script se define en `sistema.js` variable `API_URL`. Al modificar el código en Apps Script se debe hacer "Editar implementación" para mantener la misma URL.
+
+### 🚲 Panel de Domicilio (domicilio.html)
+- **Flujo completo:**
+  1. El cajero toma el pedido en pedidos.html y marca el checkbox "Es para domicilio"
+  2. Se agrega automáticamente el marcador `[DOMICILIO]` al campo Notas del pedido
+  3. El chef prepara el pedido en cocina.html y lo marca como listo
+  4. El pedido aparece automáticamente en domicilio.html
+  5. El encargado de entrega lo marca como entregado desde ahí
+- **Filtrado:** Client-side sobre `getPedidosHoy()`, filtra `estado === 'listo'` y `notas.includes('[DOMICILIO]')`
+- **Marcador:** El `[DOMICILIO]` se elimina visualmente con `formatearNotas()` antes de mostrar las notas
+- **Stats:** Listos para entregar y entregados hoy
+- **Auto-refresh:** Cada 5 segundos, notificación de sonido + vibración al aparecer pedidos nuevos
+- **Tiempo de espera:** Minutos transcurridos desde el pedido, se marca urgente a los 20 min
+
+### ✏️ Editar Pedidos (cocina.html)
+- **Disponible en:** Pedidos con estado `pendiente` o `preparando` (no en `listo`, la comida ya está lista)
+- **Acceso:** Botón lápiz dorado en cada card de cocina
+- **Modal (bottom sheet):**
+  - Sección superior: items actuales del pedido con controles +/- de cantidad (elimina al llegar a 0)
+  - Sección inferior: grid completo de productos del menú agrupados por categoría para agregar nuevos
+  - Footer fijo: total actualizado en tiempo real + botones Guardar/Cancelar
+- **Guarda:** Actualiza Items (columna 4) y Total (columna 5) en Google Sheets via acción `actualizarPedido`
+- **Impacto:** El nuevo total y los items se reflejan automáticamente en domicilio.html y cierre.html porque leen la misma fila de Sheets
+
+### 📱 Pedidos Responsive (pedidos.html en móvil)
+- **Panel de pedido:** Bottom sheet fijo en móvil (≤900px), 72px visibles por defecto, se expande al hacer tap
+- **Toggle:** Barra sticky que muestra cantidad de items y total sin expandir el panel
+- **Productos:** Grid de 2 columnas con botones de mínimo 80px de altura (≤600px) para facilitar el tap
+- **Checkbox domicilio:** Toggle visual con estilo cyan que prependa `[DOMICILIO]` a las notas al enviar
+
 ## Contacto y Redes Sociales
 
 - **WhatsApp:** +57 315 417 0484
@@ -419,11 +469,26 @@ Este proyecto es propiedad de GOSA Food Truck.
 ---
 
 **Última actualización:** Febrero 2026
-**Versión:** 3.2.0 - Sistema de pedidos integrado y ajustes
+**Versión:** 3.3.0 - Domicilio, edición de pedidos y responsive móvil
 
 ## Changelog
 
-### v3.2.0 (Febrero 2026) - ACTUAL
+### v3.3.0 (Febrero 2026) - ACTUAL
+**Nuevas funcionalidades:**
+- Panel de Domicilio (`domicilio.html`): sección dedicada para gestionar pedidos de entrega
+- Checkbox "Es para domicilio" en pedidos.html con marcador `[DOMICILIO]` automático en notas
+- Edición de pedidos desde cocina: modal con items editables y grid de productos para agregar
+- Nueva acción API `actualizarPedido` en Google Apps Script para actualizar items y total
+
+**Mejoras de UX móvil:**
+- pedidos.html responsive: panel de pedido como bottom sheet con toggle sticky
+- Botones de producto con mínimo 80px de altura para facilitar el tap
+- Grid de 2 columnas en móvil
+
+**Reescritura del backend:**
+- google-apps-script.js reescrito con if/else, manejo de JSONP callback, y helpers de formateo de fechas/horas de Google Sheets
+
+### v3.2.0 (Febrero 2026)
 **Cambios:**
 - Eliminados swipe gestures de script.js (navegación táctil entre tabs)
 - Ajustada opacidad de marca de agua del fondo: 0.1 → 0.05
