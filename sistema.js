@@ -282,28 +282,41 @@ function vibrar(duracion = 50) {
     }
 }
 
-// Reproducir sonido de notificación
+// Reproducir sonido de notificación (campana suave)
 function reproducirSonido(tipo = 'success') {
-    // Crear contexto de audio
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    const currentTime = audioContext.currentTime;
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    // Frecuencias para cada tipo
+    const frecuencias = {
+        success: [523, 659],  // Do5 y Mi5 - acorde mayor suave
+        nuevo: [440, 554]     // La4 y Do#5 - alerta suave
+    };
 
-    if (tipo === 'success') {
-        oscillator.frequency.value = 800;
-        gainNode.gain.value = 0.3;
-    } else if (tipo === 'nuevo') {
-        oscillator.frequency.value = 600;
-        gainNode.gain.value = 0.4;
-    }
+    const freqs = frecuencias[tipo] || frecuencias.success;
+    const duracion = tipo === 'nuevo' ? 0.4 : 0.3;
 
-    oscillator.start();
-    setTimeout(() => {
-        oscillator.stop();
-    }, 150);
+    freqs.forEach((freq, index) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        // Tipo de onda suave (sine = campana)
+        oscillator.type = 'sine';
+        oscillator.frequency.value = freq;
+
+        // Envelope tipo campana: ataque rápido, decay suave
+        gainNode.gain.setValueAtTime(0, currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.25, currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + duracion);
+
+        // Pequeño delay para el segundo tono (efecto campana)
+        const delay = index * 0.05;
+        oscillator.start(currentTime + delay);
+        oscillator.stop(currentTime + duracion + delay);
+    });
 }
 
 // ========== ALMACENAMIENTO LOCAL (BACKUP) ==========
