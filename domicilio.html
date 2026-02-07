@@ -167,7 +167,9 @@
                 const resultado = await GOSA.getPedidosHoy();
                 if (resultado.error) throw new Error(resultado.error);
 
-                const todosHoy = resultado.pedidos || [];
+                // Obtener fecha de hoy y filtrar solo pedidos de hoy
+                const hoy = GOSA.fechaHoy();
+                const todosHoy = (resultado.pedidos || []).filter(p => p.fecha === hoy);
 
                 // Domicilios listos para entregar
                 const listos = todosHoy.filter(p => p.estado === 'listo' && esDomicilio(p.notas));

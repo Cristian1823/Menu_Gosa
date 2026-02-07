@@ -378,7 +378,7 @@ const observer = new IntersectionObserver(function(entries) {
   - `actualizarEstado` — Cambia el estado (columna 6)
   - `actualizarPedido` — Actualiza items y total de un pedido existente (columnas 4 y 5)
   - `getPendientes` — Retorna pedidos con estado pendiente/preparando
-  - `getHoy` — Retorna todos los pedidos
+  - `getHoy` — Retorna pedidos del día actual (filtra por fecha de hoy)
   - `getPorFecha` — Retorna pedidos de una fecha específica
   - `getResumen` — Resumen de ventas por día (totales, productos vendidos)
 - **Configuración:** La URL de la web app de Apps Script se define en `sistema.js` variable `API_URL`. Al modificar el código en Apps Script se debe hacer "Editar implementación" para mantener la misma URL.
@@ -390,7 +390,7 @@ const observer = new IntersectionObserver(function(entries) {
   3. El chef prepara el pedido en cocina.html y lo marca como listo
   4. El pedido aparece automáticamente en domicilio.html
   5. El encargado de entrega lo marca como entregado desde ahí
-- **Filtrado:** Client-side sobre `getPedidosHoy()`, filtra `estado === 'listo'` y `notas.includes('[DOMICILIO]')`
+- **Filtrado:** Client-side sobre `getPedidosHoy()`, filtra por fecha de hoy, `estado === 'listo'` y `notas.includes('[DOMICILIO]')`
 - **Marcador:** El `[DOMICILIO]` se elimina visualmente con `formatearNotas()` antes de mostrar las notas
 - **Stats:** Listos para entregar y entregados hoy
 - **Auto-refresh:** Cada 5 segundos, notificación de sonido + vibración al aparecer pedidos nuevos
@@ -469,11 +469,20 @@ Este proyecto es propiedad de GOSA Food Truck.
 ---
 
 **Última actualización:** Febrero 2026
-**Versión:** 3.3.0 - Domicilio, edición de pedidos y responsive móvil
+**Versión:** 3.4.0 - Filtrado por fecha en estadísticas
 
 ## Changelog
 
-### v3.3.0 (Febrero 2026) - ACTUAL
+### v3.4.0 (Febrero 2026) - ACTUAL
+**Corrección de filtrado por fecha:**
+- `google-apps-script.js`: La función `getPedidosHoy()` ahora filtra correctamente por fecha actual (zona horaria Colombia)
+- `cocina.html`: Las estadísticas (Pendientes, Preparando, Listos Hoy) ahora filtran solo pedidos del día actual
+- `domicilio.html`: Filtra pedidos por fecha de hoy para "Listos para entregar" y "Entregados Hoy"
+- `cierre.html`: Por defecto muestra el resumen del día actual en vez de todos los pedidos
+
+**Nota:** Se agregó filtrado client-side en cocina y domicilio como respaldo, independiente de si el backend está actualizado.
+
+### v3.3.0 (Febrero 2026)
 **Nuevas funcionalidades:**
 - Panel de Domicilio (`domicilio.html`): sección dedicada para gestionar pedidos de entrega
 - Checkbox "Es para domicilio" en pedidos.html con marcador `[DOMICILIO]` automático en notas

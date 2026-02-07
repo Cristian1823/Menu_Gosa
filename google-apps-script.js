@@ -184,16 +184,25 @@ const SHEET_NAME = 'Pedidos';
     var data = sheet.getDataRange().getValues();
     var pedidos = [];
 
+    // Obtener fecha de hoy en formato YYYY-MM-DD
+    var ahora = new Date();
+    var hoy = Utilities.formatDate(ahora, 'America/Bogota', 'yyyy-MM-dd');
+
     for (var i = 1; i < data.length; i++) {
-      pedidos.push({
-        id: data[i][0],
-        fecha: formatearFechaCell(data[i][1]),
-        hora: formatearHoraCell(data[i][2]),
-        items: JSON.parse(data[i][3]),
-        total: data[i][4],
-        estado: String(data[i][5]).trim().toLowerCase(),
-        notas: data[i][6] || ''
-      });
+      var fechaPedido = formatearFechaCell(data[i][1]);
+
+      // Solo incluir pedidos de hoy
+      if (fechaPedido === hoy) {
+        pedidos.push({
+          id: data[i][0],
+          fecha: fechaPedido,
+          hora: formatearHoraCell(data[i][2]),
+          items: JSON.parse(data[i][3]),
+          total: data[i][4],
+          estado: String(data[i][5]).trim().toLowerCase(),
+          notas: data[i][6] || ''
+        });
+      }
     }
     return { pedidos: pedidos };
   }

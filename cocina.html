@@ -223,9 +223,16 @@
 
         // ========== ACTUALIZAR ESTADÍSTICAS ==========
         function actualizarEstadisticas(pendientes, todosHoy) {
-            const numPendientes = pendientes.filter(p => p.estado === 'pendiente').length;
-            const numPreparando = pendientes.filter(p => p.estado === 'preparando').length;
-            const numListos = todosHoy.filter(p => p.estado === 'listo' || p.estado === 'entregado').length;
+            // Obtener fecha de hoy en formato YYYY-MM-DD
+            const hoy = GOSA.fechaHoy();
+
+            // Filtrar solo pedidos de hoy
+            const pedidosHoy = todosHoy.filter(p => p.fecha === hoy);
+            const pendientesHoy = pendientes.filter(p => p.fecha === hoy);
+
+            const numPendientes = pendientesHoy.filter(p => p.estado === 'pendiente').length;
+            const numPreparando = pendientesHoy.filter(p => p.estado === 'preparando').length;
+            const numListos = pedidosHoy.filter(p => p.estado === 'listo' || p.estado === 'entregado').length;
 
             document.getElementById('statPendientes').textContent = numPendientes;
             document.getElementById('statPreparando').textContent = numPreparando;
