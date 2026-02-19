@@ -131,9 +131,99 @@
                 grid-template-columns: 60px 80px 1fr 100px 80px;
             }
         }
+
+        /* PIN Screen */
+        .pin-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--black);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .pin-screen.oculto {
+            display: none;
+        }
+
+        .pin-screen .logo-pin {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+        }
+
+        .pin-screen h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8em;
+            color: var(--gold);
+            letter-spacing: 2px;
+        }
+
+        .pin-screen p {
+            color: var(--gray-light);
+            font-size: 0.95em;
+        }
+
+        .pin-input {
+            display: flex;
+            gap: 12px;
+        }
+
+        .pin-input input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2em;
+            background: rgba(30, 30, 30, 0.9);
+            border: 2px solid var(--gray-dark);
+            border-radius: 10px;
+            color: var(--gold);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .pin-input input:focus {
+            border-color: var(--gold);
+        }
+
+        .pin-error {
+            color: var(--danger);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1em;
+            min-height: 1.5em;
+        }
+
+        .pin-input.shake {
+            animation: pin-shake 0.4s ease;
+        }
+
+        @keyframes pin-shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
     </style>
 </head>
 <body>
+    <!-- PIN Screen -->
+    <div class="pin-screen" id="pinScreen">
+        <img src="images/logo.jpeg" alt="GOSA Logo" class="logo-pin">
+        <h2><i class="fas fa-lock"></i> CIERRE DE CAJA</h2>
+        <p>Ingresa el PIN para acceder</p>
+        <div class="pin-input" id="pinInput">
+            <input type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+            <input type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+            <input type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+            <input type="tel" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+        </div>
+        <div class="pin-error" id="pinError"></div>
+    </div>
+
     <!-- Header -->
     <header class="sistema-header">
         <div style="display: flex; align-items: center; gap: 15px;">
@@ -193,8 +283,54 @@
 
     <script src="sistema.js"></script>
     <script>
-        // ========== INICIALIZACIÓN ==========
+        // ========== PIN DE ACCESO ==========
+        const PIN_CORRECTO = '1130';
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Configurar inputs del PIN
+            const pinInputs = document.querySelectorAll('#pinInput input');
+            pinInputs[0].focus();
+
+            pinInputs.forEach((input, index) => {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                    if (this.value && index < pinInputs.length - 1) {
+                        pinInputs[index + 1].focus();
+                    }
+                    // Verificar PIN cuando se llenen todos
+                    if (index === pinInputs.length - 1 && this.value) {
+                        verificarPin();
+                    }
+                });
+
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && !this.value && index > 0) {
+                        pinInputs[index - 1].focus();
+                    }
+                });
+            });
+        });
+
+        function verificarPin() {
+            const pinInputs = document.querySelectorAll('#pinInput input');
+            const pin = Array.from(pinInputs).map(i => i.value).join('');
+
+            if (pin === PIN_CORRECTO) {
+                document.getElementById('pinScreen').classList.add('oculto');
+                inicializarCierre();
+            } else {
+                document.getElementById('pinError').textContent = 'PIN incorrecto';
+                document.getElementById('pinInput').classList.add('shake');
+                setTimeout(() => {
+                    document.getElementById('pinInput').classList.remove('shake');
+                    pinInputs.forEach(i => i.value = '');
+                    pinInputs[0].focus();
+                }, 400);
+            }
+        }
+
+        // ========== INICIALIZACIÓN ==========
+        function inicializarCierre() {
             // Verificar configuración
             if (!GOSA.apiConfigurada()) {
                 GOSA.mostrarConfigPendiente(document.querySelector('.cierre-container'));
@@ -206,7 +342,7 @@
 
             // Consultar automáticamente - día actual
             consultarDia();
-        });
+        }
 
         // ========== VER TODOS LOS PEDIDOS ==========
         async function verTodos() {

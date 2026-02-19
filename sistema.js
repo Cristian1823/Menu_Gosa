@@ -38,7 +38,7 @@ const MENU = {
     adicionales: [
         { id: 'a1', nombre: 'Salchicha', precio: 1200 },
         { id: 'a2', nombre: 'Tocineta', precio: 1200 },
-        { id: 'a3', nombre: 'Agua', precio: 1500 },
+        { id: 'a3', nombre: 'Agua', precio: 1000 },
         { id: 'a4', nombre: 'Queso Mozzarella', precio: 1500 },
         { id: 'a5', nombre: 'Chorizo', precio: 2000 },
         { id: 'a6', nombre: 'Queso Cheddar', precio: 2000 },
@@ -50,6 +50,11 @@ const MENU = {
         { id: 'c1', nombre: 'Gaseosa o Jugo', precio: 2500 },
         { id: 'c2', nombre: 'Porcion de Papa (Combo)', precio: 4000 },
         { id: 'c3', nombre: 'El Combo Completo', precio: 5000 }
+    ],
+    comboDelMes: [
+        { id: 'cm1', nombre: 'Combo del Mes', precio: 35000 },
+        { id: 'cm2', nombre: 'Combo del Mes (1 Doble)', precio: 38000 },
+        { id: 'cm3', nombre: 'Combo del Mes (2 Dobles)', precio: 42000 }
     ]
 };
 
@@ -60,7 +65,8 @@ const CATEGORIAS_NOMBRES = {
     hamburguesas: 'Hamburguesas',
     salchipapas: 'Salchipapas',
     adicionales: 'Adicionales',
-    combos: 'Combos'
+    combos: 'Combos',
+    comboDelMes: 'Combo del Mes'
 };
 
 // Iconos de categorías
@@ -70,7 +76,8 @@ const CATEGORIAS_ICONOS = {
     hamburguesas: 'fa-burger',
     salchipapas: 'fa-drumstick-bite',
     adicionales: 'fa-plus',
-    combos: 'fa-glass-water'
+    combos: 'fa-glass-water',
+    comboDelMes: 'fa-crown'
 };
 
 // ========== FUNCIONES DE API ==========
@@ -194,14 +201,18 @@ async function actualizarEstadoPedido(id, estado) {
     });
 }
 
-// Actualizar items y total de un pedido existente
-async function actualizarPedido(id, items, total) {
-    return await apiPost({
+// Actualizar items, total y notas de un pedido existente
+async function actualizarPedido(id, items, total, notas) {
+    const data = {
         action: 'actualizarPedido',
         id: id,
         items: items,
         total: total
-    });
+    };
+    if (notas !== undefined) {
+        data.notas = notas;
+    }
+    return await apiPost(data);
 }
 
 // ========== FUNCIONES DE UTILIDAD ==========
@@ -222,10 +233,11 @@ function formatearFecha(fechaStr) {
     });
 }
 
-// Obtener fecha de hoy en formato YYYY-MM-DD
+// Obtener fecha de hoy en formato YYYY-MM-DD (zona horaria Colombia)
 function fechaHoy() {
     const hoy = new Date();
-    return hoy.toISOString().split('T')[0];
+    // Usar zona horaria de Colombia para evitar desfase UTC después de las 7PM
+    return hoy.toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
 }
 
 // Mostrar mensaje

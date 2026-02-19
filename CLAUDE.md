@@ -63,8 +63,9 @@ El menú está organizado en categorías navegables con tabs sticky (ordenados p
 - **Perros Calientes** - 5 variedades gourmet (Perro Ranchero, Tropical Gosa, Texas BBQ, Perro Burguer, Triple Gosa)
 - **Hamburguesas** - 4 tipos artesanales con opciones dobles (Gosa Burguer, Crispy Gosa, Gosa Balsamica, Madurita)
 - **Salchipapas** - 3 variedades: Rapi Gosa, Salchi Gosa, La Gosa Supreme
-- **Adicionales** - 9 complementos desde $1,200 hasta $4,000 COP
+- **Adicionales** - 9 complementos desde $1,000 hasta $4,000 COP
 - **Combos** - 3 agrandados especiales (Gaseosa/Jugo, Papa, Combo Completo)
+- **Combo del Mes** - Combo especial con 3 opciones de precio ($35,000 / $38,000 / $42,000)
 
 ### 3. Diseño Visual
 
@@ -119,8 +120,8 @@ Contiene toda la estructura del sitio:
 - Header con logo y títulos (líneas 12-16)
 - Carousel de videos con 8 slides (líneas 18-46)
 - Banner promocional con badge animado (líneas 48-57)
-- Sistema de tabs de navegación (líneas 64-89)
-- Contenido de tabs con 6 categorías (líneas 92-308)
+- Sistema de tabs de navegación (líneas 64-92)
+- Contenido de tabs con 7 categorías (líneas 94-327)
 - Footer con redes sociales (líneas 312-323)
 - Botón flotante de WhatsApp (líneas 325-333)
 - Enlace a script.js (línea 335)
@@ -248,7 +249,7 @@ const observer = new IntersectionObserver(function(entries) {
 ### Adicionales
 1. Salchicha: $1,200
 2. Tocineta: $1,200
-3. Agua: $1,500
+3. Agua: $1,000
 4. Queso Mozzarella: $1,500
 5. Chorizo: $2,000
 6. Queso Cheddar: $2,000
@@ -260,6 +261,11 @@ const observer = new IntersectionObserver(function(entries) {
 1. Gaseosa o Jugo: $2,500
 2. Porción de Papa: $4,000
 3. El Combo Completo (Papa + Bebida): $5,000 ⭐ **AHORRA**
+
+### Combo del Mes
+1. Combo del Mes: $35,000 ⭐ **DEL MES**
+2. Combo del Mes (1 Doble): $38,000
+3. Combo del Mes (2 Dobles): $42,000
 
 ## Mejoras Futuras Sugeridas
 
@@ -276,7 +282,7 @@ const observer = new IntersectionObserver(function(entries) {
    - Schema markup para restaurante
 
 3. **Funcionalidades Adicionales**
-   - Protección con PIN de 4 dígitos para páginas del sistema (pedidos, cocina, domicilio, cierre)
+   - Protección con PIN de 4 dígitos para más páginas del sistema (pedidos, cocina, domicilio) — cierre ya tiene PIN
    - Sistema de pedidos online integrado
    - Carrito de compras virtual
    - Modo oscuro/claro toggle
@@ -317,13 +323,14 @@ const observer = new IntersectionObserver(function(entries) {
 
 ### 🎯 Sistema de Navegación por Tabs
 - **Tabs sticky:** Se mantiene visible al hacer scroll con backdrop-filter blur
-- **6 categorías con iconos:**
+- **7 categorías con iconos:**
   - 🔥 Entradas
   - 🌭 Perros
   - 🍔 Hamburguesas
   - 🍗 Salchipapas
   - ➕ Adicionales
   - 🥤 Combos
+  - 👑 Combo del Mes
 - **Navegación avanzada:**
   - Click en tabs para cambiar categoría
   - Flechas ← → del teclado
@@ -353,6 +360,7 @@ const observer = new IntersectionObserver(function(entries) {
 - **ESPECIAL:** Para Madurita (hamburguesa especial con plátano maduro)
 - **LA REINA:** Para La Gosa Supreme (el combo más completo)
 - **AHORRA:** Para El Combo Completo (mejor precio en combo)
+- **DEL MES:** Para Combo del Mes (combo especial del mes)
 - **Diseño:** Rotación -2°, gradiente dorado, sombra proyectada
 
 ### 🍔 Sistema de Opciones Dobles en Hamburguesas
@@ -376,7 +384,7 @@ const observer = new IntersectionObserver(function(entries) {
 - **API Actions disponibles:**
   - `nuevoPedido` — Crea un pedido nuevo (appends row)
   - `actualizarEstado` — Cambia el estado (columna 6)
-  - `actualizarPedido` — Actualiza items y total de un pedido existente (columnas 4 y 5)
+  - `actualizarPedido` — Actualiza items, total y notas de un pedido existente (columnas 4, 5 y 7)
   - `getPendientes` — Retorna pedidos con estado pendiente/preparando
   - `getHoy` — Retorna pedidos del día actual (filtra por fecha de hoy)
   - `getPorFecha` — Retorna pedidos de una fecha específica
@@ -402,15 +410,24 @@ const observer = new IntersectionObserver(function(entries) {
 - **Modal (bottom sheet):**
   - Sección superior: items actuales del pedido con controles +/- de cantidad (elimina al llegar a 0)
   - Sección inferior: grid completo de productos del menú agrupados por categoría para agregar nuevos
+  - Sección de opciones: checkbox "Es para domicilio" y textarea de notas editables
   - Footer fijo: total actualizado en tiempo real + botones Guardar/Cancelar
-- **Guarda:** Actualiza Items (columna 4) y Total (columna 5) en Google Sheets via acción `actualizarPedido`
-- **Impacto:** El nuevo total y los items se reflejan automáticamente en domicilio.html y cierre.html porque leen la misma fila de Sheets
+- **Guarda:** Actualiza Items (columna 4), Total (columna 5) y Notas (columna 7) en Google Sheets via acción `actualizarPedido`
+- **Domicilio desde cocina:** Si se olvidó marcar domicilio al tomar el pedido, se puede agregar/quitar el marcador `[DOMICILIO]` desde el modal de edición
+- **Impacto:** El nuevo total, items y notas se reflejan automáticamente en domicilio.html y cierre.html porque leen la misma fila de Sheets
 
 ### 📱 Pedidos Responsive (pedidos.html en móvil)
 - **Panel de pedido:** Bottom sheet fijo en móvil (≤900px), 72px visibles por defecto, se expande al hacer tap
 - **Toggle:** Barra sticky que muestra cantidad de items y total sin expandir el panel
 - **Productos:** Grid de 2 columnas con botones de mínimo 80px de altura (≤600px) para facilitar el tap
 - **Checkbox domicilio:** Toggle visual con estilo cyan que prependa `[DOMICILIO]` a las notas al enviar
+
+### 🔒 Protección con PIN (cierre.html)
+- **PIN:** 1130
+- **Pantalla de bloqueo:** Cubre todo el contenido hasta ingresar el PIN correcto
+- **4 campos de entrada:** Auto-avanza al siguiente campo, inputmode numérico para teclado móvil
+- **Feedback visual:** Animación shake + mensaje "PIN incorrecto" si falla, limpia campos automáticamente
+- **Seguridad:** El contenido de cierre no se carga hasta validar el PIN
 
 ## Contacto y Redes Sociales
 
@@ -469,11 +486,33 @@ Este proyecto es propiedad de GOSA Food Truck.
 ---
 
 **Última actualización:** Febrero 2026
-**Versión:** 3.4.0 - Filtrado por fecha en estadísticas
+**Versión:** 3.5.0 - Combo del Mes, PIN en cierre, edición de domicilio/notas desde cocina
 
 ## Changelog
 
-### v3.4.0 (Febrero 2026) - ACTUAL
+### v3.5.0 (Febrero 2026) - ACTUAL
+**Corrección de zona horaria (client-side):**
+- `sistema.js`: `fechaHoy()` ahora usa `toLocaleDateString('en-CA', { timeZone: 'America/Bogota' })` en vez de `toISOString()` que usaba UTC. Esto causaba que después de las 7PM Colombia (medianoche UTC) el sistema mostrara la fecha del día siguiente y dejara de mostrar pedidos.
+
+**Nuevo producto - Combo del Mes:**
+- `index.html`: Nuevo tab "Combo del Mes" con icono de corona y 3 opciones de precio con estilo de opciones dobles
+- `sistema.js`: Nueva categoría `comboDelMes` en el objeto MENU con 3 variantes: Combo del Mes ($35,000), 1 Doble ($38,000), 2 Dobles ($42,000)
+- Aparece automáticamente en pedidos.html y en el modal de edición de cocina.html
+
+**Protección con PIN en Cierre de Caja:**
+- `cierre.html`: Pantalla de bloqueo con PIN de 4 dígitos (1130) antes de acceder al contenido
+- Inputs con auto-avance, animación shake en error, inputmode numérico para móvil
+
+**Edición de domicilio y notas desde cocina:**
+- `cocina.html`: Modal de edición ahora incluye checkbox "Es para domicilio" y textarea de notas
+- `google-apps-script.js`: `actualizarPedido()` ahora acepta y guarda notas (columna 7)
+- `sistema.js`: `actualizarPedido()` envía notas al backend
+- Permite marcar/desmarcar domicilio y modificar notas de pedidos existentes
+
+**Actualización de precios:**
+- Agua: $1,500 → $1,000 (en index.html y sistema.js)
+
+### v3.4.0 (Febrero 2026)
 **Corrección de filtrado por fecha:**
 - `google-apps-script.js`: La función `getPedidosHoy()` ahora filtra correctamente por fecha actual (zona horaria Colombia)
 - `cocina.html`: Las estadísticas (Pendientes, Preparando, Listos Hoy) ahora filtran solo pedidos del día actual

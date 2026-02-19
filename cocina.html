@@ -122,6 +122,12 @@
                 <div id="modalItems"></div>
                 <div class="modal-section-title" style="margin-top: 15px;">Agregar productos</div>
                 <div id="modalProductos"></div>
+                <div class="modal-section-title" style="margin-top: 15px;">Opciones del pedido</div>
+                <label class="domicilio-check" id="modalDomicilioLabel" onclick="toggleModalDomicilio()">
+                    <input type="checkbox" id="modalDomicilio">
+                    <i class="fas fa-motorcycle"></i> Es para domicilio
+                </label>
+                <textarea id="modalNotas" placeholder="Notas del pedido (direccion, sin cebolla, etc.)" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--gray-dark); background: rgba(30,30,30,0.9); color: var(--white); font-family: 'Inter', sans-serif; resize: none; height: 60px;"></textarea>
             </div>
             <div class="modal-footer">
                 <div class="modal-total">
@@ -405,16 +411,34 @@
             const pedido = pedidosActuales.find(p => p.id === id);
             if (!pedido) return;
 
+            const notas = pedido.notas || '';
+            const esDomicilio = notas.includes('[DOMICILIO]');
+            const notasLimpias = notas.replace('[DOMICILIO]', '').trim();
+
             pedidoEditando = {
                 id: pedido.id,
-                items: pedido.items.map(item => ({...item}))
+                items: pedido.items.map(item => ({...item})),
+                esDomicilio: esDomicilio,
+                notas: notasLimpias
             };
 
             document.getElementById('modalTitulo').textContent = `Editar Pedido #${pedido.id}`;
+            document.getElementById('modalDomicilio').checked = esDomicilio;
+            const label = document.getElementById('modalDomicilioLabel');
+            label.classList.toggle('activo', esDomicilio);
+            document.getElementById('modalNotas').value = notasLimpias;
             renderizarModalItems();
             renderizarModalProductos();
             actualizarModalTotal();
             document.getElementById('modalEditar').style.display = 'flex';
+        }
+
+        function toggleModalDomicilio() {
+            setTimeout(() => {
+                const checked = document.getElementById('modalDomicilio').checked;
+                pedidoEditando.esDomicilio = checked;
+                document.getElementById('modalDomicilioLabel').classList.toggle('activo', checked);
+            }, 0);
         }
 
         function cerrarModal() {
@@ -523,8 +547,13 @@
 
             const total = pedidoEditando.items.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
 
+            // Construir notas con marcador de domicilio
+            const notasTexto = document.getElementById('modalNotas').value.trim();
+            const esDomicilio = document.getElementById('modalDomicilio').checked;
+            const notas = esDomicilio ? `[DOMICILIO] ${notasTexto}` : notasTexto;
+
             try {
-                const resultado = await GOSA.actualizarPedido(pedidoEditando.id, pedidoEditando.items, total);
+                const resultado = await GOSA.actualizarPedido(pedidoEditando.id, pedidoEditando.items, total, notas);
 
                 if (resultado.success) {
                     GOSA.reproducirSonido('success');

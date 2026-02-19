@@ -13,7 +13,7 @@ const SHEET_NAME = 'Pedidos';
         } else if (data.action === 'actualizarEstado') {
           result = actualizarEstado(data.id, data.estado);
         } else if (data.action === 'actualizarPedido') {
-          result = actualizarPedido(data.id, data.items, data.total);
+          result = actualizarPedido(data.id, data.items, data.total, data.notas);
         } else {
           result = { error: 'Accion POST no valida' };
         }
@@ -142,7 +142,7 @@ const SHEET_NAME = 'Pedidos';
     return { error: 'Pedido no encontrado' };
   }
 
-  function actualizarPedido(id, items, total) {
+  function actualizarPedido(id, items, total, notas) {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
     var data = sheet.getDataRange().getValues();
 
@@ -150,6 +150,9 @@ const SHEET_NAME = 'Pedidos';
       if (data[i][0] == id) {
         sheet.getRange(i + 1, 4).setValue(JSON.stringify(items));
         sheet.getRange(i + 1, 5).setValue(total);
+        if (notas !== undefined) {
+          sheet.getRange(i + 1, 7).setValue(notas);
+        }
         return { success: true, mensaje: 'Pedido #' + id + ' actualizado' };
       }
     }
