@@ -37,9 +37,9 @@ Gosa/
 ├── sistema.css             # Estilos del sistema de pedidos
 ├── google-apps-script.js   # Código para Google Apps Script (copiar a Google)
 │
-├── Images/
+├── images/
 │   ├── logo.jpeg          # Logo del food truck
-│   └── Promocion.jpg      # Banner promocional
+│   └── Promocion.jpeg     # Banner promocional
 │
 └── videos/
     ├── presentacion.mp4    # Video 1 del carousel
@@ -113,13 +113,15 @@ El proyecto puede desplegarse en servicios gratuitos como:
 - **Vercel**
 - **Cloudflare Pages**
 
+**Repositorio:** https://github.com/Cristian1823/Menu_Gosa
+
 ## Archivos Principales
 
 ### index.html
 Contiene toda la estructura del sitio:
 - Header con logo y títulos (líneas 12-16)
 - Carousel de videos con 8 slides (líneas 18-46)
-- Banner promocional con badge animado (líneas 48-57)
+- Banner promocional con badge animado (líneas 48-57) — imagen: images/Promocion.jpeg
 - Sistema de tabs de navegación (líneas 64-92)
 - Contenido de tabs con 7 categorías (líneas 94-327)
 - Footer con redes sociales (líneas 312-323)
@@ -495,6 +497,15 @@ Este proyecto es propiedad de GOSA Food Truck.
 - `index.html` + `sistema.js`: Retirados **Gosa Dulcin** y **Perro Burguer** de Perros Calientes
 - Nuevo perro: **Chori Gosa** ($11,500) — chorizo de cerdo envuelto en tocineta, queso doble crema, papa ripio y salsa de la casa
 - Nueva hamburguesa: **La Indomable** ($13,500) — pan brioche morado artesanal, queso crema philadelphia, chutney de frutos rojos, tocineta crocante, vegetales frescos y salsa de la casa
+
+**Modal Combo del Mes:**
+- `pedidos.html`: Al seleccionar Combo del Mes se abre un modal para armar la composición del combo
+- El cajero selecciona los productos que pidió el cliente (informativo para cocina)
+- El precio queda fijo ($35,000 / $38,000 / $42,000) sin importar los productos seleccionados
+
+**Repositorio GitHub:** https://github.com/Cristian1823/Menu_Gosa
+- Carpeta renombrada `Images/` → `images/` para compatibilidad con servidores Linux
+- Corregida extensión `Promocion.jpg` → `Promocion.jpeg`
 
 ### v3.5.0 (Febrero 2026)
 **Corrección de zona horaria (client-side):**
