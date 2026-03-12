@@ -233,8 +233,9 @@
         <nav class="header-nav">
             <a href="pedidos.html" class="nav-btn">Pedidos</a>
             <a href="cocina.html" class="nav-btn">Cocina</a>
-            <a href="domicilio.html" class="nav-btn">Domicilio</a>
+            <a href="domicilio.html" class="nav-btn">Para Pago</a>
             <a href="cierre.html" class="nav-btn active">Cierre</a>
+            <a href="clientes.html" class="nav-btn">Clientes</a>
             <a href="index.html" class="nav-btn">Menu</a>
         </nav>
     </header>
@@ -329,12 +330,30 @@
             }
         }
 
+        // Catálogo de costos para cálculos client-side (verTodos)
+        let catalogoCostos = {};
+
         // ========== INICIALIZACIÓN ==========
-        function inicializarCierre() {
+        async function inicializarCierre() {
             // Verificar configuración
             if (!GOSA.apiConfigurada()) {
                 GOSA.mostrarConfigPendiente(document.querySelector('.cierre-container'));
                 return;
+            }
+
+            // Cargar catálogo de costos desde Sheets
+            try {
+                const result = await GOSA.getProductos();
+                if (result.productos) {
+                    result.productos.forEach(p => {
+                        catalogoCostos[p.nombre.trim().toUpperCase()] = {
+                            costo: p.costo,
+                            gastoOperativo: p.gastoOperativo
+                        };
+                    });
+                }
+            } catch(e) {
+                console.warn('No se pudo cargar catálogo de costos:', e);
             }
 
             // Establecer fecha de hoy
@@ -342,6 +361,12 @@
 
             // Consultar automáticamente - día actual
             consultarDia();
+        }
+
+        // Helper: obtener info de costo de un producto por nombre
+        function getCostoProducto(nombre) {
+            const key = nombre.trim().toUpperCase();
+            return catalogoCostos[key] || catalogoCostos[key.split(':')[0].trim()] || { costo: 0, gastoOperativo: 0 };
         }
 
         // ========== VER TODOS LOS PEDIDOS ==========
@@ -359,36 +384,53 @@
 
                 const pedidos = resultado.pedidos || [];
 
-                // Calcular resumen manualmente
+                // Calcular resumen manualmente con costos
                 let totalVentas = 0;
+                let totalCosto = 0;
+                let totalGastoOp = 0;
                 let productosCantidad = {};
                 let productosIngreso = {};
+                let productosCosto = {};
+                let productosGastoOp = {};
 
                 pedidos.forEach(p => {
                     if (p.estado !== 'cancelado') {
                         totalVentas += p.total;
                         p.items.forEach(item => {
+                            const info = getCostoProducto(item.nombre);
                             if (!productosCantidad[item.nombre]) {
                                 productosCantidad[item.nombre] = 0;
                                 productosIngreso[item.nombre] = 0;
+                                productosCosto[item.nombre] = 0;
+                                productosGastoOp[item.nombre] = 0;
                             }
                             productosCantidad[item.nombre] += item.cantidad;
                             productosIngreso[item.nombre] += item.precio * item.cantidad;
+                            productosCosto[item.nombre] += info.costo * item.cantidad;
+                            productosGastoOp[item.nombre] += info.gastoOperativo * item.cantidad;
+                            totalCosto += info.costo * item.cantidad;
+                            totalGastoOp += info.gastoOperativo * item.cantidad;
                         });
                     }
                 });
 
-                const productos = Object.keys(productosCantidad).map(nombre => ({
-                    nombre: nombre,
-                    cantidad: productosCantidad[nombre],
-                    ingreso: productosIngreso[nombre]
-                })).sort((a, b) => b.cantidad - a.cantidad);
+                const productos = Object.keys(productosCantidad).map(nombre => {
+                    const ing = productosIngreso[nombre];
+                    const cos = productosCosto[nombre];
+                    const gop = productosGastoOp[nombre];
+                    return {
+                        nombre, cantidad: productosCantidad[nombre],
+                        ingreso: ing, costo: cos, gastoOperativo: gop,
+                        gananciaNeta: ing - cos
+                    };
+                }).sort((a, b) => b.cantidad - a.cantidad);
 
                 const resumen = {
-                    totalVentas: totalVentas,
+                    totalVentas, totalCosto, totalGastoOp,
+                    gananciaNeta: totalVentas - totalCosto,
                     cantidadPedidos: pedidos.length,
                     ticketPromedio: pedidos.length > 0 ? Math.round(totalVentas / pedidos.length) : 0,
-                    productos: productos
+                    productos
                 };
 
                 document.getElementById('tituloFecha').textContent = 'Todos los Pedidos';
@@ -453,12 +495,27 @@
         // ========== RENDERIZAR RESUMEN ==========
         function renderizarResumen(resumen) {
             const container = document.getElementById('resumenCards');
+            const tieneCostos = resumen.gananciaNeta !== undefined && resumen.totalCosto !== undefined;
 
             container.innerHTML = `
-                <div class="resumen-card destacado">
+                <div class="resumen-card">
                     <div class="resumen-valor">${GOSA.formatearPrecio(resumen.totalVentas)}</div>
-                    <div class="resumen-label">Total Vendido</div>
+                    <div class="resumen-label">Ventas Brutas</div>
                 </div>
+                ${tieneCostos ? `
+                <div class="resumen-card">
+                    <div class="resumen-valor" style="color:#dc3545">${GOSA.formatearPrecio(resumen.totalCosto)}</div>
+                    <div class="resumen-label">(-) Costos</div>
+                </div>
+                <div class="resumen-card">
+                    <div class="resumen-valor" style="color:#ffc107">${GOSA.formatearPrecio(resumen.totalGastoOp)}</div>
+                    <div class="resumen-label">Gastos Op. (ref)</div>
+                </div>
+                <div class="resumen-card destacado" style="border-color:#28a745">
+                    <div class="resumen-valor" style="color:#28a745">${GOSA.formatearPrecio(resumen.gananciaNeta)}</div>
+                    <div class="resumen-label">Tu Ganancia</div>
+                </div>
+                ` : ''}
                 <div class="resumen-card">
                     <div class="resumen-valor">${resumen.cantidadPedidos}</div>
                     <div class="resumen-label">Pedidos</div>
@@ -466,10 +523,6 @@
                 <div class="resumen-card">
                     <div class="resumen-valor">${GOSA.formatearPrecio(resumen.ticketPromedio)}</div>
                     <div class="resumen-label">Ticket Promedio</div>
-                </div>
-                <div class="resumen-card">
-                    <div class="resumen-valor">${resumen.productos.length}</div>
-                    <div class="resumen-label">Productos Diferentes</div>
                 </div>
             `;
         }
@@ -483,13 +536,16 @@
                 return;
             }
 
+            const tieneCostos = productos.some(p => p.costo !== undefined && p.costo > 0);
+
             container.innerHTML = `
                 <table class="productos-tabla">
                     <thead>
                         <tr>
                             <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Ingreso</th>
+                            <th>Und</th>
+                            <th>Venta</th>
+                            ${tieneCostos ? '<th style="color:#dc3545">Costo</th><th style="color:#ffc107">Gasto Op. (ref)</th><th style="color:#28a745">Ganancia</th>' : ''}
                         </tr>
                     </thead>
                     <tbody>
@@ -498,6 +554,11 @@
                                 <td>${p.nombre}</td>
                                 <td>${p.cantidad}</td>
                                 <td>${GOSA.formatearPrecio(p.ingreso)}</td>
+                                ${tieneCostos ? `
+                                    <td style="color:#dc3545">${GOSA.formatearPrecio(p.costo || 0)}</td>
+                                    <td style="color:#ffc107">${GOSA.formatearPrecio(p.gastoOperativo || 0)}</td>
+                                    <td style="color:#28a745;font-weight:600">${GOSA.formatearPrecio(p.gananciaNeta || 0)}</td>
+                                ` : ''}
                             </tr>
                         `).join('')}
                     </tbody>

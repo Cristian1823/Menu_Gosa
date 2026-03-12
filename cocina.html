@@ -76,8 +76,9 @@
         <nav class="header-nav">
             <a href="pedidos.html" class="nav-btn">Pedidos</a>
             <a href="cocina.html" class="nav-btn active">Cocina</a>
-            <a href="domicilio.html" class="nav-btn">Domicilio</a>
+            <a href="domicilio.html" class="nav-btn">Para Pago</a>
             <a href="cierre.html" class="nav-btn">Cierre</a>
+            <a href="clientes.html" class="nav-btn">Clientes</a>
             <a href="index.html" class="nav-btn">Menu</a>
         </nav>
     </header>
@@ -123,11 +124,18 @@
                 <div class="modal-section-title" style="margin-top: 15px;">Agregar productos</div>
                 <div id="modalProductos"></div>
                 <div class="modal-section-title" style="margin-top: 15px;">Opciones del pedido</div>
-                <label class="domicilio-check" id="modalDomicilioLabel" onclick="toggleModalDomicilio()">
-                    <input type="checkbox" id="modalDomicilio">
-                    <i class="fas fa-motorcycle"></i> Es para domicilio
-                </label>
-                <textarea id="modalNotas" placeholder="Notas del pedido (direccion, sin cebolla, etc.)" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--gray-dark); background: rgba(30,30,30,0.9); color: var(--white); font-family: 'Inter', sans-serif; resize: none; height: 60px;"></textarea>
+                <div class="tipo-pedido-toggle" style="margin-bottom: 10px;">
+                    <div class="tipo-check" id="modalLlevarLabel" onclick="seleccionarTipoModal('llevar')">
+                        <i class="fas fa-bag-shopping"></i> Para llevar
+                    </div>
+                    <div class="tipo-check" id="modalComerLabel" onclick="seleccionarTipoModal('comer')">
+                        <i class="fas fa-utensils"></i> Para comer acá
+                    </div>
+                    <div class="tipo-check" id="modalDomicilioLabel" onclick="seleccionarTipoModal('domicilio')">
+                        <i class="fas fa-motorcycle"></i> Domicilio
+                    </div>
+                </div>
+                <textarea id="modalNotas" placeholder="Notas del pedido (sin cebolla, etc.)" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--gray-dark); background: rgba(30,30,30,0.9); color: var(--white); font-family: 'Inter', sans-serif; resize: none; height: 60px;"></textarea>
             </div>
             <div class="modal-footer">
                 <div class="modal-total">
@@ -153,13 +161,38 @@
         let intervaloRefresh = null;
         let ultimoPedidoId = 0;
 
+        // ========== HELPERS TIPO PEDIDO ==========
+        function getTipoPedido(notas) {
+            if (!notas) return null;
+            if (notas.includes('[PARA LLEVAR]')) return 'llevar';
+            if (notas.includes('[PARA COMER ACA]')) return 'comer';
+            if (notas.includes('[DOMICILIO]')) return 'domicilio';
+            return null;
+        }
+
+        function limpiarNotas(notas) {
+            if (!notas) return '';
+            return notas.replace('[PARA LLEVAR]', '').replace('[PARA COMER ACA]', '').replace('[DOMICILIO]', '').trim();
+        }
+
+        function badgeTipo(notas) {
+            const tipo = getTipoPedido(notas);
+            if (tipo === 'llevar') return '<div class="tipo-badge llevar"><i class="fas fa-bag-shopping"></i> PARA LLEVAR</div>';
+            if (tipo === 'comer') return '<div class="tipo-badge comer"><i class="fas fa-utensils"></i> PARA COMER ACÁ</div>';
+            if (tipo === 'domicilio') return '<div class="tipo-badge domicilio"><i class="fas fa-motorcycle"></i> DOMICILIO</div>';
+            return '';
+        }
+
         // ========== INICIALIZACIÓN ==========
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             // Verificar configuración
             if (!GOSA.apiConfigurada()) {
                 GOSA.mostrarConfigPendiente(document.getElementById('pedidosGrid'));
                 return;
             }
+
+            // Cargar precios actualizados desde Sheets (para el modal de edición)
+            await GOSA.cargarProductos();
 
             // Cargar pedidos
             cargarPedidos();
@@ -298,9 +331,11 @@
                             `).join('')}
                         </div>
 
-                        ${pedido.notas ? `
+                        ${badgeTipo(pedido.notas)}
+
+                        ${limpiarNotas(pedido.notas) ? `
                             <div class="pedido-notas-cocina">
-                                <i class="fas fa-comment"></i> ${pedido.notas}
+                                <i class="fas fa-comment"></i> ${limpiarNotas(pedido.notas)}
                             </div>
                         ` : ''}
 
@@ -411,21 +446,20 @@
             const pedido = pedidosActuales.find(p => p.id === id);
             if (!pedido) return;
 
-            const notas = pedido.notas || '';
-            const esDomicilio = notas.includes('[DOMICILIO]');
-            const notasLimpias = notas.replace('[DOMICILIO]', '').trim();
+            const tipo = getTipoPedido(pedido.notas);
+            const notasLimpias = limpiarNotas(pedido.notas);
 
             pedidoEditando = {
                 id: pedido.id,
                 items: pedido.items.map(item => ({...item})),
-                esDomicilio: esDomicilio,
+                tipo: tipo,
                 notas: notasLimpias
             };
 
             document.getElementById('modalTitulo').textContent = `Editar Pedido #${pedido.id}`;
-            document.getElementById('modalDomicilio').checked = esDomicilio;
-            const label = document.getElementById('modalDomicilioLabel');
-            label.classList.toggle('activo', esDomicilio);
+            document.getElementById('modalLlevarLabel').classList.toggle('activo', tipo === 'llevar');
+            document.getElementById('modalComerLabel').classList.toggle('activo', tipo === 'comer');
+            document.getElementById('modalDomicilioLabel').classList.toggle('activo', tipo === 'domicilio');
             document.getElementById('modalNotas').value = notasLimpias;
             renderizarModalItems();
             renderizarModalProductos();
@@ -433,12 +467,18 @@
             document.getElementById('modalEditar').style.display = 'flex';
         }
 
-        function toggleModalDomicilio() {
-            setTimeout(() => {
-                const checked = document.getElementById('modalDomicilio').checked;
-                pedidoEditando.esDomicilio = checked;
-                document.getElementById('modalDomicilioLabel').classList.toggle('activo', checked);
-            }, 0);
+        function seleccionarTipoModal(tipo) {
+            if (pedidoEditando.tipo === tipo) {
+                pedidoEditando.tipo = null;
+                document.getElementById('modalLlevarLabel').classList.remove('activo');
+                document.getElementById('modalComerLabel').classList.remove('activo');
+                document.getElementById('modalDomicilioLabel').classList.remove('activo');
+                return;
+            }
+            pedidoEditando.tipo = tipo;
+            document.getElementById('modalLlevarLabel').classList.toggle('activo', tipo === 'llevar');
+            document.getElementById('modalComerLabel').classList.toggle('activo', tipo === 'comer');
+            document.getElementById('modalDomicilioLabel').classList.toggle('activo', tipo === 'domicilio');
         }
 
         function cerrarModal() {
@@ -547,10 +587,10 @@
 
             const total = pedidoEditando.items.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
 
-            // Construir notas con marcador de domicilio
+            // Construir notas con marcador de tipo
             const notasTexto = document.getElementById('modalNotas').value.trim();
-            const esDomicilio = document.getElementById('modalDomicilio').checked;
-            const notas = esDomicilio ? `[DOMICILIO] ${notasTexto}` : notasTexto;
+            const marcador = pedidoEditando.tipo === 'llevar' ? '[PARA LLEVAR]' : pedidoEditando.tipo === 'comer' ? '[PARA COMER ACA]' : pedidoEditando.tipo === 'domicilio' ? '[DOMICILIO]' : '';
+            const notas = marcador ? `${marcador} ${notasTexto}` : notasTexto;
 
             try {
                 const resultado = await GOSA.actualizarPedido(pedidoEditando.id, pedidoEditando.items, total, notas);

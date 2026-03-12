@@ -9,6 +9,144 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="sistema.css">
+    <style>
+        /* ── SELLO AL CLIENTE ── */
+        .sellos-section {
+            margin-top: 10px;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .sellos-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: rgba(255,215,0,0.04);
+            cursor: pointer;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.05rem;
+            letter-spacing: 1.5px;
+            color: #aaa;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        .sellos-header:hover { background: rgba(255,215,0,0.08); }
+        .sellos-header i { transition: transform 0.25s; font-size: 0.8rem; }
+        .sellos-header.open { color: var(--gold); border-bottom: 1px solid #2a2a2a; }
+        .sellos-header.open i { transform: rotate(180deg); color: var(--gold); }
+        .sellos-body {
+            padding: 12px;
+            display: none;
+            background: #0d0d0d;
+        }
+        .sellos-body.open { display: block; }
+        .sellos-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            margin-bottom: 8px;
+        }
+        .sellos-input:focus { border-color: var(--gold); }
+        .sellos-input::placeholder { color: #444; }
+        .sello-result-item {
+            padding: 10px 12px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s;
+            font-size: 0.88rem;
+        }
+        .sello-result-item:hover { border-color: var(--gold); }
+        .sello-result-nombre { font-weight: 600; color: #fff; }
+        .sello-result-info { font-size: 0.72rem; color: #666; margin-top: 2px; }
+        .sello-result-stamps { font-size: 0.9rem; letter-spacing: 1px; }
+        .sello-cliente-panel {
+            background: #141414;
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            padding: 14px;
+        }
+        .sello-cliente-nombre {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.4rem;
+            color: var(--gold);
+            letter-spacing: 1.5px;
+            margin-bottom: 2px;
+        }
+        .sello-cliente-info { font-size: 0.72rem; color: #666; margin-bottom: 12px; }
+        .sello-stamps-row {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+        .sello-stamp {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+        }
+        .sello-stamp.empty { background: #1a1a1a; border: 2px dashed #2a2a2a; }
+        .sello-stamp.filled {
+            background: radial-gradient(circle at 35% 35%, #fff7cc, #ffd700, #b8860b);
+            border: 2px solid var(--gold);
+        }
+        .sello-btn-row { display: flex; gap: 8px; }
+        .btn-agregar-sello {
+            flex: 1;
+            padding: 11px 8px;
+            background: linear-gradient(135deg, var(--gold), #FFA000);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.05rem;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        .btn-agregar-sello:active { transform: scale(0.97); }
+        .btn-agregar-sello:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-otro-cliente {
+            padding: 11px 12px;
+            background: transparent;
+            border: 1px solid #333;
+            color: #666;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-otro-cliente:hover { border-color: #555; color: #aaa; }
+        .sello-prize-banner {
+            background: linear-gradient(135deg, #1a0800, #0d0600);
+            border: 1px solid #ff6b35;
+            border-radius: 8px;
+            padding: 10px 12px;
+            text-align: center;
+            margin-bottom: 10px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            color: #ff6b35;
+            letter-spacing: 1px;
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -20,8 +158,9 @@
         <nav class="header-nav">
             <a href="pedidos.html" class="nav-btn active">Pedidos</a>
             <a href="cocina.html" class="nav-btn">Cocina</a>
-            <a href="domicilio.html" class="nav-btn">Domicilio</a>
+            <a href="domicilio.html" class="nav-btn">Para Pago</a>
             <a href="cierre.html" class="nav-btn">Cierre</a>
+            <a href="clientes.html" class="nav-btn">Clientes</a>
             <a href="index.html" class="nav-btn">Menu</a>
         </nav>
     </header>
@@ -58,11 +197,18 @@
                 </div>
             </div>
             <div class="pedido-notas">
-                <label class="domicilio-check" id="domicilioLabel">
-                    <input type="checkbox" id="esDomicilio" onchange="toggleDomicilioCheck()">
-                    <i class="fas fa-motorcycle"></i> Es para domicilio
-                </label>
-                <textarea id="pedidoNotas" placeholder="Notas del pedido (dirección, sin cebolla, etc.)"></textarea>
+                <div class="tipo-pedido-toggle">
+                    <div class="tipo-check" id="llevarLabel" onclick="seleccionarTipo('llevar')">
+                        <i class="fas fa-bag-shopping"></i> Para llevar
+                    </div>
+                    <div class="tipo-check" id="comerLabel" onclick="seleccionarTipo('comer')">
+                        <i class="fas fa-utensils"></i> Para comer acá
+                    </div>
+                    <div class="tipo-check" id="domicilioLabel" onclick="seleccionarTipo('domicilio')">
+                        <i class="fas fa-motorcycle"></i> Domicilio
+                    </div>
+                </div>
+                <textarea id="pedidoNotas" placeholder="Notas del pedido (sin cebolla, etc.)"></textarea>
             </div>
             <button class="btn-enviar" id="btnEnviar" disabled onclick="enviarPedido()">
                 <i class="fas fa-paper-plane"></i> ENVIAR A COCINA
@@ -70,6 +216,41 @@
             <button class="btn-limpiar" onclick="limpiarPedido()">
                 <i class="fas fa-trash"></i> Limpiar Pedido
             </button>
+
+            <!-- ── SELLO AL CLIENTE ── -->
+            <div class="sellos-section">
+                <div class="sellos-header" id="sellosHeader" onclick="toggleSellos()">
+                    <span>🏆 &nbsp;Sello al Cliente</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="sellos-body" id="sellosBody">
+                    <!-- Búsqueda -->
+                    <div id="sellosBuscadorWrap">
+                        <input class="sellos-input" id="sellosBuscar"
+                            placeholder="🔍 Buscar cliente por nombre o ID..."
+                            oninput="buscarClienteSello(this.value)"
+                            autocomplete="off">
+                        <div id="sellosResultados"></div>
+                    </div>
+                    <!-- Panel cliente encontrado -->
+                    <div id="selloClientePanel" style="display:none">
+                        <div class="sello-prize-banner" id="selloPrizeBanner" style="display:none">
+                            🌭 ¡TARJETA COMPLETA! — CANJEAR EN PANEL DE CLIENTES
+                        </div>
+                        <div class="sello-cliente-panel">
+                            <div class="sello-cliente-nombre" id="selloNombre"></div>
+                            <div class="sello-cliente-info" id="selloInfo"></div>
+                            <div class="sello-stamps-row" id="selloStampsRow"></div>
+                            <div class="sello-btn-row">
+                                <button class="btn-agregar-sello" id="btnAgregarSello" onclick="agregarSelloEnPedidos()">
+                                    🌭 &nbsp;Agregar Sello
+                                </button>
+                                <button class="btn-otro-cliente" onclick="limpiarClienteSello()">← Otro</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </aside>
     </div>
 
@@ -99,16 +280,20 @@
     <script>
         // ========== ESTADO DEL PEDIDO ==========
         let pedidoActual = [];
+        let tipoPedido = null; // 'llevar' | 'comer' | null
 
         // ========== INICIALIZACIÓN ==========
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             // Verificar configuración
             if (!GOSA.apiConfigurada()) {
                 GOSA.mostrarConfigPendiente(document.getElementById('productosSection'));
                 return;
             }
 
-            // Cargar productos
+            // Cargar precios desde Sheets (actualiza MENU; si falla usa precios locales)
+            await GOSA.cargarProductos();
+
+            // Cargar productos en pantalla
             cargarProductos();
 
             // Sincronizar pedidos locales pendientes
@@ -260,8 +445,8 @@
 
             const btnEnviar = document.getElementById('btnEnviar');
             const notas = document.getElementById('pedidoNotas').value.trim();
-            const esDomicilio = document.getElementById('esDomicilio').checked;
-            const notasFinal = esDomicilio ? `[DOMICILIO] ${notas}` : notas;
+            const marcador = tipoPedido === 'llevar' ? '[PARA LLEVAR]' : tipoPedido === 'comer' ? '[PARA COMER ACA]' : tipoPedido === 'domicilio' ? '[DOMICILIO]' : '';
+            const notasFinal = marcador ? `${marcador} ${notas}` : notas;
 
             // Calcular total
             const total = pedidoActual.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
@@ -324,17 +509,28 @@
         // ========== LIMPIAR PEDIDO ==========
         function limpiarPedido() {
             pedidoActual = [];
+            tipoPedido = null;
             document.getElementById('pedidoNotas').value = '';
-            document.getElementById('esDomicilio').checked = false;
+            document.getElementById('llevarLabel').classList.remove('activo');
+            document.getElementById('comerLabel').classList.remove('activo');
             document.getElementById('domicilioLabel').classList.remove('activo');
             actualizarPanelPedido();
             document.getElementById('pedidoPanel').classList.remove('expandido');
         }
 
-        // ========== TOGGLE ESTILO CHECKBOX DOMICILIO ==========
-        function toggleDomicilioCheck() {
-            const label = document.getElementById('domicilioLabel');
-            label.classList.toggle('activo', document.getElementById('esDomicilio').checked);
+        // ========== SELECCIONAR TIPO DE PEDIDO ==========
+        function seleccionarTipo(tipo) {
+            // Si ya estaba activo, deseleccionar (toggle off)
+            if (tipoPedido === tipo) {
+                tipoPedido = null;
+                document.getElementById('llevarLabel').classList.remove('activo');
+                document.getElementById('comerLabel').classList.remove('activo');
+                return;
+            }
+            tipoPedido = tipo;
+            document.getElementById('llevarLabel').classList.toggle('activo', tipo === 'llevar');
+            document.getElementById('comerLabel').classList.toggle('activo', tipo === 'comer');
+            document.getElementById('domicilioLabel').classList.toggle('activo', tipo === 'domicilio');
         }
 
         // ========== TOGGLE PANEL (MÓVIL) ==========
@@ -440,6 +636,137 @@
             document.getElementById("modalCombo").style.display = "none";
             comboEnModal = null;
             composicionCombo = [];
+        }
+
+        // ========== SELLO AL CLIENTE ==========
+        let selloClienteActual = null;
+        let selloSearchTimer   = null;
+        let selloLoadingFlag   = false;
+
+        function toggleSellos() {
+            const header = document.getElementById('sellosHeader');
+            const body   = document.getElementById('sellosBody');
+            const open   = header.classList.toggle('open');
+            body.classList.toggle('open', open);
+            if (open) document.getElementById('sellosBuscar').focus();
+        }
+
+        function buscarClienteSello(query) {
+            clearTimeout(selloSearchTimer);
+            const res = document.getElementById('sellosResultados');
+            if (query.length < 2) { res.innerHTML = ''; return; }
+            res.innerHTML = '<div style="color:#444;font-size:0.78rem;padding:6px 0">Buscando...</div>';
+            selloSearchTimer = setTimeout(() => ejecutarBusquedaSello(query), 400);
+        }
+
+        async function ejecutarBusquedaSello(query) {
+            const res = document.getElementById('sellosResultados');
+            try {
+                const data = await GOSA.apiGet('buscarClientes', { query });
+                const matches = (data && data.clientes) ? data.clientes : [];
+                if (matches.length === 0) {
+                    res.innerHTML = '<div style="color:#444;font-size:0.78rem;padding:6px 0">Sin resultados</div>';
+                    return;
+                }
+                res.innerHTML = matches.map(c => {
+                    const s = Math.min(c.sellos, 6);
+                    const filled = '🌭'.repeat(s);
+                    const empty  = Array(6 - s).fill('○').join('');
+                    return `<div class="sello-result-item" onclick="seleccionarClienteSello('${c.id}')">
+                        <div>
+                            <div class="sello-result-nombre">${escSello(c.nombre)}</div>
+                            <div class="sello-result-info">${c.id} · ${s}/6 sellos</div>
+                        </div>
+                        <div class="sello-result-stamps">${filled}<span style="color:#2a2a2a">${empty}</span></div>
+                    </div>`;
+                }).join('');
+            } catch(e) {
+                res.innerHTML = '<div style="color:#e05050;font-size:0.78rem;padding:6px 0">Error de conexión</div>';
+            }
+        }
+
+        async function seleccionarClienteSello(id) {
+            document.getElementById('sellosResultados').innerHTML = '';
+            document.getElementById('sellosBuscar').value = '';
+            document.getElementById('sellosBuscadorWrap').style.display = 'none';
+            document.getElementById('selloClientePanel').style.display  = 'block';
+            document.getElementById('selloNombre').textContent = 'Cargando...';
+            document.getElementById('selloInfo').textContent = '';
+            document.getElementById('selloStampsRow').innerHTML = '';
+            try {
+                const data = await GOSA.apiGet('getCliente', { id });
+                if (!data || !data.cliente) { limpiarClienteSello(); return; }
+                selloClienteActual = data.cliente;
+                renderSelloPanel(selloClienteActual);
+            } catch(e) {
+                limpiarClienteSello();
+            }
+        }
+
+        function renderSelloPanel(c) {
+            const sellos   = Math.min(c.sellos, 6);
+            const hasPrize = c.sellos >= 6;
+            document.getElementById('selloNombre').textContent = c.nombre;
+            document.getElementById('selloInfo').textContent =
+                (c.telefono ? '📱 ' + c.telefono + '  · ' : '') + 'ID: ' + c.id +
+                (c.canjes ? '  · 🎁 ' + c.canjes + ' canje(s)' : '');
+            const row = document.getElementById('selloStampsRow');
+            row.innerHTML = '';
+            for (let i = 0; i < 6; i++) {
+                const el = document.createElement('div');
+                el.className = 'sello-stamp ' + (i < sellos ? 'filled' : 'empty');
+                el.textContent = i < sellos ? '🌭' : '';
+                row.appendChild(el);
+            }
+            document.getElementById('selloPrizeBanner').style.display = hasPrize ? 'block' : 'none';
+            document.getElementById('btnAgregarSello').disabled = hasPrize || selloLoadingFlag;
+        }
+
+        async function agregarSelloEnPedidos() {
+            if (!selloClienteActual || selloLoadingFlag) return;
+            selloLoadingFlag = true;
+            const btn = document.getElementById('btnAgregarSello');
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+            try {
+                const result = await GOSA.apiPost({ action: 'agregarSello', id: selloClienteActual.id });
+                if (result.error) {
+                    btn.textContent = '❌ Error';
+                    setTimeout(() => { btn.textContent = '🌭 Agregar Sello'; btn.disabled = false; selloLoadingFlag = false; }, 1800);
+                    return;
+                }
+                selloClienteActual.sellos = result.sellos;
+                renderSelloPanel(selloClienteActual);
+                btn.textContent = '✅ Sello Agregado!';
+                btn.style.background = '#28a745';
+                btn.style.color = '#fff';
+                setTimeout(() => {
+                    btn.textContent = '🌭 Agregar Sello';
+                    btn.style.background = '';
+                    btn.style.color = '';
+                    btn.disabled = selloClienteActual.sellos >= 6;
+                    selloLoadingFlag = false;
+                }, 1800);
+            } catch(e) {
+                btn.textContent = '❌ Sin conexión';
+                setTimeout(() => { btn.textContent = '🌭 Agregar Sello'; btn.disabled = false; selloLoadingFlag = false; }, 2000);
+            }
+        }
+
+        function limpiarClienteSello() {
+            selloClienteActual = null;
+            selloLoadingFlag   = false;
+            document.getElementById('selloClientePanel').style.display  = 'none';
+            document.getElementById('sellosBuscadorWrap').style.display = 'block';
+            document.getElementById('sellosBuscar').value = '';
+            document.getElementById('sellosResultados').innerHTML = '';
+            document.getElementById('btnAgregarSello').textContent = '🌭 Agregar Sello';
+            document.getElementById('btnAgregarSello').style.background = '';
+            document.getElementById('btnAgregarSello').style.color = '';
+        }
+
+        function escSello(str) {
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
         }
     </script>
 </body>

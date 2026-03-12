@@ -192,6 +192,36 @@ async function getResumenDia(fecha) {
     return await apiGet('getResumen', { fecha });
 }
 
+// Obtener catálogo de productos desde la hoja Productos de Sheets
+async function getProductos() {
+    return await apiGet('getProductos');
+}
+
+// Cargar productos desde Sheets y actualizar MENU dinámicamente
+// Si falla, el MENU hardcodeado en este archivo sirve de respaldo
+async function cargarProductos() {
+    try {
+        const result = await getProductos();
+        if (result.error || !result.productos || result.productos.length === 0) return false;
+
+        // Vaciar categorías actuales
+        Object.keys(MENU).forEach(cat => { MENU[cat] = []; });
+
+        // Rellenar desde Sheets
+        result.productos.forEach(p => {
+            if (MENU[p.categoria] !== undefined) {
+                MENU[p.categoria].push({ id: p.id, nombre: p.nombre, precio: p.precio });
+            }
+        });
+
+        console.log('✅ Precios cargados desde Google Sheets');
+        return true;
+    } catch (e) {
+        console.warn('⚠️ Usando precios locales:', e.message);
+        return false;
+    }
+}
+
 // Actualizar estado de pedido
 async function actualizarEstadoPedido(id, estado) {
     return await apiPost({
@@ -387,11 +417,15 @@ window.GOSA = {
     apiConfigurada,
 
     // API
+    apiGet,
+    apiPost,
     crearPedido,
     getPedidosPendientes,
     getPedidosHoy,
     getPedidosPorFecha,
     getResumenDia,
+    getProductos,
+    cargarProductos,
     actualizarEstadoPedido,
     actualizarPedido,
 

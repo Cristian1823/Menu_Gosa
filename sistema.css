@@ -325,6 +325,81 @@ body {
     font-size: 1.1em;
 }
 
+/* ========== TIPO DE PEDIDO TOGGLE ========== */
+.tipo-pedido-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.tipo-check {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-dark);
+    background: rgba(255,255,255,0.03);
+    cursor: pointer;
+    font-size: 0.88em;
+    color: var(--gray-light);
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    user-select: none;
+}
+
+.tipo-check:hover {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: rgba(255, 215, 0, 0.4);
+}
+
+.tipo-check.activo {
+    background: rgba(255, 215, 0, 0.18);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.tipo-check input[type="radio"] {
+    display: none;
+}
+
+.tipo-check i {
+    font-size: 1.05em;
+}
+
+/* ========== BADGE TIPO EN CARDS ========== */
+.tipo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.9em;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.tipo-badge.llevar {
+    background: rgba(40, 167, 69, 0.15);
+    border: 1px solid var(--success);
+    color: var(--success);
+}
+
+.tipo-badge.comer {
+    background: rgba(255, 215, 0, 0.12);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+}
+
+.tipo-badge.domicilio {
+    background: rgba(23, 162, 184, 0.15);
+    border: 1px solid var(--info);
+    color: var(--info);
+}
+
 .btn-enviar {
     width: 100%;
     padding: 15px;
