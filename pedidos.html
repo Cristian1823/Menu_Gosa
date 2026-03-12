@@ -560,9 +560,10 @@
                     return "<button id=\"combobtn-" + p.id + "\" "
                         + "data-pid=\"" + p.id + "\" "
                         + "data-pnombre=\"" + p.nombre.replace(/"/g, "&quot;") + "\" "
+                        + "data-pprecio=\"" + p.precio + "\" "
                         + "onclick=\"toggleProductoCombo(this)\" "
-                        + "style=\"padding:9px 14px; background:#2a2a2a; color:#ccc; border:1px solid #444; border-radius:8px; font-size:0.85em; cursor:pointer; transition:all 0.15s;\">" 
-                        + p.nombre + "</button>";
+                        + "style=\"padding:9px 14px; background:#2a2a2a; color:#ccc; border:1px solid #444; border-radius:8px; font-size:0.85em; cursor:pointer; transition:all 0.15s;\">"
+                        + p.nombre + "<br><span style='font-size:0.78em;opacity:0.6'>" + GOSA.formatearPrecio(p.precio) + "</span></button>";
                 }).join("");
                 seccion.innerHTML =
                     "<div style=\"font-family:Bebas Neue,sans-serif; color:#aaa; font-size:0.95em; letter-spacing:1px; margin-bottom:8px;\">"
@@ -575,8 +576,9 @@
         }
 
         function toggleProductoCombo(btn) {
-            const id = btn.dataset.pid;
+            const id     = btn.dataset.pid;
             const nombre = btn.dataset.pnombre;
+            const precio = parseInt(btn.dataset.pprecio) || 0;
             const idx = composicionCombo.findIndex(function(p) { return p.id === id; });
             if (idx >= 0) {
                 composicionCombo.splice(idx, 1);
@@ -585,7 +587,7 @@
                 btn.style.color = "#ccc";
                 btn.style.fontWeight = "normal";
             } else {
-                composicionCombo.push({ id: id, nombre: nombre });
+                composicionCombo.push({ id: id, nombre: nombre, precio: precio });
                 btn.style.background = "#FFD700";
                 btn.style.borderColor = "#FFD700";
                 btn.style.color = "#000";
@@ -601,7 +603,9 @@
                 el.style.color = "#666";
                 el.style.fontStyle = "italic";
             } else {
-                el.textContent = composicionCombo.map(function(p) { return p.nombre; }).join(" + ");
+                const totalSuma = composicionCombo.reduce(function(s, p) { return s + p.precio; }, 0);
+                el.innerHTML = composicionCombo.map(function(p) { return p.nombre; }).join(" + ")
+                    + " <span style='color:#aaa;font-size:0.88em'>= " + GOSA.formatearPrecio(totalSuma) + "</span>";
                 el.style.color = "#FFD700";
                 el.style.fontStyle = "normal";
             }
@@ -609,19 +613,21 @@
 
         function confirmarCombo() {
             if (!comboEnModal) return;
-            const descripcion = composicionCombo.length > 0
-                ? composicionCombo.map(function(p) { return p.nombre; }).join(" + ")
-                : null;
-            const nombreCompleto = descripcion
-                ? comboEnModal.nombre + ": " + descripcion
-                : comboEnModal.nombre;
-            const itemId = comboEnModal.id + "_" + Date.now();
-            pedidoActual.push({
-                id: itemId,
-                nombre: nombreCompleto,
-                precio: comboEnModal.precio,
-                cantidad: 1
-            });
+            const ts = Date.now();
+            if (composicionCombo.length > 0) {
+                // Agregar cada producto seleccionado como ítem individual con su precio real
+                composicionCombo.forEach(function(p, i) {
+                    const existente = pedidoActual.find(function(it) { return it.id === p.id; });
+                    if (existente) {
+                        existente.cantidad++;
+                    } else {
+                        pedidoActual.push({ id: p.id, nombre: p.nombre, precio: p.precio, cantidad: 1 });
+                    }
+                });
+            } else {
+                // Sin selección: agregar el combo con su precio fijo (caso raro)
+                pedidoActual.push({ id: comboEnModal.id + "_" + ts, nombre: comboEnModal.nombre, precio: comboEnModal.precio, cantidad: 1 });
+            }
             const btn = document.querySelector("[data-id=\"" + comboEnModal.id + "\"]");
             if (btn) {
                 btn.classList.add("added");
