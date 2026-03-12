@@ -329,11 +329,30 @@ const SHEET_NAME = 'Pedidos';
           var item = items[j];
           var nombreKey = String(item.nombre).trim().toUpperCase();
 
-          // Buscar costo: nombre exacto, luego nombre base antes de ":"
+          // Buscar costo: nombre exacto, luego composicion de combo (parte tras ":"), luego nombre base
           var info = costosPorNombre[nombreKey];
+          if (!info && nombreKey.indexOf(':') > -1) {
+            var partes = nombreKey.split(':');
+            var nombreBase = partes[0].trim();
+            var composicion = partes[1] ? partes[1].trim() : '';
+            // Si el base es un combo del mes, sumar costos de productos de la composicion
+            if (nombreBase.indexOf('COMBO DEL MES') > -1 && composicion) {
+              var subProductos = composicion.split('+');
+              var costoCombo = 0;
+              var gastoCombo = 0;
+              for (var k = 0; k < subProductos.length; k++) {
+                var subKey = subProductos[k].trim().toUpperCase();
+                var subInfo = costosPorNombre[subKey] || { costo: 0, gastoOperativo: 0 };
+                costoCombo += subInfo.costo;
+                gastoCombo += subInfo.gastoOperativo;
+              }
+              info = { costo: costoCombo, gastoOperativo: gastoCombo };
+            } else {
+              info = costosPorNombre[nombreBase] || { costo: 0, gastoOperativo: 0 };
+            }
+          }
           if (!info) {
-            var nombreBase = nombreKey.split(':')[0].trim();
-            info = costosPorNombre[nombreBase] || { costo: 0, gastoOperativo: 0 };
+            info = { costo: 0, gastoOperativo: 0 };
           }
 
           if (!productosCantidad[item.nombre]) {

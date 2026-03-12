@@ -366,7 +366,27 @@
         // Helper: obtener info de costo de un producto por nombre
         function getCostoProducto(nombre) {
             const key = nombre.trim().toUpperCase();
-            return catalogoCostos[key] || catalogoCostos[key.split(':')[0].trim()] || { costo: 0, gastoOperativo: 0 };
+            // Busqueda exacta
+            if (catalogoCostos[key]) return catalogoCostos[key];
+            // Si tiene ":" puede ser combo del mes con composicion
+            if (key.includes(':')) {
+                const base = key.split(':')[0].trim();
+                const composicion = key.split(':')[1].trim();
+                // Combo del mes: sumar costos de los productos seleccionados
+                if (base.includes('COMBO DEL MES') && composicion) {
+                    const subProductos = composicion.split('+');
+                    let costoTotal = 0, gastoTotal = 0;
+                    subProductos.forEach(sub => {
+                        const subInfo = catalogoCostos[sub.trim().toUpperCase()] || { costo: 0, gastoOperativo: 0 };
+                        costoTotal += subInfo.costo;
+                        gastoTotal += subInfo.gastoOperativo;
+                    });
+                    return { costo: costoTotal, gastoOperativo: gastoTotal };
+                }
+                // Otro producto con variante: buscar por nombre base
+                return catalogoCostos[base] || { costo: 0, gastoOperativo: 0 };
+            }
+            return { costo: 0, gastoOperativo: 0 };
         }
 
         // ========== VER TODOS LOS PEDIDOS ==========
