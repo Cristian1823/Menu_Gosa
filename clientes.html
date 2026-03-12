@@ -551,7 +551,7 @@
             <div class="cp-body">
                 <div class="prize-banner" id="prize-banner">
                     <p>¡Tarjeta completada!</p>
-                    <strong>🌭 1 PERRO CALIENTE GRATIS</strong>
+                    <strong>🌭 PERRO RANCHERO O RAPI GOSA GRATIS</strong>
                 </div>
                 <div class="stamps-grid" id="stamps-grid"></div>
                 <div class="stamps-progress" id="stamps-progress"></div>
@@ -758,7 +758,7 @@ function compartirQR() {
     const url = generarUrlTarjeta(lastQRClientId);
     const nombre = document.getElementById('result-nombre').textContent;
     if (navigator.share) {
-        navigator.share({ title: 'Mi Tarjeta GOSA - ' + nombre, text: '¡Acumula sellos y gana un Perro Caliente gratis! 🌭', url }).catch(() => {});
+        navigator.share({ title: 'Mi Tarjeta GOSA - ' + nombre, text: '¡Acumula 6 sellos y gana un Perro Ranchero o Rapi Gosa gratis! 🌭', url }).catch(() => {});
     } else {
         navigator.clipboard.writeText(url)
             .then(() => showToast('🔗 Link copiado al portapapeles'))
@@ -897,7 +897,7 @@ async function quitarSello() {
 
 async function canjearPremio() {
     if (!currentClient || isLoading) return;
-    if (!confirm('¿Confirmar canje de 1 Perro Caliente Gratis para ' + currentClient.nombre + '?')) return;
+    if (!confirm('¿Confirmar canje de Perro Ranchero o Rapi Gosa Gratis para ' + currentClient.nombre + '?')) return;
     setLoading(true);
     try {
         const result = await apiPost('canjearPremio', { id: currentClient.id });
