@@ -207,10 +207,15 @@ async function cargarProductos() {
         // Vaciar categorías actuales
         Object.keys(MENU).forEach(cat => { MENU[cat] = []; });
 
+        // Mapa de categoría en minúscula → clave real del MENU (tolera mayúsculas en Sheets)
+        const catMap = {};
+        Object.keys(MENU).forEach(k => { catMap[k.toLowerCase()] = k; });
+
         // Rellenar desde Sheets
         result.productos.forEach(p => {
-            if (MENU[p.categoria] !== undefined) {
-                MENU[p.categoria].push({ id: p.id, nombre: p.nombre, precio: p.precio });
+            const key = catMap[String(p.categoria).trim().toLowerCase()];
+            if (key !== undefined) {
+                MENU[key].push({ id: p.id, nombre: p.nombre, precio: p.precio });
             }
         });
 
