@@ -27,6 +27,7 @@ const MENU = {
         { id: 'h3', nombre: 'Gosa Balsamica', precio: 13000 },
         { id: 'h3d', nombre: 'Gosa Balsamica Doble', precio: 17500 },
         { id: 'h5', nombre: 'La Indomable', precio: 13500 },
+        { id: 'h5d', nombre: 'La Indomable Doble', precio: 18000 },
         { id: 'h4', nombre: 'Madurita', precio: 13500 },
         { id: 'h4d', nombre: 'Madurita Doble', precio: 18000 }
     ],
