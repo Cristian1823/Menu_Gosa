@@ -7,8 +7,9 @@ Este es un sitio web completo para **GOSA Food Truck**, un negocio de comida rá
 1. **Menú Digital** - Carta interactiva para clientes con descripciones y precios
 2. **Sistema de Pedidos** - Para toma de pedidos en el punto de venta
 3. **Panel de Cocina** - Para que el cocinero vea y gestione pedidos
-4. **Cierre de Caja** - Resumen de ventas y estadísticas del día
-5. **Panel de Domicilio** - Para gestionar pedidos de entrega a domicilio
+4. **Cierre de Caja** - Resumen de ventas, costos y ganancia del día
+5. **Panel Para Pago** - Para cobrar pedidos listos (reemplazó Domicilio)
+6. **Clientes Frecuentes** - Tarjeta de sellos y programa de fidelización
 
 ## Tecnologías Utilizadas
 
@@ -31,15 +32,18 @@ Gosa/
 │
 ├── pedidos.html            # Sistema de toma de pedidos (cajero)
 ├── cocina.html             # Panel de cocina (cocinero)
-├── domicilio.html          # Panel de domicilio (entrega)
+├── domicilio.html          # Panel Para Pago (cobrar pedidos listos)
 ├── cierre.html             # Cierre de caja (administrador)
+├── clientes.html           # Gestión de clientes frecuentes (cajero)
+├── tarjeta.html            # Tarjeta de sellos del cliente (se abre desde QR)
 ├── sistema.js              # Lógica del sistema de pedidos
 ├── sistema.css             # Estilos del sistema de pedidos
 ├── google-apps-script.js   # Código para Google Apps Script (copiar a Google)
 │
 ├── images/
-│   ├── logo.jpeg          # Logo del food truck
-│   └── Promocion.jpeg     # Banner promocional
+│   ├── logo.jpeg           # Logo del food truck
+│   ├── Promocion.jpeg      # Banner promocional
+│   └── fondo_tarjeta.PNG   # Fondo de imagen para tarjeta.html
 │
 └── videos/
     ├── presentacion.mp4    # Video 1 del carousel
@@ -379,10 +383,13 @@ const observer = new IntersectionObserver(function(entries) {
 ## Sistema de Pedidos
 
 ### Backend (Google Sheets + Apps Script)
-- **Almacenamiento:** Google Sheets, hoja "Pedidos"
-- **Columnas:** ID | Fecha | Hora | Items (JSON) | Total | Estado | Notas
+- **Almacenamiento:** Google Sheets (hojas: Pedidos, Productos, Clientes)
 - **Comunicación:** JSONP (inyección de script tag) para evitar CORS
 - **Estados del pedido:** `pendiente` → `preparando` → `listo` → `entregado`
+- **Hojas de Google Sheets:**
+  - `Pedidos` — Columnas: ID | Fecha | Hora | Items (JSON) | Total | Estado | Notas
+  - `Productos` — Columnas: ID | Nombre | Categoria | PrecioVenta | Costo | GastoOperativo | Activo (TRUE/FALSE)
+  - `Clientes` — Columnas: ID | Nombre | Teléfono | Sellos | Canjes | FechaRegistro | UltimoSello
 - **API Actions disponibles:**
   - `nuevoPedido` — Crea un pedido nuevo (appends row)
   - `actualizarEstado` — Cambia el estado (columna 6)
@@ -390,7 +397,14 @@ const observer = new IntersectionObserver(function(entries) {
   - `getPendientes` — Retorna pedidos con estado pendiente/preparando
   - `getHoy` — Retorna pedidos del día actual (filtra por fecha de hoy)
   - `getPorFecha` — Retorna pedidos de una fecha específica
-  - `getResumen` — Resumen de ventas por día (totales, productos vendidos)
+  - `getResumen` — Resumen del día: totalVentas, totalCosto, totalGastoOp, gananciaNeta, ticketPromedio, productos con ingreso/costo/ganancia por ítem
+  - `getProductos` — Retorna catálogo de la hoja Productos (solo activos)
+  - `registrarCliente` — Registra nuevo cliente en hoja Clientes
+  - `getCliente` — Busca cliente por ID
+  - `buscarClientes` — Busca clientes por nombre o ID (query mínimo 2 chars, max 8 resultados)
+  - `agregarSello` — Suma 1 sello al cliente y actualiza UltimoSello
+  - `quitarSello` — Resta 1 sello (para correcciones)
+  - `canjearPremio` — Reinicia sellos a 0 y suma 1 a Canjes (requiere ≥6 sellos)
 - **Configuración:** La URL de la web app de Apps Script se define en `sistema.js` variable `API_URL`. Al modificar el código en Apps Script se debe hacer "Editar implementación" para mantener la misma URL.
 
 ### 🚲 Panel de Domicilio (domicilio.html)
@@ -487,12 +501,86 @@ Este proyecto es propiedad de GOSA Food Truck.
 
 ---
 
-**Última actualización:** Febrero 2026
-**Versión:** 3.6.0 - Actualización de menú: Chori Gosa, La Indomable; retirados Gosa Dulcin y Perro Burguer
+**Última actualización:** Marzo 2026
+**Versión:** 3.8.0 - Sello al Cliente en pedidos + Domicilio en toggle + Clientes integrados a Sheets + Hoja Productos con costos
 
 ## Changelog
 
-### v3.6.0 (Marzo 2026) - ACTUAL
+### v3.8.0 (Marzo 2026) - ACTUAL
+
+**Domicilio como tercera opción del toggle:**
+- `pedidos.html` y `cocina.html`: Toggle ahora tiene 3 opciones: Para llevar, Para comer acá, Domicilio
+- Marcador `[DOMICILIO]` disponible desde el toggle (antes solo se ponía manualmente en notas)
+- `limpiarPedido()` también resetea el label de Domicilio
+
+**Sello al Cliente integrado en pedidos.html:**
+- Sección colapsable "Sello al Cliente" al final del panel de pedido
+- El cajero busca el cliente por nombre o ID sin salir de la pantalla de pedidos
+- Muestra sellos actuales con iconos 🌭 y permite agregar sello con un botón
+- Si la tarjeta está completa (6 sellos), muestra banner naranja para canjear en clientes.html
+- Usa `buscarClientes` y `agregarSello` de la API directamente
+
+**Sistema de Clientes integrado con Google Sheets:**
+- `clientes.html` y `tarjeta.html` ahora usan llamadas JSONP a la API (ya no localStorage)
+- `google-apps-script.js` incluye todas las acciones de clientes: `registrarCliente`, `getCliente`, `buscarClientes`, `agregarSello`, `quitarSello`, `canjearPremio`
+- Hoja "Clientes" en Google Sheets: ID | Nombre | Teléfono | Sellos | Canjes | FechaRegistro | UltimoSello
+
+**Hoja Productos y carga dinámica de precios:**
+- Nueva hoja "Productos" en Google Sheets: ID | Nombre | Categoria | PrecioVenta | Costo | GastoOperativo | Activo
+- `getProductos` en Apps Script retorna productos activos de esa hoja
+- `cargarProductos()` en `sistema.js` actualiza el objeto `MENU` desde Sheets al cargar pedidos.html y cocina.html
+- Si falla la carga, usa los precios hardcodeados en `sistema.js` como respaldo
+
+**getResumen con métricas de costos:**
+- `getResumen` ahora retorna: `totalVentas`, `totalCosto`, `totalGastoOp`, `gananciaNeta`, `ticketPromedio`
+- Por producto: `ingreso`, `costo`, `gastoOperativo`, `gananciaNeta`
+- Para Combo del Mes: calcula costos sumando los sub-productos de la composición (formato `"Combo del Mes: ProductoA + ProductoB"`)
+
+### v3.7.0 (Marzo 2026)
+
+**Toggle Para llevar / Para comer acá (2 opciones iniciales — expandido a 3 en v3.8.0):**
+- `pedidos.html`: Reemplazado checkbox de domicilio por toggle doble "Para llevar" / "Para comer acá"
+  - Marcadores en notas: `[PARA LLEVAR]` / `[PARA COMER ACA]`
+  - Click nuevamente en el activo lo deselecciona (ninguno = sin tipo)
+- `cocina.html`: Modal de edición actualizado con el mismo toggle
+  - Cards muestran badge dorado (Para comer acá) o verde (Para llevar)
+  - Las notas se muestran limpias sin el marcador
+- `sistema.css`: Nuevas clases `.tipo-pedido-toggle`, `.tipo-check`, `.tipo-badge`, `.tipo-badge.llevar`, `.tipo-badge.comer`
+
+**Sección Para Pago (reemplaza Domicilio):**
+- `domicilio.html`: Renombrada internamente como "Para Pago" — muestra TODOS los pedidos con estado `listo` del día
+- Badge de tipo en cada card (Para llevar / Para comer acá)
+- Botón verde **"COBRADO"** → marca pedido como `entregado`
+- Stats: "Por cobrar" (listos) y "Cobrados hoy" (entregados)
+- Auto-refresh cada 5s con notificación de sonido + vibración
+- Navegación en todos los archivos actualizada: "Domicilio" → "Para Pago"
+
+### v3.6.1 (Marzo 2026) - ✅ INTEGRADO CON GOOGLE SHEETS
+
+**Sistema de Tarjeta de Sellos — Cliente Frecuente:**
+- `clientes.html`: Página nueva para el cajero — registrar clientes y escanear QR
+  - Tab "Registrar": formulario nombre + teléfono, genera QR con link a tarjeta del cliente
+  - Tab "Escanear QR": cámara para escanear QR + buscador por nombre/ID
+  - Al encontrar cliente: muestra tarjeta con sellos y botones de acción
+  - Botón **"Agregar Sello"** (dorado) + botón **"✕ Quitar"** (para corregir errores)
+  - Al llegar a 6 sellos: botón naranja pulsante **"Canjear Perro Gratis"** → reinicia a 0 y suma canjes
+- `tarjeta.html`: Página del cliente (se abre desde el QR)
+  - Muestra 6 slots de sellos 🌭, barra de progreso y premio
+  - Al completar 6: pantalla naranja animada **"¡Premio Listo!"** para mostrar al cajero
+  - Auto-refresh cada 3 segundos para ver sellos en tiempo real
+- **Premio:** 1 Perro Caliente Gratis al completar 6 sellos
+- **IDs de cliente:** formato `GOSA-XXXXXX` (6 caracteres alfanuméricos)
+
+**Estado actual — integrado con Google Sheets:**
+- Los datos se guardan en la hoja "Clientes" de Google Sheets
+- El QR contiene la URL completa de `tarjeta.html?id=GOSA-XXXXXX`
+- Las acciones `registrarCliente`, `getCliente`, `agregarSello`, `quitarSello`, `canjearPremio` están en `google-apps-script.js`
+- `tarjeta.html` y `clientes.html` usan llamadas JSONP a la API (mismo mecanismo que el resto del sistema)
+
+**Pendiente:**
+- Alojar `tarjeta.html` en GitHub Pages para que el QR funcione desde cualquier celular (actualmente solo funciona en red local)
+
+### v3.6.0 (Marzo 2026)
 **Actualización de menú:**
 - `index.html` + `sistema.js`: Retirados **Gosa Dulcin** y **Perro Burguer** de Perros Calientes
 - Nuevo perro: **Chori Gosa** ($11,500) — chorizo de cerdo envuelto en tocineta, queso doble crema, papa ripio y salsa de la casa

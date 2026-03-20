@@ -202,6 +202,89 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ========== Actualizar precios desde Google Sheets ==========
+    const API_URL_MENU = 'https://script.google.com/macros/s/AKfycbxVj9EO3hoX4VLMyf75Hv-MkQEXqOyTfxyXr_4z7nuccIxWx4_jji3gMJ5CcMczU316/exec';
+
+    function normalizarNombre(nombre) {
+        return nombre.toUpperCase()
+            .replace(/[ÁÀÂÄ]/g, 'A').replace(/[ÉÈÊË]/g, 'E')
+            .replace(/[ÍÌÎÏ]/g, 'I').replace(/[ÓÒÔÖ]/g, 'O')
+            .replace(/[ÚÙÛÜ]/g, 'U').replace(/Ñ/g, 'N')
+            .replace(/\s*\(COMBO\)\s*/g, '')
+            .trim();
+    }
+
+    function formatearPrecio(precio) {
+        return '$' + Number(precio).toLocaleString('es-CO');
+    }
+
+    function actualizarPreciosMenu() {
+        const callbackName = 'menuPreciosCallback_' + Date.now();
+        const script = document.createElement('script');
+
+        window[callbackName] = function(data) {
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+            if (!data || !data.productos || data.error) return;
+
+            const precios = {};
+            data.productos.forEach(p => {
+                precios[normalizarNombre(p.nombre)] = p.precio;
+            });
+
+            // .card-header h3 + .price
+            document.querySelectorAll('.card-header h3').forEach(h3 => {
+                const precio = precios[normalizarNombre(h3.textContent)];
+                if (precio !== undefined) {
+                    const el = h3.parentElement.querySelector('.price');
+                    if (el) el.textContent = formatearPrecio(precio);
+                }
+            });
+
+            // .double-name + .double-price
+            document.querySelectorAll('.double-name').forEach(nameEl => {
+                const precio = precios[normalizarNombre(nameEl.textContent)];
+                if (precio !== undefined) {
+                    const el = nameEl.parentElement.querySelector('.double-price');
+                    if (el) el.textContent = formatearPrecio(precio);
+                }
+            });
+
+            // .extra-name + .extra-price (adicionales)
+            document.querySelectorAll('.extra-name').forEach(nameEl => {
+                const precio = precios[normalizarNombre(nameEl.textContent)];
+                if (precio !== undefined) {
+                    const el = nameEl.parentElement.querySelector('.extra-price');
+                    if (el) el.textContent = formatearPrecio(precio);
+                }
+            });
+
+            // .combo-card h3 + .combo-price (agrandados)
+            document.querySelectorAll('.combo-card h3').forEach(h3 => {
+                const precio = precios[normalizarNombre(h3.textContent)];
+                if (precio !== undefined) {
+                    const el = h3.closest('.combo-card').querySelector('.combo-price');
+                    if (el) el.textContent = formatearPrecio(precio);
+                }
+            });
+        };
+
+        script.src = API_URL_MENU + '?action=getProductos&callback=' + callbackName;
+        script.onerror = function() {
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+        };
+        setTimeout(() => {
+            if (window[callbackName]) {
+                delete window[callbackName];
+                if (script.parentNode) script.parentNode.removeChild(script);
+            }
+        }, 10000);
+        document.body.appendChild(script);
+    }
+
+    actualizarPreciosMenu();
+
     // ========== Log de inicio ==========
     console.log('%c🍔 GOSA Food Truck - Menú Digital 🍔', 'color: #FFD700; font-size: 20px; font-weight: bold;');
     console.log('%cDesarrollado con ❤️ para GOSA', 'color: #E0E0E0; font-size: 12px;');
