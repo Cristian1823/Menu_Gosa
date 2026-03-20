@@ -65,7 +65,7 @@ El menú está organizado en categorías navegables con tabs sticky (ordenados p
 
 - **Entradas** - 3 opciones: Aritos Gosa, Bacon Gosa, Tender Gosa
 - **Perros Calientes** - 5 variedades gourmet (Perro Ranchero, Chori Gosa, Tropical Gosa, Texas BBQ, Triple Gosa)
-- **Hamburguesas** - 5 tipos artesanales con opciones dobles (Gosa Burguer, Crispy Gosa, Gosa Balsamica, La Indomable, Madurita)
+- **Hamburguesas** - 5 tipos artesanales con opciones dobles (Gosa Burguer, Crispy Gosa, Gosa Balsamica, La Indomable, Madurita) — todas tienen versión doble
 - **Salchipapas** - 3 variedades: Rapi Gosa, Salchi Gosa, La Gosa Supreme
 - **Adicionales** - 9 complementos desde $1,000 hasta $4,000 COP
 - **Combos** - 3 agrandados especiales (Gaseosa/Jugo, Papa, Combo Completo)
@@ -244,7 +244,7 @@ const observer = new IntersectionObserver(function(entries) {
 1. Gosa Burguer: $10,000 → Doble: $14,500
 2. Crispy Gosa: $13,000 → Doble: $17,500
 3. Gosa Balsamica: $13,000 → Doble: $17,500
-4. La Indomable: $13,500
+4. La Indomable: $13,500 → Doble: $18,000
 5. Madurita: $13,500 → Doble: $18,000 ⭐ **ESPECIAL**
 
 ### Salchipapas
@@ -376,6 +376,7 @@ const observer = new IntersectionObserver(function(entries) {
   - Gosa Burguer Doble: +$4,500 (total $14,500)
   - Crispy Gosa Doble: +$4,500 (total $17,500)
   - Gosa Balsamica Doble: +$4,500 (total $17,500)
+  - La Indomable Doble: +$4,500 (total $18,000)
   - Madurita Doble: +$4,500 (total $18,000)
 - **Ubicación:** Debajo de la descripción de cada hamburguesa (index.html)
 - **Estilos CSS:** `.double-option`, `.double-name`, `.double-price` (style.css:404-431)
