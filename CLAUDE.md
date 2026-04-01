@@ -565,11 +565,15 @@ Este proyecto es propiedad de GOSA Food Truck.
   - Al encontrar cliente: muestra tarjeta con sellos y botones de acción
   - Botón **"Agregar Sello"** (dorado) + botón **"✕ Quitar"** (para corregir errores)
   - Al llegar a 6 sellos: botón naranja pulsante **"Canjear Perro Gratis"** → reinicia a 0 y suma canjes
+  - Premio mostrado en banner: **"🌭 PERRO RANCHERO O RAPI GOSA GRATIS"**
+  - Badge de canjes previos (dorado) visible en el panel del cliente si ya ha canjeado antes
 - `tarjeta.html`: Página del cliente (se abre desde el QR)
   - Muestra 6 slots de sellos 🌭, barra de progreso y premio
   - Al completar 6: pantalla naranja animada **"¡Premio Listo!"** para mostrar al cajero
-  - Auto-refresh cada 3 segundos para ver sellos en tiempo real
-- **Premio:** 1 Perro Caliente Gratis al completar 6 sellos
+  - Auto-refresh cada 4 segundos para ver sellos en tiempo real
+  - Muestra badge de canjes previos (🎁 X canjes previos) si el cliente ya ha canjeado antes
+  - Fondo: imagen `images/fondo_tarjeta.PNG` con overlay rgba(0,0,0,0.72)
+- **Premio:** Perro Ranchero o Rapi Gosa Gratis al completar 6 sellos
 - **IDs de cliente:** formato `GOSA-XXXXXX` (6 caracteres alfanuméricos)
 
 **Estado actual — integrado con Google Sheets:**

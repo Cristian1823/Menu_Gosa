@@ -22,6 +22,10 @@ const SHEET_NAME = 'Pedidos';
           result = quitarSello(data.id);
         } else if (data.action === 'canjearPremio') {
           result = canjearPremio(data.id);
+        } else if (data.action === 'descontarConsumo') {
+          result = descontarConsumo(data.fecha);
+        } else if (data.action === 'reponerIngrediente') {
+          result = reponerIngrediente(data.id, Number(data.cantidad));
         } else {
           result = { error: 'Accion POST no valida' };
         }
@@ -44,6 +48,10 @@ const SHEET_NAME = 'Pedidos';
           result = getClienteClientes(e.parameter.id);
         } else if (action === 'buscarClientes') {
           result = buscarClientesClientes(e.parameter.query);
+        } else if (action === 'getInventario') {
+          result = getInventario();
+        } else if (action === 'inicializarInventario') {
+          result = inicializarInventario();
         } else {
           result = { error: 'Accion no valida' };
         }
@@ -506,4 +514,210 @@ const SHEET_NAME = 'Pedidos';
       }
     }
     return { error: 'Cliente no encontrado' };
+  }
+
+  // ══════════════════════════════════════════
+  // INVENTARIO — hojas "Ingredientes" y "Recetas"
+  // Ingredientes: ID | Nombre | Unidad | StockActual | StockMinimo
+  // Recetas: Producto | IngredienteID | Cantidad
+  // ══════════════════════════════════════════
+
+  // Recetas hardcodeadas (usadas si no existe la hoja "Recetas")
+  var RECETAS_DEFAULT = {
+    'ARITOS GOSA':          { 'ING01': 6 },
+    'BACON GOSA':           { 'ING02': 1, 'ING03': 1 },
+    'TENDER GOSA':          { 'ING04': 3 },
+    'PERRO RANCHERO':       { 'ING05': 1, 'ING03': 1, 'ING06': 1, 'ING07': 1 },
+    'CHORI GOSA':           { 'ING05': 1, 'ING06': 2, 'ING03': 1, 'ING08': 1 },
+    'TROPICAL GOSA':        { 'ING05': 1, 'ING03': 1, 'ING06': 1, 'ING09': 1 },
+    'TEXAS BBQ':            { 'ING05': 1, 'ING03': 1, 'ING07': 1, 'ING06': 1, 'ING10': 1 },
+    'TRIPLE GOSA':          { 'ING05': 1, 'ING03': 1, 'ING07': 1, 'ING06': 1, 'ING11': 1, 'ING08': 0.5 },
+    'GOSA BURGUER':         { 'ING12': 1, 'ING13': 1, 'ING14': 1, 'ING06': 1 },
+    'GOSA BURGUER DOBLE':   { 'ING12': 1, 'ING13': 1, 'ING14': 2, 'ING06': 2 },
+    'CRISPY GOSA':          { 'ING12': 1, 'ING03': 1, 'ING14': 1, 'ING06': 1 },
+    'CRISPY GOSA DOBLE':    { 'ING12': 1, 'ING03': 1, 'ING14': 2, 'ING06': 2 },
+    'GOSA BALSAMICA':       { 'ING12': 1, 'ING14': 1, 'ING06': 1 },
+    'GOSA BALSAMICA DOBLE': { 'ING12': 1, 'ING14': 2, 'ING06': 2 },
+    'MADURITA':             { 'ING12': 1, 'ING14': 1, 'ING06': 1, 'ING08': 0.5 },
+    'MADURITA DOBLE':       { 'ING12': 1, 'ING14': 1, 'ING06': 2, 'ING08': 0.5 },
+    'RAPI GOSA':            { 'ING02': 2, 'ING15': 2 },
+    'SALCHI GOSA':          { 'ING02': 2, 'ING15': 1, 'ING08': 0.5, 'ING11': 1 },
+    'LA GOSA SUPREME':      { 'ING02': 3, 'ING16': 1, 'ING08': 0.5, 'ING15': 2, 'ING06': 1, 'ING13': 1, 'ING10': 1 },
+    'SALCHICHA':            { 'ING07': 1 },
+    'TOCINETA':             { 'ING03': 1 },
+    'CHORIZO':              { 'ING08': 1 },
+    'CARNE DE HAMBURGUESA': { 'ING14': 1 },
+    'CHICHARRON':           { 'ING11': 1 },
+    'PORCION DE PAPA':      { 'ING02': 1 },
+    'PORCION DE PAPA (COMBO)': { 'ING02': 1 },
+    'EL COMBO COMPLETO':    { 'ING02': 1 }
+  };
+
+  function inicializarInventario() {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('Ingredientes');
+
+    if (sheet && sheet.getLastRow() > 1) {
+      return { error: 'La hoja Ingredientes ya existe y tiene datos. Bórrala primero si quieres reiniciarla.' };
+    }
+
+    if (!sheet) {
+      sheet = ss.insertSheet('Ingredientes');
+    } else {
+      sheet.clearContents();
+    }
+
+    var datos = [
+      ['ID',    'Nombre',              'Unidad',  'StockActual', 'StockMinimo'],
+      ['ING01', 'Aro de cebolla',      'unidad',   0, 60],
+      ['ING02', 'Porción de papa',     'porción',  0, 40],
+      ['ING03', 'Tocineta',            'unidad',   0, 40],
+      ['ING04', 'Tira de pollo',       'unidad',   0, 30],
+      ['ING05', 'Pan perro caliente',  'unidad',   0, 40],
+      ['ING06', 'Queso doble crema',   'porción',  0, 50],
+      ['ING07', 'Salchicha yankee',    'unidad',   0, 40],
+      ['ING08', 'Chorizo',             'unidad',   0, 20],
+      ['ING09', 'Porción de piña',     'porción',  0, 15],
+      ['ING10', 'Carne desmechada',    'porción',  0, 20],
+      ['ING11', 'Chicharrón',          'porción',  0, 20],
+      ['ING12', 'Pan hamburguesa',     'unidad',   0, 30],
+      ['ING13', 'Huevo',               'unidad',   0, 20],
+      ['ING14', 'Carne hamburguesa',   'porción',  0, 30],
+      ['ING15', 'Salchicha ranchera',  'unidad',   0, 40],
+      ['ING16', 'Porción de maíz',     'porción',  0, 15]
+    ];
+
+    sheet.getRange(1, 1, datos.length, 5).setValues(datos);
+
+    // Formato encabezado
+    var header = sheet.getRange(1, 1, 1, 5);
+    header.setFontWeight('bold');
+    header.setBackground('#1a1a1a');
+    header.setFontColor('#FFD700');
+
+    // Ancho de columnas
+    sheet.setColumnWidth(1, 70);
+    sheet.setColumnWidth(2, 200);
+    sheet.setColumnWidth(3, 90);
+    sheet.setColumnWidth(4, 110);
+    sheet.setColumnWidth(5, 110);
+
+    return { success: true, mensaje: 'Hoja Ingredientes creada con ' + (datos.length - 1) + ' ingredientes.' };
+  }
+
+  function getInventario() {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Ingredientes');
+    if (!sheet) return { error: 'Hoja Ingredientes no encontrada. Crea una hoja llamada "Ingredientes" con columnas: ID | Nombre | Unidad | StockActual | StockMinimo' };
+    var data = sheet.getDataRange().getValues();
+    var ingredientes = [];
+    for (var i = 1; i < data.length; i++) {
+      if (!data[i][0]) continue;
+      ingredientes.push({
+        id:     String(data[i][0]).trim(),
+        nombre: String(data[i][1]).trim(),
+        unidad: String(data[i][2]).trim(),
+        stock:  Number(data[i][3]) || 0,
+        minimo: Number(data[i][4]) || 0
+      });
+    }
+    return { ingredientes: ingredientes };
+  }
+
+  function descontarConsumo(fecha) {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheetPedidos = ss.getSheetByName(SHEET_NAME);
+    var sheetIng     = ss.getSheetByName('Ingredientes');
+    var sheetRecetas = ss.getSheetByName('Recetas');
+
+    if (!sheetIng) return { error: 'Hoja Ingredientes no encontrada' };
+
+    // Construir mapa de recetas: { 'NOMBRE UPPERCASE': { 'INGID': cantidad } }
+    var recetas = {};
+    if (sheetRecetas) {
+      var recData = sheetRecetas.getDataRange().getValues();
+      for (var i = 1; i < recData.length; i++) {
+        var prod  = String(recData[i][0]).trim().toUpperCase();
+        var ingId = String(recData[i][1]).trim().toUpperCase();
+        var cant  = Number(recData[i][2]) || 0;
+        if (!recetas[prod]) recetas[prod] = {};
+        recetas[prod][ingId] = (recetas[prod][ingId] || 0) + cant;
+      }
+    } else {
+      recetas = RECETAS_DEFAULT;
+    }
+
+    // Calcular consumo por ingrediente sumando todos los pedidos del día (excepto cancelados)
+    var pedidosData = sheetPedidos.getDataRange().getValues();
+    var consumo = {};
+
+    for (var i = 1; i < pedidosData.length; i++) {
+      var fechaPedido = formatearFechaCell(pedidosData[i][1]);
+      var estado = String(pedidosData[i][5]).trim().toLowerCase();
+      if (fechaPedido !== fecha || estado === 'cancelado') continue;
+
+      var items = JSON.parse(pedidosData[i][3]);
+      for (var j = 0; j < items.length; j++) {
+        var item = items[j];
+        var nombreKey = String(item.nombre).trim().toUpperCase();
+
+        // Manejar formato "Combo del Mes: ProdA + ProdB"
+        var baseKey = nombreKey;
+        if (nombreKey.indexOf(':') > -1) {
+          baseKey = nombreKey.split(':')[0].trim().toUpperCase();
+        }
+
+        var receta = recetas[nombreKey] || recetas[baseKey];
+        if (!receta) continue;
+
+        for (var ingId in receta) {
+          consumo[ingId] = (consumo[ingId] || 0) + receta[ingId] * item.cantidad;
+        }
+      }
+    }
+
+    // Leer ingredientes y aplicar descuentos en batch
+    var ingData  = sheetIng.getDataRange().getValues();
+    var descuentos = [];
+    var rangesToUpdate = [];
+
+    for (var i = 1; i < ingData.length; i++) {
+      if (!ingData[i][0]) continue;
+      var ingId = String(ingData[i][0]).trim().toUpperCase();
+      if (consumo[ingId] === undefined) continue;
+
+      var stockActual = Number(ingData[i][3]) || 0;
+      var nuevoStock  = stockActual - consumo[ingId];
+      rangesToUpdate.push({ row: i + 1, valor: nuevoStock });
+      descuentos.push({
+        id:         ingId,
+        nombre:     String(ingData[i][1]).trim(),
+        unidad:     String(ingData[i][2]).trim(),
+        consumido:  consumo[ingId],
+        stockAntes: stockActual,
+        stockAhora: nuevoStock,
+        minimo:     Number(ingData[i][4]) || 0
+      });
+    }
+
+    // Escribir todos los cambios
+    for (var k = 0; k < rangesToUpdate.length; k++) {
+      sheetIng.getRange(rangesToUpdate[k].row, 4).setValue(rangesToUpdate[k].valor);
+    }
+
+    return { success: true, fecha: fecha, descuentos: descuentos };
+  }
+
+  function reponerIngrediente(id, cantidad) {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Ingredientes');
+    if (!sheet) return { error: 'Hoja Ingredientes no encontrada' };
+    var data = sheet.getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim().toUpperCase() === String(id).trim().toUpperCase()) {
+        var stockActual = Number(data[i][3]) || 0;
+        var nuevoStock  = stockActual + cantidad;
+        sheet.getRange(i + 1, 4).setValue(nuevoStock);
+        return { success: true, nombre: String(data[i][1]).trim(), stockAntes: stockActual, stockAhora: nuevoStock };
+      }
+    }
+    return { error: 'Ingrediente no encontrado: ' + id };
   }
