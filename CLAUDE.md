@@ -10,6 +10,7 @@ Este es un sitio web completo para **GOSA Food Truck**, un negocio de comida rá
 4. **Cierre de Caja** - Resumen de ventas, costos y ganancia del día
 5. **Panel Para Pago** - Para cobrar pedidos listos (reemplazó Domicilio)
 6. **Clientes Frecuentes** - Tarjeta de sellos y programa de fidelización
+7. **Inventario** - Control de stock de ingredientes con deducción por consumo y reposición
 
 ## Tecnologías Utilizadas
 
@@ -36,6 +37,7 @@ Gosa/
 ├── cierre.html             # Cierre de caja (administrador)
 ├── clientes.html           # Gestión de clientes frecuentes (cajero)
 ├── tarjeta.html            # Tarjeta de sellos del cliente (se abre desde QR)
+├── inventario.html         # Control de inventario de ingredientes (administrador)
 ├── sistema.js              # Lógica del sistema de pedidos
 ├── sistema.css             # Estilos del sistema de pedidos
 ├── google-apps-script.js   # Código para Google Apps Script (copiar a Google)
@@ -65,7 +67,7 @@ El menú está organizado en categorías navegables con tabs sticky (ordenados p
 
 - **Entradas** - 3 opciones: Aritos Gosa, Bacon Gosa, Tender Gosa
 - **Perros Calientes** - 5 variedades gourmet (Perro Ranchero, Chori Gosa, Tropical Gosa, Texas BBQ, Triple Gosa)
-- **Hamburguesas** - 4 tipos artesanales con opciones dobles (Gosa Burguer, Crispy Gosa, Gosa Balsamica, Madurita) — todas tienen versión doble
+- **Hamburguesas** - 4 tipos artesanales con opciones dobles (Gosa Burguer, Crispy Gosa, Gosa Balsamica, Madurita) — todas tienen versión doble (La Indomable retirada del menú público)
 - **Salchipapas** - 3 variedades: Rapi Gosa, Salchi Gosa, La Gosa Supreme
 - **Adicionales** - 9 complementos desde $1,000 hasta $4,000 COP
 - **Combos** - 3 agrandados especiales (Gaseosa/Jugo, Papa, Combo Completo)
@@ -371,25 +373,26 @@ const observer = new IntersectionObserver(function(entries) {
 ### 🍔 Sistema de Opciones Dobles en Hamburguesas
 - **Funcionalidad:** Todas las hamburguesas tienen opción de versión doble
 - **Diseño:** Separador con borde superior, nombre en tipografía Bebas Neue 1.8em
-- **Precios dobles:**
+- **Precios dobles (menú público index.html):**
   - Gosa Burguer Doble: +$4,500 (total $14,500)
   - Crispy Gosa Doble: +$4,500 (total $17,500)
   - Gosa Balsamica Doble: +$4,500 (total $17,500)
-  - La Indomable Doble: +$4,500 (total $18,000)
   - Madurita Doble: +$4,500 (total $18,000)
+- **Nota:** La Indomable retirada del menú público (index.html) pero sigue activa en pedidos.html vía hoja Productos de Sheets (Activo=TRUE/FALSE)
 - **Ubicación:** Debajo de la descripción de cada hamburguesa (index.html)
 - **Estilos CSS:** `.double-option`, `.double-name`, `.double-price` (style.css:404-431)
 
 ## Sistema de Pedidos
 
 ### Backend (Google Sheets + Apps Script)
-- **Almacenamiento:** Google Sheets (hojas: Pedidos, Productos, Clientes)
+- **Almacenamiento:** Google Sheets (hojas: Pedidos, Productos, Clientes, Ingredientes)
 - **Comunicación:** JSONP (inyección de script tag) para evitar CORS
 - **Estados del pedido:** `pendiente` → `preparando` → `listo` → `entregado`
 - **Hojas de Google Sheets:**
   - `Pedidos` — Columnas: ID | Fecha | Hora | Items (JSON) | Total | Estado | Notas
   - `Productos` — Columnas: ID | Nombre | Categoria | PrecioVenta | Costo | GastoOperativo | Activo (TRUE/FALSE)
   - `Clientes` — Columnas: ID | Nombre | Teléfono | Sellos | Canjes | FechaRegistro | UltimoSello
+  - `Ingredientes` — Columnas: ID | Nombre | Unidad | Stock | StockMinimo | UltimaActualizacion
 - **API Actions disponibles:**
   - `nuevoPedido` — Crea un pedido nuevo (appends row)
   - `actualizarEstado` — Cambia el estado (columna 6)
@@ -405,6 +408,10 @@ const observer = new IntersectionObserver(function(entries) {
   - `agregarSello` — Suma 1 sello al cliente y actualiza UltimoSello
   - `quitarSello` — Resta 1 sello (para correcciones)
   - `canjearPremio` — Reinicia sellos a 0 y suma 1 a Canjes (requiere ≥6 sellos)
+  - `getInventario` — Retorna stock actual de todos los ingredientes
+  - `inicializarInventario` — Crea y puebla la hoja Ingredientes con los 16 ingredientes base
+  - `descontarConsumo` — Lee pedidos de una fecha, aplica recetas y descuenta stock (POST con `fecha`)
+  - `reponerIngrediente` — Suma cantidad al stock de un ingrediente (POST con `id` y `cantidad`)
 - **Configuración:** La URL de la web app de Apps Script se define en `sistema.js` variable `API_URL`. Al modificar el código en Apps Script se debe hacer "Editar implementación" para mantener la misma URL.
 
 ### 🚲 Panel de Domicilio (domicilio.html)
@@ -438,12 +445,45 @@ const observer = new IntersectionObserver(function(entries) {
 - **Productos:** Grid de 2 columnas con botones de mínimo 80px de altura (≤600px) para facilitar el tap
 - **Checkbox domicilio:** Toggle visual con estilo cyan que prependa `[DOMICILIO]` a las notas al enviar
 
-### 🔒 Protección con PIN (cierre.html)
+### 🔒 Protección con PIN (cierre.html e inventario.html)
 - **PIN:** 1130
+- **Páginas protegidas:** `cierre.html` e `inventario.html`
 - **Pantalla de bloqueo:** Cubre todo el contenido hasta ingresar el PIN correcto
 - **4 campos de entrada:** Auto-avanza al siguiente campo, inputmode numérico para teclado móvil
 - **Feedback visual:** Animación shake + mensaje "PIN incorrecto" si falla, limpia campos automáticamente
-- **Seguridad:** El contenido de cierre no se carga hasta validar el PIN
+- **Seguridad:** El contenido no se carga hasta validar el PIN
+
+### 🤝 Modo Al Costo (pedidos.html)
+- **Propósito:** Para clientes con precio preferencial, muestra precios al costo de producción
+- **Activación:** Cuarto botón del toggle de tipo de pedido (naranja)
+- **Marcador en notas:** `[AL COSTO]` se agrega automáticamente al pedido
+- **Comportamiento:**
+  - Al activar: todos los items del carrito cambian a precio costo
+  - Al desactivar: vuelven al precio de venta
+  - Al limpiar pedido: se resetea el modo
+- **Fuente de costos:** Columna `Costo` de la hoja Productos en Sheets (cargada al inicio)
+- **CSS:** `.tipo-check-costo.activo` con colores naranjas (#ff6b35)
+- **Banner informativo:** Aparece en naranja bajo el toggle cuando está activo
+
+### 📦 Inventario de Ingredientes (inventario.html)
+- **Protección:** PIN 1130 (igual que cierre.html)
+- **Ingredientes:** 16 ingredientes base (ING01–ING16) cubriendo todos los productos del menú
+- **Hoja:** `Ingredientes` en Google Sheets — ID | Nombre | Unidad | Stock | StockMinimo | UltimaActualizacion
+- **Estados de stock:** AGOTADO (stock≤0), CRÍTICO (stock<mínimo), BAJO (stock≤mínimo×1.5), OK
+- **Flujo de uso:**
+  1. Al inicio del día: reponer ingredientes con el botón "+ Reponer" por ingrediente
+  2. Al cierre: presionar "Descontar Consumo" seleccionando la fecha del día
+  3. El sistema lee los pedidos, aplica las recetas y descuenta automáticamente
+- **Recetas:** `RECETAS_DEFAULT` hardcodeado en Apps Script como fallback; soporta hoja opcional "Recetas"
+- **Botón "Crear hoja automáticamente":** Aparece si la hoja Ingredientes no existe; llama a `inicializarInventario` desde la UI
+- **Ordenamiento:** Tabla ordenada por urgencia (agotado → crítico → bajo → ok)
+
+### ⚡ Cache de Precios (pedidos.html y cocina.html)
+- **Mecanismo:** localStorage con TTL de 24 horas (`gosa_productos_cache`)
+- **Comportamiento:** Primera carga del día consulta Sheets; las siguientes usan cache (instantáneo)
+- **Botón 🔄:** En el nav de pedidos.html y cocina.html — fuerza actualización desde Sheets
+- **COSTOS:** Se construye desde el mismo array cacheado (un solo llamado a la API al día)
+- **Fallback:** Si falla la API, usa precios hardcodeados en sistema.js
 
 ## Contacto y Redes Sociales
 
@@ -502,11 +542,38 @@ Este proyecto es propiedad de GOSA Food Truck.
 ---
 
 **Última actualización:** Marzo 2026
-**Versión:** 3.8.0 - Sello al Cliente en pedidos + Domicilio en toggle + Clientes integrados a Sheets + Hoja Productos con costos
+**Versión:** 4.0.0 - Inventario + Modo Al Costo + Cache de precios
 
 ## Changelog
 
-### v3.8.0 (Marzo 2026) - ACTUAL
+### v4.0.0 (Marzo 2026) - ACTUAL
+
+**Inventario de ingredientes:**
+- `inventario.html`: Nueva página con PIN 1130, tabla de stock ordenada por urgencia, botón "Descontar Consumo" con selector de fecha y botones de reposición por ingrediente
+- `google-apps-script.js`: 4 nuevas acciones — `getInventario`, `inicializarInventario`, `descontarConsumo`, `reponerIngrediente`
+- `RECETAS_DEFAULT`: mapa hardcodeado en Apps Script con las recetas de los 26 productos del menú
+- Botón "Crear hoja automáticamente" en inventario.html aparece ante cualquier error de carga
+- Hoja `Ingredientes` en Google Sheets: ID | Nombre | Unidad | Stock | StockMinimo | UltimaActualizacion
+
+**Modo Al Costo en pedidos.html:**
+- Cuarto botón en el toggle de tipo de pedido (naranja) para clientes con precio preferencial
+- Activa precios de costo de producción en todo el carrito; se puede activar/desactivar en cualquier momento
+- Marcador `[AL COSTO]` en notas del pedido
+- `sistema.css`: layout del toggle cambiado a CSS grid 2×2 (`grid-template-columns: 1fr 1fr`) para evitar desbordamiento
+
+**Cache localStorage 24h para precios:**
+- `sistema.js`: `cargarProductos(forzar)` usa cache `gosa_productos_cache` con TTL de 24h
+- Primera carga del día llama a Sheets; siguientes cargas usan cache (instantáneo)
+- Botón 🔄 en nav de `pedidos.html` y `cocina.html` para forzar actualización manual
+- Elimina llamada duplicada a `getProductos` en `pedidos.html` (ahora una sola llamada al día)
+
+**Menú público (index.html):**
+- La Indomable y La Indomable Doble retiradas del menú público (siguen en pedidos vía Sheets)
+
+**Navegación:**
+- Enlace "Inventario" agregado al nav de pedidos.html, cocina.html, domicilio.html, cierre.html, clientes.html
+
+### v3.8.0 (Marzo 2026)
 
 **Domicilio como tercera opción del toggle:**
 - `pedidos.html` y `cocina.html`: Toggle ahora tiene 3 opciones: Para llevar, Para comer acá, Domicilio
