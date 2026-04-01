@@ -208,6 +208,12 @@
                     <div class="tipo-check" id="domicilioLabel" onclick="seleccionarTipo('domicilio')">
                         <i class="fas fa-motorcycle"></i> Domicilio
                     </div>
+                    <div class="tipo-check tipo-check-costo" id="costoLabel" onclick="seleccionarTipo('costo')">
+                        <i class="fas fa-handshake"></i> Al Costo
+                    </div>
+                </div>
+                <div id="bannerCosto" style="display:none; background:rgba(255,107,53,0.12); border:1px solid #ff6b35; border-radius:8px; padding:8px 12px; text-align:center; color:#ff9966; font-size:0.82rem; font-weight:600; letter-spacing:1px; margin-top:6px;">
+                    🤝 MODO AL COSTO ACTIVO — precios al costo de producción
                 </div>
                 <textarea id="pedidoNotas" placeholder="Notas del pedido (sin cebolla, etc.)"></textarea>
             </div>
@@ -281,7 +287,9 @@
     <script>
         // ========== ESTADO DEL PEDIDO ==========
         let pedidoActual = [];
-        let tipoPedido = null; // 'llevar' | 'comer' | null
+        let tipoPedido = null; // 'llevar' | 'comer' | 'domicilio' | 'costo' | null
+        let modoCosto = false;
+        let COSTOS = {}; // { productoId: costoValue }
 
         // ========== INICIALIZACIÓN ==========
         document.addEventListener('DOMContentLoaded', async function() {
@@ -293,6 +301,14 @@
 
             // Cargar precios desde Sheets (actualiza MENU; si falla usa precios locales)
             await GOSA.cargarProductos();
+
+            // Cargar costos de producción para modo Al Costo
+            try {
+                const resProductos = await GOSA.getProductos();
+                if (resProductos && resProductos.productos) {
+                    resProductos.productos.forEach(p => { COSTOS[p.id] = p.costo || 0; });
+                }
+            } catch(e) { /* sin costos, modo al costo usará precio de venta */ }
 
             // Cargar productos en pantalla
             cargarProductos();
@@ -357,10 +373,14 @@
             if (existente) {
                 existente.cantidad++;
             } else {
+                const precioVenta = producto.precio;
+                const precioCosto = COSTOS[producto.id] || precioVenta;
                 pedidoActual.push({
                     id: producto.id,
                     nombre: producto.nombre,
-                    precio: producto.precio,
+                    precio: modoCosto ? precioCosto : precioVenta,
+                    precioVenta: precioVenta,
+                    precioCosto: precioCosto,
                     cantidad: 1
                 });
             }
@@ -446,7 +466,7 @@
 
             const btnEnviar = document.getElementById('btnEnviar');
             const notas = document.getElementById('pedidoNotas').value.trim();
-            const marcador = tipoPedido === 'llevar' ? '[PARA LLEVAR]' : tipoPedido === 'comer' ? '[PARA COMER ACA]' : tipoPedido === 'domicilio' ? '[DOMICILIO]' : '';
+            const marcador = tipoPedido === 'llevar' ? '[PARA LLEVAR]' : tipoPedido === 'comer' ? '[PARA COMER ACA]' : tipoPedido === 'domicilio' ? '[DOMICILIO]' : tipoPedido === 'costo' ? '[AL COSTO]' : '';
             const notasFinal = marcador ? `${marcador} ${notas}` : notas;
 
             // Calcular total
@@ -511,27 +531,48 @@
         function limpiarPedido() {
             pedidoActual = [];
             tipoPedido = null;
+            modoCosto = false;
             document.getElementById('pedidoNotas').value = '';
-            document.getElementById('llevarLabel').classList.remove('activo');
-            document.getElementById('comerLabel').classList.remove('activo');
-            document.getElementById('domicilioLabel').classList.remove('activo');
+            ['llevarLabel','comerLabel','domicilioLabel','costoLabel'].forEach(id =>
+                document.getElementById(id).classList.remove('activo'));
+            document.getElementById('bannerCosto').style.display = 'none';
             actualizarPanelPedido();
             document.getElementById('pedidoPanel').classList.remove('expandido');
         }
 
         // ========== SELECCIONAR TIPO DE PEDIDO ==========
         function seleccionarTipo(tipo) {
-            // Si ya estaba activo, deseleccionar (toggle off)
+            const eraModoCosto = modoCosto;
+
+            // Toggle off si ya estaba activo
             if (tipoPedido === tipo) {
                 tipoPedido = null;
-                document.getElementById('llevarLabel').classList.remove('activo');
-                document.getElementById('comerLabel').classList.remove('activo');
+                modoCosto = false;
+                ['llevarLabel','comerLabel','domicilioLabel','costoLabel'].forEach(id =>
+                    document.getElementById(id).classList.remove('activo'));
+                document.getElementById('bannerCosto').style.display = 'none';
+                if (eraModoCosto) {
+                    pedidoActual.forEach(item => { item.precio = item.precioVenta; });
+                    actualizarPanelPedido();
+                }
                 return;
             }
+
             tipoPedido = tipo;
+            modoCosto = tipo === 'costo';
             document.getElementById('llevarLabel').classList.toggle('activo', tipo === 'llevar');
             document.getElementById('comerLabel').classList.toggle('activo', tipo === 'comer');
             document.getElementById('domicilioLabel').classList.toggle('activo', tipo === 'domicilio');
+            document.getElementById('costoLabel').classList.toggle('activo', tipo === 'costo');
+            document.getElementById('bannerCosto').style.display = tipo === 'costo' ? 'block' : 'none';
+
+            // Actualizar precios del carrito si cambió el modo costo
+            if (eraModoCosto !== modoCosto) {
+                pedidoActual.forEach(item => {
+                    item.precio = modoCosto ? item.precioCosto : item.precioVenta;
+                });
+                actualizarPanelPedido();
+            }
         }
 
         // ========== TOGGLE PANEL (MÓVIL) ==========

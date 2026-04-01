@@ -361,6 +361,12 @@ body {
     color: var(--gold);
 }
 
+.tipo-check-costo.activo {
+    background: rgba(255, 107, 53, 0.18);
+    border-color: #ff6b35;
+    color: #ff9966;
+}
+
 .tipo-check input[type="radio"] {
     display: none;
 }
