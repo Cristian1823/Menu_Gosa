@@ -163,6 +163,7 @@
             <a href="clientes.html" class="nav-btn">Clientes</a>
             <a href="inventario.html" class="nav-btn">Inventario</a>
             <a href="index.html" class="nav-btn">Menu</a>
+            <button class="nav-btn" id="btnActualizarPrecios" onclick="actualizarPrecios()" title="Actualizar precios desde Google Sheets">🔄</button>
         </nav>
     </header>
 
@@ -299,16 +300,11 @@
                 return;
             }
 
-            // Cargar precios desde Sheets (actualiza MENU; si falla usa precios locales)
-            await GOSA.cargarProductos();
-
-            // Cargar costos de producción para modo Al Costo
-            try {
-                const resProductos = await GOSA.getProductos();
-                if (resProductos && resProductos.productos) {
-                    resProductos.productos.forEach(p => { COSTOS[p.id] = p.costo || 0; });
-                }
-            } catch(e) { /* sin costos, modo al costo usará precio de venta */ }
+            // Cargar precios (cache local 24h o Sheets si es la primera vez del día)
+            const productos = await GOSA.cargarProductos();
+            if (productos && productos.length) {
+                productos.forEach(p => { COSTOS[p.id] = p.costo || 0; });
+            }
 
             // Cargar productos en pantalla
             cargarProductos();
@@ -316,6 +312,23 @@
             // Sincronizar pedidos locales pendientes
             GOSA.sincronizarPedidosLocales();
         });
+
+        // ========== ACTUALIZAR PRECIOS (forzar desde Sheets) ==========
+        async function actualizarPrecios() {
+            const btn = document.getElementById('btnActualizarPrecios');
+            btn.textContent = '⏳';
+            btn.disabled = true;
+            const productos = await GOSA.cargarProductos(true); // forzar = true
+            if (productos && productos.length) {
+                productos.forEach(p => { COSTOS[p.id] = p.costo || 0; });
+                cargarProductos();
+                GOSA.mostrarMensaje('✅ Precios actualizados desde Sheets', 'success');
+            } else {
+                GOSA.mostrarMensaje('⚠️ No se pudo actualizar, usando precios locales', 'warning');
+            }
+            btn.textContent = '🔄';
+            btn.disabled = false;
+        }
 
         // ========== CARGAR PRODUCTOS ==========
         function cargarProductos() {

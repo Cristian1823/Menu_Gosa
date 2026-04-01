@@ -81,6 +81,7 @@
             <a href="clientes.html" class="nav-btn">Clientes</a>
             <a href="inventario.html" class="nav-btn">Inventario</a>
             <a href="index.html" class="nav-btn">Menu</a>
+            <button class="nav-btn" id="btnActualizarPrecios" onclick="actualizarPrecios()" title="Actualizar precios desde Google Sheets">🔄</button>
         </nav>
     </header>
 
@@ -182,6 +183,17 @@
             if (tipo === 'comer') return '<div class="tipo-badge comer"><i class="fas fa-utensils"></i> PARA COMER ACÁ</div>';
             if (tipo === 'domicilio') return '<div class="tipo-badge domicilio"><i class="fas fa-motorcycle"></i> DOMICILIO</div>';
             return '';
+        }
+
+        // ========== ACTUALIZAR PRECIOS (forzar desde Sheets) ==========
+        async function actualizarPrecios() {
+            const btn = document.getElementById('btnActualizarPrecios');
+            btn.textContent = '⏳';
+            btn.disabled = true;
+            const ok = await GOSA.cargarProductos(true);
+            GOSA.mostrarMensaje(ok ? '✅ Precios actualizados desde Sheets' : '⚠️ No se pudo actualizar', ok ? 'success' : 'warning');
+            btn.textContent = '🔄';
+            btn.disabled = false;
         }
 
         // ========== INICIALIZACIÓN ==========

@@ -198,30 +198,54 @@ async function getProductos() {
     return await apiGet('getProductos');
 }
 
-// Cargar productos desde Sheets y actualizar MENU dinámicamente
-// Si falla, el MENU hardcodeado en este archivo sirve de respaldo
-async function cargarProductos() {
+// Cache de productos en localStorage (TTL: 24 horas)
+const CACHE_KEY_PRODUCTOS = 'gosa_productos_cache';
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+
+function _aplicarProductosAlMenu(productos) {
+    Object.keys(MENU).forEach(cat => { MENU[cat] = []; });
+    const catMap = {};
+    Object.keys(MENU).forEach(k => { catMap[k.toLowerCase()] = k; });
+    productos.forEach(p => {
+        const key = catMap[String(p.categoria).trim().toLowerCase()];
+        if (key !== undefined) {
+            MENU[key].push({ id: p.id, nombre: p.nombre, precio: p.precio });
+        }
+    });
+}
+
+// Cargar productos desde cache local o Sheets.
+// forzar=true ignora el cache y siempre llama a Sheets.
+// Retorna el array de productos (para construir COSTOS, etc.) o false si falla.
+async function cargarProductos(forzar = false) {
     try {
-        const result = await getProductos();
-        if (result.error || !result.productos || result.productos.length === 0) return false;
+        let productos = null;
 
-        // Vaciar categorías actuales
-        Object.keys(MENU).forEach(cat => { MENU[cat] = []; });
-
-        // Mapa de categoría en minúscula → clave real del MENU (tolera mayúsculas en Sheets)
-        const catMap = {};
-        Object.keys(MENU).forEach(k => { catMap[k.toLowerCase()] = k; });
-
-        // Rellenar desde Sheets
-        result.productos.forEach(p => {
-            const key = catMap[String(p.categoria).trim().toLowerCase()];
-            if (key !== undefined) {
-                MENU[key].push({ id: p.id, nombre: p.nombre, precio: p.precio });
+        if (!forzar) {
+            const cached = localStorage.getItem(CACHE_KEY_PRODUCTOS);
+            if (cached) {
+                const { timestamp, data } = JSON.parse(cached);
+                if ((Date.now() - timestamp) < CACHE_TTL_MS) {
+                    productos = data;
+                    const horas = Math.round((Date.now() - timestamp) / 3600000);
+                    console.log(`✅ Precios desde cache local (hace ${horas}h)`);
+                }
             }
-        });
+        }
 
-        console.log('✅ Precios cargados desde Google Sheets');
-        return true;
+        if (!productos) {
+            const result = await getProductos();
+            if (result.error || !result.productos || result.productos.length === 0) return false;
+            productos = result.productos;
+            localStorage.setItem(CACHE_KEY_PRODUCTOS, JSON.stringify({
+                timestamp: Date.now(),
+                data: productos
+            }));
+            console.log('✅ Precios actualizados desde Google Sheets');
+        }
+
+        _aplicarProductosAlMenu(productos);
+        return productos; // el caller puede usarlo para COSTOS u otros fines
     } catch (e) {
         console.warn('⚠️ Usando precios locales:', e.message);
         return false;
