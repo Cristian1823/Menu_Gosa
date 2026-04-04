@@ -197,6 +197,70 @@ header img:hover {
     font-style: italic;
 }
 
+/* ========== Slider Promocional ========== */
+.promo-slide {
+    display: none;
+}
+
+.promo-slide.active {
+    display: block;
+    animation: promo-fade 0.4s ease;
+}
+
+@keyframes promo-fade {
+    from { opacity: 0; transform: translateX(15px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.promo-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.promo-arrow {
+    background: rgba(255, 215, 0, 0.12);
+    border: 2px solid var(--gold-dark);
+    color: var(--gold);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.6em;
+    line-height: 1;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.promo-arrow:hover {
+    background: var(--gold);
+    color: var(--black);
+}
+
+.promo-dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.promo-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(255, 215, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.promo-dot.active {
+    background: var(--gold);
+    transform: scale(1.4);
+}
+
 /* ========== Main Content ========== */
 main {
     max-width: 1400px;

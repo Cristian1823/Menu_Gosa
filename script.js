@@ -285,6 +285,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     actualizarPreciosMenu();
 
+    // ========== Slider Promocional ==========
+    const promoSlides = document.querySelectorAll('.promo-slide');
+    const promoDots   = document.querySelectorAll('.promo-dot');
+    let promoActual   = 0;
+
+    function irAPromo(index) {
+        promoSlides[promoActual].classList.remove('active');
+        promoDots[promoActual].classList.remove('active');
+        promoActual = (index + promoSlides.length) % promoSlides.length;
+        promoSlides[promoActual].classList.add('active');
+        promoDots[promoActual].classList.add('active');
+    }
+
+    const prevBtn = document.getElementById('promo-prev');
+    const nextBtn = document.getElementById('promo-next');
+    if (prevBtn) prevBtn.addEventListener('click', () => irAPromo(promoActual - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => irAPromo(promoActual + 1));
+    promoDots.forEach((dot, i) => dot.addEventListener('click', () => irAPromo(i)));
+
     // ========== Log de inicio ==========
     console.log('%c🍔 GOSA Food Truck - Menú Digital 🍔', 'color: #FFD700; font-size: 20px; font-weight: bold;');
     console.log('%cDesarrollado con ❤️ para GOSA', 'color: #E0E0E0; font-size: 12px;');

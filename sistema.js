@@ -10,6 +10,7 @@ const MENU = {
     entradas: [
         { id: 'e1', nombre: 'Aritos Gosa', precio: 7000 },
         { id: 'e2', nombre: 'Bacon Gosa', precio: 7600 },
+        { id: 'e4', nombre: 'Totopos Gosa', precio: 7600 },
         { id: 'e3', nombre: 'Tender Gosa', precio: 8000 }
     ],
     perros: [
@@ -29,7 +30,9 @@ const MENU = {
         { id: 'h5', nombre: 'La Indomable', precio: 13500 },
         { id: 'h5d', nombre: 'La Indomable Doble', precio: 18000 },
         { id: 'h4', nombre: 'Madurita', precio: 13500 },
-        { id: 'h4d', nombre: 'Madurita Doble', precio: 18000 }
+        { id: 'h4d', nombre: 'Madurita Doble', precio: 18000 },
+        { id: 'h6', nombre: 'Alfa Pretzel', precio: 16000 },
+        { id: 'h6d', nombre: 'Alfa Pretzel Doble', precio: 22000 }
     ],
     salchipapas: [
         { id: 's1', nombre: 'Rapi Gosa', precio: 9000 },
@@ -50,7 +53,9 @@ const MENU = {
     combos: [
         { id: 'c1', nombre: 'Gaseosa o Jugo', precio: 2500 },
         { id: 'c2', nombre: 'Porcion de Papa (Combo)', precio: 4000 },
-        { id: 'c3', nombre: 'El Combo Completo', precio: 5000 }
+        { id: 'c3', nombre: 'El Combo Completo', precio: 5000 },
+        { id: 'c4h', nombre: 'Menu Infantil Hamburguesa', precio: 14500 },
+        { id: 'c4n', nombre: 'Menu Infantil Nuggets', precio: 14500 }
     ],
     comboDelMes: [
         { id: 'cm1', nombre: 'Combo del Mes', precio: 35000 },

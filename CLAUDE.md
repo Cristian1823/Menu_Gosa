@@ -65,12 +65,12 @@ Gosa/
 ### 2. Sistema de Navegación por Tabs
 El menú está organizado en categorías navegables con tabs sticky (ordenados por precio de menor a mayor):
 
-- **Entradas** - 3 opciones: Aritos Gosa, Bacon Gosa, Tender Gosa
+- **Entradas** - 4 opciones: Aritos Gosa, Bacon Gosa, Totopos Gosa, Tender Gosa
 - **Perros Calientes** - 5 variedades gourmet (Perro Ranchero, Chori Gosa, Tropical Gosa, Texas BBQ, Triple Gosa)
-- **Hamburguesas** - 4 tipos artesanales con opciones dobles (Gosa Burguer, Crispy Gosa, Gosa Balsamica, Madurita) — todas tienen versión doble (La Indomable retirada del menú público)
+- **Hamburguesas** - 5 tipos artesanales con opciones dobles (Gosa Burguer, Crispy Gosa, Gosa Balsamica, Madurita, Alfa Pretzel) — todas tienen versión doble (La Indomable retirada del menú público)
 - **Salchipapas** - 3 variedades: Rapi Gosa, Salchi Gosa, La Gosa Supreme
 - **Adicionales** - 9 complementos desde $1,000 hasta $4,000 COP
-- **Combos** - 3 agrandados especiales (Gaseosa/Jugo, Papa, Combo Completo)
+- **Combos** - 3 agrandados especiales + Menú Infantil (Gaseosa/Jugo, Papa, Combo Completo, Menú Infantil)
 - **Combo del Mes** - Combo especial con 3 opciones de precio ($35,000 / $38,000 / $42,000)
 
 ### 3. Diseño Visual
@@ -233,7 +233,8 @@ const observer = new IntersectionObserver(function(entries) {
 ### Entradas
 1. Aritos Gosa: $7,000
 2. Bacon Gosa: $7,600
-3. Tender Gosa: $8,000
+3. Totopos Gosa: $7,600
+4. Tender Gosa: $8,000
 
 ### Perros Calientes
 1. Perro Ranchero: $10,000
@@ -247,6 +248,7 @@ const observer = new IntersectionObserver(function(entries) {
 2. Crispy Gosa: $13,000 → Doble: $17,500
 3. Gosa Balsamica: $13,000 → Doble: $17,500
 4. Madurita: $13,500 → Doble: $18,000 ⭐ **ESPECIAL**
+5. Alfa Pretzel: $16,000 → Doble: $22,000 ⭐ **NUEVO**
 
 ### Salchipapas
 1. Rapi Gosa: $9,000
@@ -268,6 +270,7 @@ const observer = new IntersectionObserver(function(entries) {
 1. Gaseosa o Jugo: $2,500
 2. Porción de Papa: $4,000
 3. El Combo Completo (Papa + Bebida): $5,000 ⭐ **AHORRA**
+4. Menú Infantil: $14,500 ⭐ **NUEVO**
 
 ### Combo del Mes
 1. Combo del Mes: $35,000 ⭐ **DEL MES**

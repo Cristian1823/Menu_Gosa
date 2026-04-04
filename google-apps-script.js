@@ -550,7 +550,12 @@ const SHEET_NAME = 'Pedidos';
     'CHICHARRON':           { 'ING11': 1 },
     'PORCION DE PAPA':      { 'ING02': 1 },
     'PORCION DE PAPA (COMBO)': { 'ING02': 1 },
-    'EL COMBO COMPLETO':    { 'ING02': 1 }
+    'EL COMBO COMPLETO':    { 'ING02': 1 },
+    'TOTOPOS GOSA':         { 'ING18': 1 },
+    'ALFA PRETZEL':         { 'ING17': 1, 'ING14': 1, 'ING18': 1, 'ING06': 1, 'ING01': 3, 'ING03': 1 },
+    'ALFA PRETZEL DOBLE':   { 'ING17': 1, 'ING14': 2, 'ING18': 2, 'ING06': 2, 'ING01': 3, 'ING03': 1 },
+    'MENU INFANTIL HAMBURGUESA': { 'ING19': 1, 'ING14': 1, 'ING06': 1, 'ING03': 0.5, 'ING02': 1 },
+    'MENU INFANTIL NUGGETS':     { 'ING20': 6, 'ING02': 1 }
   };
 
   function inicializarInventario() {
@@ -584,7 +589,11 @@ const SHEET_NAME = 'Pedidos';
       ['ING13', 'Huevo',               'unidad',   0, 20],
       ['ING14', 'Carne hamburguesa',   'porción',  0, 30],
       ['ING15', 'Salchicha ranchera',  'unidad',   0, 40],
-      ['ING16', 'Porción de maíz',     'porción',  0, 15]
+      ['ING16', 'Porción de maíz',     'porción',  0, 15],
+      ['ING17', 'Pan de pretzel',      'unidad',   0, 20],
+      ['ING18', 'Queso amarillo',      'unidad',   0, 20],
+      ['ING19', 'Pan pequeño',         'unidad',   0, 10],
+      ['ING20', 'Nuggets',             'unidad',   0, 10]
     ];
 
     sheet.getRange(1, 1, datos.length, 5).setValues(datos);
