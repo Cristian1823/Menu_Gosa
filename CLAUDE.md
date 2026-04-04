@@ -544,12 +544,42 @@ Este proyecto es propiedad de GOSA Food Truck.
 
 ---
 
-**Última actualización:** Marzo 2026
-**Versión:** 4.0.0 - Inventario + Modo Al Costo + Cache de precios
+**Última actualización:** Abril 2026
+**Versión:** 4.1.0 - Nuevos productos + Slider promocional + Menú Infantil
 
 ## Changelog
 
-### v4.0.0 (Marzo 2026) - ACTUAL
+### v4.1.0 (Abril 2026) - ACTUAL
+
+**Nuevos productos:**
+- `Totopos Gosa` ($7,600) agregado a Entradas — totopos de maíz bañados en salsa cheddar
+- `Alfa Pretzel` ($16,000) + `Alfa Pretzel Doble` ($22,000) agregados a Hamburguesas con badge NUEVO
+- `Menu Infantil Hamburguesa` y `Menu Infantil Nuggets` ($14,500 c/u) en Combos — separados para inventario correcto
+
+**Menú Infantil — opción dual:**
+- Se divide en dos productos separados (Hamburguesa / Nuggets) para que el inventario descuente los ingredientes correctos según lo que pida el cliente
+- Recetas independientes: Hamburguesa usa ING19+ING14+ING06+ING03+ING02; Nuggets usa ING20×6+ING02
+- En Sheets `Productos`: dos filas c4h y c4n, mismo precio
+
+**Slider promocional (index.html):**
+- Sección de promoción reemplazada por slider lateral con 2 slides
+- Slide 1: Promoción del Mes (`images/Promocion.jpeg`)
+- Slide 2: Promoción Infantil (`images/combo infantil.jpeg`)
+- Badge dinámico: cambia entre "PROMOCIÓN DEL MES" y "PROMOCIÓN INFANTIL" según el slide activo
+- Navegación con flechas `‹ ›` y dots indicadores clickeables
+- Animación fade al cambiar slide
+- CSS: `.promo-slider`, `.promo-slide`, `.promo-nav`, `.promo-arrow`, `.promo-dots`, `.promo-dot`
+- JS: función `irAPromo(index)` en `script.js`
+
+**Nuevos ingredientes (ING17–ING20):**
+- ING17: Pan de pretzel
+- ING18: Queso amarillo
+- ING19: Pan pequeño
+- ING20: Nuggets
+- Agregados en `RECETAS_DEFAULT` y en `inicializarInventario` de `google-apps-script.js`
+- Agregados manualmente en hoja `Ingredientes` de Sheets
+
+### v4.0.0 (Marzo 2026)
 
 **Inventario de ingredientes:**
 - `inventario.html`: Nueva página con PIN 1130, tabla de stock ordenada por urgencia, botón "Descontar Consumo" con selector de fecha y botones de reposición por ingrediente
