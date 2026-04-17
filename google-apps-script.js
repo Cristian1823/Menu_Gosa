@@ -26,6 +26,10 @@ const SHEET_NAME = 'Pedidos';
           result = descontarConsumo(data.fecha);
         } else if (data.action === 'reponerIngrediente') {
           result = reponerIngrediente(data.id, Number(data.cantidad));
+        } else if (data.action === 'registrarSueldo') {
+          result = registrarSueldo(data.fecha, data.nombre, data.valor, data.nota);
+        } else if (data.action === 'eliminarSueldo') {
+          result = eliminarSueldo(data.id);
         } else {
           result = { error: 'Accion POST no valida' };
         }
@@ -42,6 +46,10 @@ const SHEET_NAME = 'Pedidos';
           result = getPedidosPorFecha(e.parameter.fecha);
         } else if (action === 'getResumen') {
           result = getResumenDia(e.parameter.fecha);
+        } else if (action === 'getResumenMes') {
+          result = getResumenMes(e.parameter.mes);
+        } else if (action === 'getResumenMesCompleto') {
+          result = getResumenMesCompleto(e.parameter.mes);
         } else if (action === 'getProductos') {
           result = getProductos();
         } else if (action === 'getCliente') {
@@ -52,6 +60,12 @@ const SHEET_NAME = 'Pedidos';
           result = getInventario();
         } else if (action === 'inicializarInventario') {
           result = inicializarInventario();
+        } else if (action === 'getSueldosFecha') {
+          result = getSueldosPorFecha(e.parameter.fecha);
+        } else if (action === 'getSueldosMes') {
+          result = getSueldosMes(e.parameter.mes);
+        } else if (action === 'getEmpleados') {
+          result = getEmpleados();
         } else {
           result = { error: 'Accion no valida' };
         }
@@ -714,6 +728,234 @@ const SHEET_NAME = 'Pedidos';
     }
 
     return { success: true, fecha: fecha, descuentos: descuentos };
+  }
+
+  function getResumenMes(mes) {
+    // mes = 'YYYY-MM'
+    var sheetPedidos  = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    var sheetProductos = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Productos');
+
+    var costosPorNombre = {};
+    if (sheetProductos) {
+      var prodRows = sheetProductos.getDataRange().getValues();
+      for (var k = 1; k < prodRows.length; k++) {
+        var nombreProd = String(prodRows[k][1]).trim().toUpperCase();
+        costosPorNombre[nombreProd] = {
+          costo: Number(prodRows[k][4]) || 0,
+          gastoOperativo: Number(prodRows[k][5]) || 0
+        };
+      }
+    }
+
+    var data = sheetPedidos.getDataRange().getValues();
+    var totalVentas = 0, totalCosto = 0, totalGastoOp = 0, cantidadPedidos = 0;
+    var productosCantidad = {}, productosIngreso = {}, productosCosto = {}, productosGastoOp = {};
+    var porDia = {};
+
+    for (var i = 1; i < data.length; i++) {
+      var fechaPedido = formatearFechaCell(data[i][1]);
+      var estado = String(data[i][5]).trim().toLowerCase();
+      if (!fechaPedido || fechaPedido.indexOf(mes) !== 0 || estado === 'cancelado') continue;
+
+      cantidadPedidos++;
+      var ventaPedido = Number(data[i][4]) || 0;
+      totalVentas += ventaPedido;
+      var costoPedido = 0;
+
+      var items = JSON.parse(data[i][3]);
+      for (var j = 0; j < items.length; j++) {
+        var item = items[j];
+        var nombreKey = String(item.nombre).trim().toUpperCase();
+
+        var info = costosPorNombre[nombreKey];
+        if (!info && nombreKey.indexOf(':') > -1) {
+          var partes     = nombreKey.split(':');
+          var nombreBase = partes[0].trim();
+          var composicion = partes[1] ? partes[1].trim() : '';
+          if (nombreBase.indexOf('COMBO DEL MES') > -1 && composicion) {
+            var subProductos = composicion.split('+');
+            var costoCombo = 0, gastoCombo = 0;
+            for (var m = 0; m < subProductos.length; m++) {
+              var subKey  = subProductos[m].trim().toUpperCase();
+              var subInfo = costosPorNombre[subKey] || { costo: 0, gastoOperativo: 0 };
+              costoCombo += subInfo.costo;
+              gastoCombo += subInfo.gastoOperativo;
+            }
+            info = { costo: costoCombo, gastoOperativo: gastoCombo };
+          } else {
+            info = costosPorNombre[nombreBase] || { costo: 0, gastoOperativo: 0 };
+          }
+        }
+        if (!info) info = { costo: 0, gastoOperativo: 0 };
+
+        if (!productosCantidad[item.nombre]) {
+          productosCantidad[item.nombre] = 0;
+          productosIngreso[item.nombre]  = 0;
+          productosCosto[item.nombre]    = 0;
+          productosGastoOp[item.nombre]  = 0;
+        }
+        productosCantidad[item.nombre] += item.cantidad;
+        productosIngreso[item.nombre]  += item.precio * item.cantidad;
+        productosCosto[item.nombre]    += info.costo * item.cantidad;
+        productosGastoOp[item.nombre]  += info.gastoOperativo * item.cantidad;
+        totalCosto    += info.costo * item.cantidad;
+        totalGastoOp  += info.gastoOperativo * item.cantidad;
+        costoPedido   += info.costo * item.cantidad;
+      }
+
+      if (!porDia[fechaPedido]) {
+        porDia[fechaPedido] = { fecha: fechaPedido, totalVentas: 0, totalCosto: 0, cantidadPedidos: 0 };
+      }
+      porDia[fechaPedido].totalVentas     += ventaPedido;
+      porDia[fechaPedido].totalCosto      += costoPedido;
+      porDia[fechaPedido].cantidadPedidos += 1;
+    }
+
+    var productos = [];
+    for (var nombre in productosCantidad) {
+      var ing = productosIngreso[nombre];
+      var cos = productosCosto[nombre];
+      var gop = productosGastoOp[nombre];
+      productos.push({ nombre: nombre, cantidad: productosCantidad[nombre],
+        ingreso: ing, costo: cos, gastoOperativo: gop, gananciaNeta: ing - cos });
+    }
+    productos.sort(function(a, b) { return b.cantidad - a.cantidad; });
+
+    var diasArray = [];
+    for (var fecha in porDia) {
+      var d = porDia[fecha];
+      diasArray.push({ fecha: d.fecha, totalVentas: d.totalVentas,
+        gananciaNeta: d.totalVentas - d.totalCosto, cantidadPedidos: d.cantidadPedidos });
+    }
+    diasArray.sort(function(a, b) { return a.fecha < b.fecha ? -1 : 1; });
+
+    return {
+      mes: mes,
+      totalVentas: totalVentas,
+      totalCosto: totalCosto,
+      totalGastoOp: totalGastoOp,
+      gananciaNeta: totalVentas - totalCosto,
+      cantidadPedidos: cantidadPedidos,
+      ticketPromedio: cantidadPedidos > 0 ? Math.round(totalVentas / cantidadPedidos) : 0,
+      productos: productos,
+      porDia: diasArray
+    };
+  }
+
+  // ══════════════════════════════════════════
+  // SUELDOS — hoja "Sueldos"
+  // Columnas: ID | Fecha | Nombre | Valor | Nota
+  // ══════════════════════════════════════════
+
+  function _getOCrearHojaSueldos() {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('Sueldos');
+    if (!sheet) {
+      sheet = ss.insertSheet('Sueldos');
+      var header = sheet.getRange(1, 1, 1, 5);
+      sheet.appendRow(['ID', 'Fecha', 'Nombre', 'Valor', 'Nota']);
+      header.setFontWeight('bold');
+      header.setBackground('#1a1a1a');
+      header.setFontColor('#FFD700');
+      sheet.setColumnWidth(1, 60);
+      sheet.setColumnWidth(2, 110);
+      sheet.setColumnWidth(3, 180);
+      sheet.setColumnWidth(4, 110);
+      sheet.setColumnWidth(5, 200);
+    }
+    return sheet;
+  }
+
+  function registrarSueldo(fecha, nombre, valor, nota) {
+    var sheet = _getOCrearHojaSueldos();
+    var lastRow = sheet.getLastRow();
+    var nuevoId = 1;
+    if (lastRow > 1) {
+      nuevoId = parseInt(sheet.getRange(lastRow, 1).getValue()) + 1;
+    }
+    sheet.appendRow([nuevoId, fecha, String(nombre).trim(), Number(valor) || 0, nota || '']);
+    return { success: true, id: nuevoId };
+  }
+
+  function eliminarSueldo(id) {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sueldos');
+    if (!sheet) return { error: 'Hoja Sueldos no encontrada' };
+    var data = sheet.getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]) === String(id)) {
+        sheet.deleteRow(i + 1);
+        return { success: true };
+      }
+    }
+    return { error: 'Registro no encontrado' };
+  }
+
+  function getSueldosPorFecha(fecha) {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sueldos');
+    if (!sheet) return { sueldos: [], total: 0 };
+    var data = sheet.getDataRange().getValues();
+    var sueldos = [];
+    var total = 0;
+    for (var i = 1; i < data.length; i++) {
+      var fechaRow = formatearFechaCell(data[i][1]);
+      if (fechaRow === fecha) {
+        var valor = Number(data[i][3]) || 0;
+        total += valor;
+        sueldos.push({
+          id:     String(data[i][0]),
+          fecha:  fechaRow,
+          nombre: String(data[i][2]),
+          valor:  valor,
+          nota:   String(data[i][4] || '')
+        });
+      }
+    }
+    return { sueldos: sueldos, total: total };
+  }
+
+  function getResumenMesCompleto(mes) {
+    var resumen   = getResumenMes(mes);
+    var sueldos   = getSueldosMes(mes);
+    var empResult = getEmpleados();
+    return { resumen: resumen, sueldos: sueldos, empleados: empResult.empleados || [] };
+  }
+
+  function getEmpleados() {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sueldos');
+    if (!sheet) return { empleados: [] };
+    var data = sheet.getDataRange().getValues();
+    var nombres = {};
+    for (var i = 1; i < data.length; i++) {
+      var nombre = String(data[i][2]).trim();
+      if (nombre) nombres[nombre] = true;
+    }
+    var lista = Object.keys(nombres).sort(function(a, b) {
+      return a.localeCompare(b, 'es');
+    });
+    return { empleados: lista };
+  }
+
+  function getSueldosMes(mes) {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sueldos');
+    if (!sheet) return { sueldos: [], total: 0 };
+    var data = sheet.getDataRange().getValues();
+    var sueldos = [];
+    var total = 0;
+    for (var i = 1; i < data.length; i++) {
+      var fechaRow = formatearFechaCell(data[i][1]);
+      if (fechaRow && fechaRow.indexOf(mes) === 0) {
+        var valor = Number(data[i][3]) || 0;
+        total += valor;
+        sueldos.push({
+          id:     String(data[i][0]),
+          fecha:  fechaRow,
+          nombre: String(data[i][2]),
+          valor:  valor,
+          nota:   String(data[i][4] || '')
+        });
+      }
+    }
+    return { sueldos: sueldos, total: total };
   }
 
   function reponerIngrediente(id, cantidad) {

@@ -198,6 +198,36 @@ async function getResumenDia(fecha) {
     return await apiGet('getResumen', { fecha });
 }
 
+// Obtener resumen mensual (mes = 'YYYY-MM')
+async function getResumenMes(mes) {
+    return await apiGet('getResumenMes', { mes });
+}
+
+async function getResumenMesCompleto(mes) {
+    return await apiGet('getResumenMesCompleto', { mes });
+}
+
+// ========== SUELDOS ==========
+async function registrarSueldo(fecha, nombre, valor, nota) {
+    return await apiPost({ action: 'registrarSueldo', fecha, nombre, valor: Number(valor), nota: nota || '' });
+}
+
+async function eliminarSueldo(id) {
+    return await apiPost({ action: 'eliminarSueldo', id });
+}
+
+async function getSueldosPorFecha(fecha) {
+    return await apiGet('getSueldosFecha', { fecha });
+}
+
+async function getSueldosMes(mes) {
+    return await apiGet('getSueldosMes', { mes });
+}
+
+async function getEmpleados() {
+    return await apiGet('getEmpleados');
+}
+
 // Obtener catálogo de productos desde la hoja Productos de Sheets
 async function getProductos() {
     return await apiGet('getProductos');
@@ -459,7 +489,14 @@ window.GOSA = {
     getPedidosHoy,
     getPedidosPorFecha,
     getResumenDia,
+    getResumenMes,
+    getResumenMesCompleto,
     getProductos,
+    registrarSueldo,
+    eliminarSueldo,
+    getSueldosPorFecha,
+    getSueldosMes,
+    getEmpleados,
     cargarProductos,
     actualizarEstadoPedido,
     actualizarPedido,
