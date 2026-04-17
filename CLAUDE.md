@@ -7,7 +7,7 @@ Este es un sitio web completo para **GOSA Food Truck**, un negocio de comida rá
 1. **Menú Digital** - Carta interactiva para clientes con descripciones y precios
 2. **Sistema de Pedidos** - Para toma de pedidos en el punto de venta
 3. **Panel de Cocina** - Para que el cocinero vea y gestione pedidos
-4. **Cierre de Caja** - Resumen de ventas, costos y ganancia del día
+4. **Cierre de Caja** - Resumen de ventas, costos, ganancia del día + reporte mensual con gráficas y control de sueldos
 5. **Panel Para Pago** - Para cobrar pedidos listos (reemplazó Domicilio)
 6. **Clientes Frecuentes** - Tarjeta de sellos y programa de fidelización
 7. **Inventario** - Control de stock de ingredientes con deducción por consumo y reposición
@@ -19,8 +19,9 @@ Este es un sitio web completo para **GOSA Food Truck**, un negocio de comida rá
 - **JavaScript (Vanilla)** - Sistema de tabs, navegación por teclado y efectos interactivos
 - **Font Awesome 6.0.0** - Iconos de redes sociales y categorías del menú
 - **Google Fonts (Bebas Neue + Inter)** - Tipografía dual: títulos impactantes y texto legible
-- **Google Sheets** - Base de datos para almacenar pedidos
+- **Google Sheets** - Base de datos para almacenar pedidos, sueldos e inventario
 - **Google Apps Script** - Backend/API para gestionar pedidos
+- **Chart.js 4.4** - Gráficas de barras y línea en el reporte mensual
 
 ## Estructura del Proyecto
 
@@ -44,7 +45,8 @@ Gosa/
 │
 ├── images/
 │   ├── logo.jpeg           # Logo del food truck
-│   ├── Promocion.jpeg      # Banner promocional
+│   ├── Promocion.jpeg      # Banner promocional (slide 1)
+│   ├── Promocion2.jpeg     # Banner promocional infantil (slide 2)
 │   └── fondo_tarjeta.PNG   # Fondo de imagen para tarjeta.html
 │
 └── videos/
@@ -388,7 +390,7 @@ const observer = new IntersectionObserver(function(entries) {
 ## Sistema de Pedidos
 
 ### Backend (Google Sheets + Apps Script)
-- **Almacenamiento:** Google Sheets (hojas: Pedidos, Productos, Clientes, Ingredientes)
+- **Almacenamiento:** Google Sheets (hojas: Pedidos, Productos, Clientes, Ingredientes, Sueldos)
 - **Comunicación:** JSONP (inyección de script tag) para evitar CORS
 - **Estados del pedido:** `pendiente` → `preparando` → `listo` → `entregado`
 - **Hojas de Google Sheets:**
@@ -396,6 +398,7 @@ const observer = new IntersectionObserver(function(entries) {
   - `Productos` — Columnas: ID | Nombre | Categoria | PrecioVenta | Costo | GastoOperativo | Activo (TRUE/FALSE)
   - `Clientes` — Columnas: ID | Nombre | Teléfono | Sellos | Canjes | FechaRegistro | UltimoSello
   - `Ingredientes` — Columnas: ID | Nombre | Unidad | Stock | StockMinimo | UltimaActualizacion
+  - `Sueldos` — Columnas: ID | Fecha | Nombre | Valor | Nota (auto-creada al registrar el primer sueldo)
 - **API Actions disponibles:**
   - `nuevoPedido` — Crea un pedido nuevo (appends row)
   - `actualizarEstado` — Cambia el estado (columna 6)
@@ -404,6 +407,8 @@ const observer = new IntersectionObserver(function(entries) {
   - `getHoy` — Retorna pedidos del día actual (filtra por fecha de hoy)
   - `getPorFecha` — Retorna pedidos de una fecha específica
   - `getResumen` — Resumen del día: totalVentas, totalCosto, totalGastoOp, gananciaNeta, ticketPromedio, productos con ingreso/costo/ganancia por ítem
+  - `getResumenMes` — Resumen de un mes: ventas/costos/ganancia por día y por producto (param `mes` formato YYYY-MM)
+  - `getResumenMesCompleto` — Llamada única que retorna `{ resumen, sueldos, empleados }` para el reporte mensual
   - `getProductos` — Retorna catálogo de la hoja Productos (solo activos)
   - `registrarCliente` — Registra nuevo cliente en hoja Clientes
   - `getCliente` — Busca cliente por ID
@@ -415,6 +420,11 @@ const observer = new IntersectionObserver(function(entries) {
   - `inicializarInventario` — Crea y puebla la hoja Ingredientes con los 16 ingredientes base
   - `descontarConsumo` — Lee pedidos de una fecha, aplica recetas y descuenta stock (POST con `fecha`)
   - `reponerIngrediente` — Suma cantidad al stock de un ingrediente (POST con `id` y `cantidad`)
+  - `registrarSueldo` — Agrega fila en hoja Sueldos (POST con `fecha`, `nombre`, `valor`, `nota`)
+  - `eliminarSueldo` — Elimina fila por ID de la hoja Sueldos (POST con `id`)
+  - `getSueldosFecha` — Retorna sueldos de una fecha específica (param `fecha`)
+  - `getSueldosMes` — Retorna sueldos de un mes completo (param `mes` formato YYYY-MM)
+  - `getEmpleados` — Retorna lista única de nombres de empleados de la hoja Sueldos
 - **Configuración:** La URL de la web app de Apps Script se define en `sistema.js` variable `API_URL`. Al modificar el código en Apps Script se debe hacer "Editar implementación" para mantener la misma URL.
 
 ### 🚲 Panel de Domicilio (domicilio.html)
@@ -488,6 +498,33 @@ const observer = new IntersectionObserver(function(entries) {
 - **COSTOS:** Se construye desde el mismo array cacheado (un solo llamado a la API al día)
 - **Fallback:** Si falla la API, usa precios hardcodeados en sistema.js
 
+### 📊 Reporte Mensual (cierre.html)
+- **Acceso:** Sección "Reporte Mensual" al final de cierre.html (protegida con PIN 1130)
+- **Selector de mes:** Input `month` con botón 🔄 para forzar refresco ignorando cache
+- **Tarjetas de resumen (7 cards):**
+  - Total Vendido, Total Pedidos, Ticket Promedio
+  - Ganancia luego de costos (verde), Total Costos (rojo)
+  - Total Sueldos (naranja), Ganancia Real (turquesa — después de costos Y sueldos)
+- **Producto Estrella:** Producto más vendido del mes con icono 🏆, unidades vendidas e ingreso total
+- **Gráfica (Chart.js 4.4):** Gráfica mixta — barras doradas (Ventas), barras verdes (Ganancia costos), línea turquesa (Ganancia Real)
+- **Tabla de días:** Columnas Día | Ventas | Costos | Ganancia costos | Sueldos | Ganancia Real — columnas de sueldos/gananciaReal solo aparecen si hay datos de sueldos en el mes
+- **Performance:**
+  - Llamada única `getResumenMesCompleto` (merges resumen + sueldos + empleados en 1 request)
+  - Cache localStorage: 30 min para mes actual (`gosa_mes_YYYY-MM`), 7 días para meses anteriores
+  - Botón 🔄 invalida cache y reconsulta desde Sheets
+
+### 💰 Sueldos del Día (cierre.html)
+- **Propósito:** Registrar lo pagado a empleados para calcular la Ganancia Real
+- **Flujo:** El administrador ingresa nombre + valor + nota opcional → se guarda en hoja Sueldos de Sheets
+- **Dropdown de empleados:** Se puebla automáticamente con nombres únicos históricos de la hoja Sueldos; incluye opción "➕ Nuevo empleado..." para escribir nombre nuevo
+- **Comportamiento del dropdown:**
+  - Primera vez (hoja vacía): solo muestra "➕ Nuevo empleado..." → aparece campo de texto
+  - Veces siguientes: lista de empleados previos + opción de nuevo
+- **Eliminar sueldo:** Botón ✕ por registro con confirmación; invalida cache del mes automáticamente
+- **Total del día:** Se muestra suma de sueldos del día en tiempo real
+- **Integración con reporte mensual:** Los sueldos del día se reflejan en la columna Sueldos y Ganancia Real de la tabla mensual
+- **CSS:** Color naranja `#ff6b35` para sueldos, turquesa `#00d4aa` para Ganancia Real
+
 ## Contacto y Redes Sociales
 
 - **WhatsApp:** +57 315 417 0484
@@ -545,11 +582,38 @@ Este proyecto es propiedad de GOSA Food Truck.
 ---
 
 **Última actualización:** Abril 2026
-**Versión:** 4.1.0 - Nuevos productos + Slider promocional + Menú Infantil
+**Versión:** 4.2.0 - Reporte mensual + Sueldos + Gráficas en cierre de caja
 
 ## Changelog
 
-### v4.1.0 (Abril 2026) - ACTUAL
+### v4.2.0 (Abril 2026) - ACTUAL
+
+**Reporte mensual en cierre.html:**
+- Selector de mes con 7 tarjetas: Total Vendido, Pedidos, Ticket Promedio, Ganancia costos, Total Costos, Total Sueldos, Ganancia Real
+- Producto estrella del mes con icono 🏆 y métricas de unidades e ingreso
+- Gráfica mixta Chart.js 4.4: barras doradas (Ventas) + barras verdes (Ganancia costos) + línea turquesa (Ganancia Real)
+- Tabla de días con columnas de sueldos y gananciaReal que aparecen solo si hay datos
+
+**Control de sueldos del día:**
+- Sección interactiva en cierre.html para registrar pagos a empleados
+- Dropdown dinámico de empleados poblado desde historial de hoja Sueldos; opción "➕ Nuevo empleado..."
+- Hoja `Sueldos` en Google Sheets: ID | Fecha | Nombre | Valor | Nota — auto-creada al primer registro
+- Eliminar sueldos con confirmación; invalida cache del mes automáticamente
+
+**Ganancia Real:**
+- Dos niveles de ganancia: "Ganancia luego de costos" (solo costos productos) vs "Ganancia Real" (costos + sueldos)
+- Se reflejan en las tarjetas del reporte mensual y en la gráfica de línea
+
+**Performance del reporte mensual:**
+- Llamada única `getResumenMesCompleto` (resumen + sueldos + empleados en 1 JSONP request)
+- Cache localStorage: 30 min mes actual, 7 días meses anteriores (`gosa_mes_YYYY-MM`)
+- Botón 🔄 fuerza reconsulta invalidando cache
+
+**Nuevas API actions:**
+- `getResumenMes`, `getResumenMesCompleto`, `getSueldosFecha`, `getSueldosMes`, `getEmpleados` (GET)
+- `registrarSueldo`, `eliminarSueldo` (POST)
+
+### v4.1.0 (Abril 2026)
 
 **Nuevos productos:**
 - `Totopos Gosa` ($7,600) agregado a Entradas — totopos de maíz bañados en salsa cheddar
