@@ -581,12 +581,23 @@ Este proyecto es propiedad de GOSA Food Truck.
 
 ---
 
-**Última actualización:** Abril 2026
-**Versión:** 4.2.0 - Reporte mensual + Sueldos + Gráficas en cierre de caja
+**Última actualización:** Mayo 2026
+**Versión:** 4.2.1 - Fixes de robustez en cierre de caja
 
 ## Changelog
 
-### v4.2.0 (Abril 2026) - ACTUAL
+### v4.2.1 (Mayo 2026) - ACTUAL
+
+**Fixes de robustez en `google-apps-script.js` y `sistema.js`:**
+- `formatearPrecio` en `sistema.js` defiende contra `null`/`undefined` con `Number() || 0` — evita crash `Cannot read properties of null (reading 'toLocaleString')`
+- `getResumenDia`: `item.precio` usa fallback a `precioVenta` de hoja Productos cuando el JSON del pedido trae precio 0 o faltante
+- `getResumenMes`: mismo fix de `item.precio` con fallback a `precioVenta`
+- `JSON.parse(data[i][3])` protegido con try/catch + skip de fila en `getPedidosHoy`, `getPedidosPorFecha`, `getResumenDia` y `getResumenMes`
+- `totalVentas += Number(data[i][4]) || 0` en `getResumenDia` para celdas vacías en hoja Pedidos
+- `item.cantidad` protegido con `Number() || 0` en todos los cálculos de resumen
+- `costosPorNombre` ahora incluye `precioVenta` (columna 3 de Productos) además de `costo` y `gastoOperativo`
+
+### v4.2.0 (Abril 2026)
 
 **Reporte mensual en cierre.html:**
 - Selector de mes con 7 tarjetas: Total Vendido, Pedidos, Ticket Promedio, Ganancia costos, Total Costos, Total Sueldos, Ganancia Real
