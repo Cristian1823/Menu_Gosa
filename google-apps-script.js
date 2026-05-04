@@ -230,14 +230,17 @@ const SHEET_NAME = 'Pedidos';
     for (var i = 1; i < data.length; i++) {
       var fechaPedido = formatearFechaCell(data[i][1]);
 
-      // Solo incluir pedidos de hoy
       if (fechaPedido === hoy) {
+        var itemsRaw = data[i][3];
+        if (!itemsRaw) continue;
+        var items;
+        try { items = JSON.parse(itemsRaw); } catch(e) { continue; }
         pedidos.push({
           id: data[i][0],
           fecha: fechaPedido,
           hora: formatearHoraCell(data[i][2]),
-          items: JSON.parse(data[i][3]),
-          total: data[i][4],
+          items: items,
+          total: Number(data[i][4]) || 0,
           estado: String(data[i][5]).trim().toLowerCase(),
           notas: data[i][6] || ''
         });
@@ -253,18 +256,20 @@ const SHEET_NAME = 'Pedidos';
 
     for (var i = 1; i < data.length; i++) {
       var fechaPedido = formatearFechaCell(data[i][1]);
-
-      if (fechaPedido === fecha) {
-        pedidos.push({
-          id: data[i][0],
-          fecha: fechaPedido,
-          hora: formatearHoraCell(data[i][2]),
-          items: JSON.parse(data[i][3]),
-          total: data[i][4],
-          estado: String(data[i][5]).trim().toLowerCase(),
-          notas: data[i][6] || ''
-        });
-      }
+      if (fechaPedido !== fecha) continue;
+      var itemsRaw = data[i][3];
+      if (!itemsRaw) continue;
+      var items;
+      try { items = JSON.parse(itemsRaw); } catch(e) { continue; }
+      pedidos.push({
+        id: data[i][0],
+        fecha: fechaPedido,
+        hora: formatearHoraCell(data[i][2]),
+        items: items,
+        total: Number(data[i][4]) || 0,
+        estado: String(data[i][5]).trim().toLowerCase(),
+        notas: data[i][6] || ''
+      });
     }
     return { pedidos: pedidos };
   }
@@ -322,7 +327,8 @@ const SHEET_NAME = 'Pedidos';
       for (var k = 1; k < prodRows.length; k++) {
         var nombreProd = String(prodRows[k][1]).trim().toUpperCase();
         costosPorNombre[nombreProd] = {
-          costo: Number(prodRows[k][4]) || 0,
+          precioVenta:    Number(prodRows[k][3]) || 0,
+          costo:          Number(prodRows[k][4]) || 0,
           gastoOperativo: Number(prodRows[k][5]) || 0
         };
       }
@@ -344,8 +350,11 @@ const SHEET_NAME = 'Pedidos';
 
       if (fechaPedido === fecha && estado !== 'cancelado') {
         cantidadPedidos++;
-        totalVentas += data[i][4];
-        var items = JSON.parse(data[i][3]);
+        totalVentas += Number(data[i][4]) || 0;
+        var itemsRaw = data[i][3];
+        if (!itemsRaw) continue;
+        var items;
+        try { items = JSON.parse(itemsRaw); } catch(e) { continue; }
 
         for (var j = 0; j < items.length; j++) {
           var item = items[j];
@@ -383,39 +392,41 @@ const SHEET_NAME = 'Pedidos';
             productosCosto[item.nombre] = 0;
             productosGastoOp[item.nombre] = 0;
           }
-          productosCantidad[item.nombre] += item.cantidad;
-          productosIngreso[item.nombre] += item.precio * item.cantidad;
-          productosCosto[item.nombre] += info.costo * item.cantidad;
-          productosGastoOp[item.nombre] += info.gastoOperativo * item.cantidad;
+          var precioItem = Number(item.precio) || (info.precioVenta || 0);
+          var cantItem   = Number(item.cantidad) || 0;
+          productosCantidad[item.nombre] += cantItem;
+          productosIngreso[item.nombre]  += precioItem * cantItem;
+          productosCosto[item.nombre]    += info.costo * cantItem;
+          productosGastoOp[item.nombre]  += info.gastoOperativo * cantItem;
 
-          totalCosto += info.costo * item.cantidad;
-          totalGastoOp += info.gastoOperativo * item.cantidad;
+          totalCosto   += info.costo * cantItem;
+          totalGastoOp += info.gastoOperativo * cantItem;
         }
       }
     }
 
     var productos = [];
     for (var nombre in productosCantidad) {
-      var ing = productosIngreso[nombre];
-      var cos = productosCosto[nombre];
-      var gop = productosGastoOp[nombre];
+      var ing = productosCosto[nombre]    !== undefined ? productosIngreso[nombre]  : 0;
+      var cos = productosCosto[nombre]    !== undefined ? productosCosto[nombre]    : 0;
+      var gop = productosGastoOp[nombre]  !== undefined ? productosGastoOp[nombre] : 0;
       productos.push({
         nombre: nombre,
         cantidad: productosCantidad[nombre],
-        ingreso: ing,
-        costo: cos,
-        gastoOperativo: gop,
-        gananciaNeta: ing - cos
+        ingreso: ing || 0,
+        costo: cos || 0,
+        gastoOperativo: gop || 0,
+        gananciaNeta: (ing || 0) - (cos || 0)
       });
     }
     productos.sort(function(a, b) { return b.cantidad - a.cantidad; });
 
     return {
       fecha: fecha,
-      totalVentas: totalVentas,
-      totalCosto: totalCosto,
-      totalGastoOp: totalGastoOp,
-      gananciaNeta: totalVentas - totalCosto,
+      totalVentas: totalVentas || 0,
+      totalCosto: totalCosto || 0,
+      totalGastoOp: totalGastoOp || 0,
+      gananciaNeta: (totalVentas || 0) - (totalCosto || 0),
       cantidadPedidos: cantidadPedidos,
       ticketPromedio: cantidadPedidos > 0 ? Math.round(totalVentas / cantidadPedidos) : 0,
       productos: productos
@@ -741,7 +752,8 @@ const SHEET_NAME = 'Pedidos';
       for (var k = 1; k < prodRows.length; k++) {
         var nombreProd = String(prodRows[k][1]).trim().toUpperCase();
         costosPorNombre[nombreProd] = {
-          costo: Number(prodRows[k][4]) || 0,
+          precioVenta:    Number(prodRows[k][3]) || 0,
+          costo:          Number(prodRows[k][4]) || 0,
           gastoOperativo: Number(prodRows[k][5]) || 0
         };
       }
@@ -762,7 +774,10 @@ const SHEET_NAME = 'Pedidos';
       totalVentas += ventaPedido;
       var costoPedido = 0;
 
-      var items = JSON.parse(data[i][3]);
+      var itemsRawMes = data[i][3];
+      if (!itemsRawMes) continue;
+      var items;
+      try { items = JSON.parse(itemsRawMes); } catch(e) { continue; }
       for (var j = 0; j < items.length; j++) {
         var item = items[j];
         var nombreKey = String(item.nombre).trim().toUpperCase();
@@ -794,13 +809,15 @@ const SHEET_NAME = 'Pedidos';
           productosCosto[item.nombre]    = 0;
           productosGastoOp[item.nombre]  = 0;
         }
-        productosCantidad[item.nombre] += item.cantidad;
-        productosIngreso[item.nombre]  += item.precio * item.cantidad;
-        productosCosto[item.nombre]    += info.costo * item.cantidad;
-        productosGastoOp[item.nombre]  += info.gastoOperativo * item.cantidad;
-        totalCosto    += info.costo * item.cantidad;
-        totalGastoOp  += info.gastoOperativo * item.cantidad;
-        costoPedido   += info.costo * item.cantidad;
+        var precioItemMes = Number(item.precio) || (info.precioVenta || 0);
+        var cantItemMes   = Number(item.cantidad) || 0;
+        productosCantidad[item.nombre] += cantItemMes;
+        productosIngreso[item.nombre]  += precioItemMes * cantItemMes;
+        productosCosto[item.nombre]    += info.costo * cantItemMes;
+        productosGastoOp[item.nombre]  += info.gastoOperativo * cantItemMes;
+        totalCosto    += info.costo * cantItemMes;
+        totalGastoOp  += info.gastoOperativo * cantItemMes;
+        costoPedido   += info.costo * cantItemMes;
       }
 
       if (!porDia[fechaPedido]) {

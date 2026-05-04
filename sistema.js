@@ -314,7 +314,8 @@ async function actualizarPedido(id, items, total, notas) {
 
 // Formatear precio en pesos colombianos
 function formatearPrecio(precio) {
-    return '$' + precio.toLocaleString('es-CO');
+    const valor = Number(precio) || 0;
+    return '$' + valor.toLocaleString('es-CO');
 }
 
 // Formatear fecha
