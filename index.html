@@ -87,6 +87,10 @@
                 <i class="fas fa-fire"></i>
                 <span>Entradas</span>
             </button>
+            <button class="tab-btn tab-ahumados" data-tab="ahumados">
+                <span class="tab-barril-emoji">🛢️</span>
+                <span>Ahumados</span>
+            </button>
             <button class="tab-btn" data-tab="perros">
                 <i class="fas fa-hotdog"></i>
                 <span>Perros</span>
@@ -135,17 +139,63 @@
                     </div>
                     <div class="menu-card">
                         <div class="card-header">
-                            <h3>TOTOPOS GOSA</h3>
-                            <span class="price">$7,600</span>
-                        </div>
-                        <p class="description">Totopos de maíz bañados en salsa cheddar</p>
-                    </div>
-                    <div class="menu-card">
-                        <div class="card-header">
                             <h3>TENDER GOSA</h3>
                             <span class="price">$8,000</span>
                         </div>
                         <p class="description">Crujientes nuggets de pollo apanados servidos con el toque único de la salsa artesanal de la casa</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Ahumados Gosa -->
+            <div class="tab-panel" id="ahumados">
+                <div class="ahumados-header">
+                    <img src="images/logo_barril.jpeg" alt="Ahumados GOSA" class="ahumados-logo">
+                    <div class="ahumados-prox-badge">
+                        <i class="fas fa-fire"></i>
+                        PRÓXIMAMENTE
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <p class="ahumados-desc">Nueva línea de ahumados artesanales GOSA</p>
+                </div>
+                <div class="menu-grid">
+                    <div class="menu-card ahumados-card">
+                        <div class="card-header">
+                            <h3>COSTI CHICHARRÓN GOSA</h3>
+                            <span class="precio-prox">- - -</span>
+                        </div>
+                        <p class="description">300 gr de costicchicharrón acompañado de papa criolla ahumada junto con una taza de guacamole y salsa de la casa</p>
+                    </div>
+                    <div class="menu-card ahumados-card">
+                        <div class="card-header">
+                            <h3>COSTILLITAS BBQ GOSA</h3>
+                            <span class="precio-prox">- - -</span>
+                        </div>
+                        <p class="description">300 gr de costilla BBQ acompañado de papa criolla ahumada y guacamole</p>
+                    </div>
+                    <div class="menu-card ahumados-card">
+                        <div class="card-header">
+                            <h3>ALITAS GOSA</h3>
+                            <span class="precio-prox">- - -</span>
+                        </div>
+                        <p class="description">8 alitas ahumadas acompañadas con guacamole y taza de BBQ</p>
+                    </div>
+                </div>
+                <div class="ahumados-adicionales">
+                    <h4 class="ahumados-adicionales-titulo">Adicionales</h4>
+                    <div class="extras-grid">
+                        <div class="extra-item ahumados-extra">
+                            <span class="extra-name">Papa Criolla</span>
+                            <span class="extra-price precio-prox-sm">- - -</span>
+                        </div>
+                        <div class="extra-item ahumados-extra">
+                            <span class="extra-name">Guacamole</span>
+                            <span class="extra-price precio-prox-sm">- - -</span>
+                        </div>
+                        <div class="extra-item ahumados-extra">
+                            <span class="extra-name">Salsa de la Casa</span>
+                            <span class="extra-price precio-prox-sm">- - -</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -218,17 +268,6 @@
                             <span class="double-price">$17,500</span>
                         </div>
                     </div>
-                    <div class="menu-card">
-                        <div class="card-header">
-                            <h3>GOSA BALSAMICA</h3>
-                            <span class="price">$13,000</span>
-                        </div>
-                        <p class="description">Pan brioche suavecito, salsa de la casa, carne artesanal jugosa, queso americano derretido, cebolla caramelizada en reducción de vinagre balsámico y tocineta crocante</p>
-                        <div class="double-option">
-                            <span class="double-name">Gosa Balsamica Doble</span>
-                            <span class="double-price">$17,500</span>
-                        </div>
-                    </div>
                     <div class="menu-card featured">
                         <div class="featured-badge">ESPECIAL</div>
                         <div class="card-header">
@@ -250,6 +289,18 @@
                         <p class="description">Pan pretzel acompañado de nuestra jugosa carne, con doble queso americano y cheddar fundido, coronada con crujientes aros de cebolla y tocineta dorada. Todo bañado en nuestras salsas de la casa, con un toque extra de nuestra nueva salsa de tocineta a parte.</p>
                         <div class="double-option">
                             <span class="double-name">Alfa Pretzel Doble</span>
+                            <span class="double-price">$22,000</span>
+                        </div>
+                    </div>
+                    <div class="menu-card featured">
+                        <div class="featured-badge">NUEVO</div>
+                        <div class="card-header">
+                            <h3>COLBY BACON</h3>
+                            <span class="price">$16,500</span>
+                        </div>
+                        <p class="description">Pan pretzel acompañado de nuestra jugosa carne, coronado con una grandiosa combinación de queso colby bacon, huevo y mermelada de tocineta salteada en whiskey, todo bañado en nuestra salsa de la casa y para darle el toque de frescura, nuestros vegetales</p>
+                        <div class="double-option">
+                            <span class="double-name">Colby Bacon Doble</span>
                             <span class="double-price">$22,000</span>
                         </div>
                     </div>
@@ -345,16 +396,6 @@
                         <h3>El Combo Completo</h3>
                         <p class="combo-description">Papa + Bebida</p>
                         <p class="combo-price">$5,000</p>
-                    </div>
-                </div>
-                <div class="menu-grid" style="margin-top:16px;">
-                    <div class="menu-card featured">
-                        <div class="featured-badge">NUEVO</div>
-                        <div class="card-header">
-                            <h3>MENÚ INFANTIL</h3>
-                            <span class="price">$14,500</span>
-                        </div>
-                        <p class="description">La diversión también viene en pequeño. Elige entre una deliciosa hamburguesa en pan brioche con carne, queso, tocineta y vegetales frescos, o 6 crujientes nuggets. Acompañado de papas a la francesa y jugo Hit para completar la felicidad. ¡Perfecto para los más pequeños… con todo el sabor GOSA!</p>
                     </div>
                 </div>
             </div>

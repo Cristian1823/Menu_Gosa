@@ -1023,6 +1023,12 @@
                     <div class="resumen-valor" style="color:#28a745">${GOSA.formatearPrecio(resumen.gananciaNeta)}</div>
                     <div class="resumen-label">Tu Ganancia</div>
                 </div>
+                ${resumen.totalSueldos > 0 ? `
+                <div class="resumen-card" style="border-color:#ff6b35">
+                    <div class="resumen-valor" style="color:#ff6b35">${GOSA.formatearPrecio(resumen.totalSueldos)}</div>
+                    <div class="resumen-label">Sueldos del Día</div>
+                </div>
+                ` : ''}
                 ` : ''}
                 <div class="resumen-card">
                     <div class="resumen-valor">${resumen.cantidadPedidos}</div>

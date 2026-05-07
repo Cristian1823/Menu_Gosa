@@ -329,7 +329,8 @@ const SHEET_NAME = 'Pedidos';
         costosPorNombre[nombreProd] = {
           precioVenta:    Number(prodRows[k][3]) || 0,
           costo:          Number(prodRows[k][4]) || 0,
-          gastoOperativo: Number(prodRows[k][5]) || 0
+          gastoOperativo: Number(prodRows[k][5]) || 0,
+          sueldos:        Number(prodRows[k][7]) || 0
         };
       }
     }
@@ -338,6 +339,7 @@ const SHEET_NAME = 'Pedidos';
     var totalVentas = 0;
     var totalCosto = 0;
     var totalGastoOp = 0;
+    var totalSueldos = 0;
     var cantidadPedidos = 0;
     var productosCantidad = {};
     var productosIngreso = {};
@@ -399,8 +401,9 @@ const SHEET_NAME = 'Pedidos';
           productosCosto[item.nombre]    += info.costo * cantItem;
           productosGastoOp[item.nombre]  += info.gastoOperativo * cantItem;
 
-          totalCosto   += info.costo * cantItem;
-          totalGastoOp += info.gastoOperativo * cantItem;
+          totalCosto    += info.costo * cantItem;
+          totalGastoOp  += info.gastoOperativo * cantItem;
+          totalSueldos  += (info.sueldos || 0) * cantItem;
         }
       }
     }
@@ -426,6 +429,7 @@ const SHEET_NAME = 'Pedidos';
       totalVentas: totalVentas || 0,
       totalCosto: totalCosto || 0,
       totalGastoOp: totalGastoOp || 0,
+      totalSueldos: totalSueldos || 0,
       gananciaNeta: (totalVentas || 0) - (totalCosto || 0),
       cantidadPedidos: cantidadPedidos,
       ticketPromedio: cantidadPedidos > 0 ? Math.round(totalVentas / cantidadPedidos) : 0,
@@ -579,6 +583,8 @@ const SHEET_NAME = 'Pedidos';
     'TOTOPOS GOSA':         { 'ING18': 1 },
     'ALFA PRETZEL':         { 'ING17': 1, 'ING14': 1, 'ING18': 1, 'ING06': 1, 'ING01': 3, 'ING03': 1 },
     'ALFA PRETZEL DOBLE':   { 'ING17': 1, 'ING14': 2, 'ING18': 2, 'ING06': 2, 'ING01': 3, 'ING03': 1 },
+    'COLBY BACON':          { 'ING22': 1, 'ING21': 1, 'ING13': 1, 'ING14': 1 },
+    'COLBY BACON DOBLE':    { 'ING22': 1, 'ING21': 2, 'ING13': 2, 'ING14': 2 },
     'MENU INFANTIL HAMBURGUESA': { 'ING19': 1, 'ING14': 1, 'ING06': 1, 'ING03': 0.5, 'ING02': 1 },
     'MENU INFANTIL NUGGETS':     { 'ING20': 6, 'ING02': 1 }
   };
@@ -618,7 +624,9 @@ const SHEET_NAME = 'Pedidos';
       ['ING17', 'Pan de pretzel',      'unidad',   0, 20],
       ['ING18', 'Queso amarillo',      'unidad',   0, 20],
       ['ING19', 'Pan pequeño',         'unidad',   0, 10],
-      ['ING20', 'Nuggets',             'unidad',   0, 10]
+      ['ING20', 'Nuggets',             'unidad',   0, 10],
+      ['ING21', 'Queso colby',         'unidad',   0, 20],
+      ['ING22', 'Pan pretzel colby',   'unidad',   0, 20]
     ];
 
     sheet.getRange(1, 1, datos.length, 5).setValues(datos);
@@ -754,7 +762,8 @@ const SHEET_NAME = 'Pedidos';
         costosPorNombre[nombreProd] = {
           precioVenta:    Number(prodRows[k][3]) || 0,
           costo:          Number(prodRows[k][4]) || 0,
-          gastoOperativo: Number(prodRows[k][5]) || 0
+          gastoOperativo: Number(prodRows[k][5]) || 0,
+          sueldos:        Number(prodRows[k][7]) || 0
         };
       }
     }

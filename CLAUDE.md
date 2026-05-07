@@ -67,12 +67,12 @@ Gosa/
 ### 2. Sistema de Navegación por Tabs
 El menú está organizado en categorías navegables con tabs sticky (ordenados por precio de menor a mayor):
 
-- **Entradas** - 4 opciones: Aritos Gosa, Bacon Gosa, Totopos Gosa, Tender Gosa
+- **Entradas** - 3 opciones: Aritos Gosa, Bacon Gosa, Tender Gosa
 - **Perros Calientes** - 5 variedades gourmet (Perro Ranchero, Chori Gosa, Tropical Gosa, Texas BBQ, Triple Gosa)
-- **Hamburguesas** - 5 tipos artesanales con opciones dobles (Gosa Burguer, Crispy Gosa, Gosa Balsamica, Madurita, Alfa Pretzel) — todas tienen versión doble (La Indomable retirada del menú público)
+- **Hamburguesas** - 5 tipos artesanales con opciones dobles (Gosa Burguer, Crispy Gosa, Madurita, Alfa Pretzel, Colby Bacon) — todas tienen versión doble (La Indomable y Gosa Balsamica retiradas del menú público)
 - **Salchipapas** - 3 variedades: Rapi Gosa, Salchi Gosa, La Gosa Supreme
 - **Adicionales** - 9 complementos desde $1,000 hasta $4,000 COP
-- **Combos** - 3 agrandados especiales + Menú Infantil (Gaseosa/Jugo, Papa, Combo Completo, Menú Infantil)
+- **Combos** - 3 agrandados especiales (Gaseosa/Jugo, Papa, Combo Completo)
 - **Combo del Mes** - Combo especial con 3 opciones de precio ($35,000 / $38,000 / $42,000)
 
 ### 3. Diseño Visual
@@ -235,8 +235,7 @@ const observer = new IntersectionObserver(function(entries) {
 ### Entradas
 1. Aritos Gosa: $7,000
 2. Bacon Gosa: $7,600
-3. Totopos Gosa: $7,600
-4. Tender Gosa: $8,000
+3. Tender Gosa: $8,000
 
 ### Perros Calientes
 1. Perro Ranchero: $10,000
@@ -248,9 +247,9 @@ const observer = new IntersectionObserver(function(entries) {
 ### Hamburguesas (con opciones dobles)
 1. Gosa Burguer: $10,000 → Doble: $14,500
 2. Crispy Gosa: $13,000 → Doble: $17,500
-3. Gosa Balsamica: $13,000 → Doble: $17,500
-4. Madurita: $13,500 → Doble: $18,000 ⭐ **ESPECIAL**
-5. Alfa Pretzel: $16,000 → Doble: $22,000 ⭐ **NUEVO**
+3. Madurita: $13,500 → Doble: $18,000 ⭐ **ESPECIAL**
+4. Alfa Pretzel: $16,000 → Doble: $22,000 ⭐ **NUEVO**
+5. Colby Bacon: $16,500 → Doble: $22,000 ⭐ **NUEVO**
 
 ### Salchipapas
 1. Rapi Gosa: $9,000
@@ -272,7 +271,6 @@ const observer = new IntersectionObserver(function(entries) {
 1. Gaseosa o Jugo: $2,500
 2. Porción de Papa: $4,000
 3. El Combo Completo (Papa + Bebida): $5,000 ⭐ **AHORRA**
-4. Menú Infantil: $14,500 ⭐ **NUEVO**
 
 ### Combo del Mes
 1. Combo del Mes: $35,000 ⭐ **DEL MES**
@@ -381,9 +379,9 @@ const observer = new IntersectionObserver(function(entries) {
 - **Precios dobles (menú público index.html):**
   - Gosa Burguer Doble: +$4,500 (total $14,500)
   - Crispy Gosa Doble: +$4,500 (total $17,500)
-  - Gosa Balsamica Doble: +$4,500 (total $17,500)
   - Madurita Doble: +$4,500 (total $18,000)
-- **Nota:** La Indomable retirada del menú público (index.html) pero sigue activa en pedidos.html vía hoja Productos de Sheets (Activo=TRUE/FALSE)
+  - Colby Bacon Doble: +$5,500 (total $22,000)
+- **Nota:** La Indomable y Gosa Balsamica retiradas del menú público (index.html); siguen en Sheets con Activo=FALSE
 - **Ubicación:** Debajo de la descripción de cada hamburguesa (index.html)
 - **Estilos CSS:** `.double-option`, `.double-name`, `.double-price` (style.css:404-431)
 
@@ -582,11 +580,25 @@ Este proyecto es propiedad de GOSA Food Truck.
 ---
 
 **Última actualización:** Mayo 2026
-**Versión:** 4.2.1 - Fixes de robustez en cierre de caja
+**Versión:** 4.2.3 - Nueva hamburguesa Colby Bacon
 
 ## Changelog
 
-### v4.2.1 (Mayo 2026) - ACTUAL
+### v4.2.3 (Mayo 2026) - ACTUAL
+
+**Nueva hamburguesa:**
+- `Colby Bacon` ($16,500) + `Colby Bacon Doble` ($22,000) agregados a Hamburguesas con badge NUEVO
+- Pan pretzel, queso colby bacon, huevo y mermelada de tocineta salteada en whiskey, salsa de la casa y vegetales
+- Ya agregado en hoja Productos de Sheets
+
+### v4.2.2 (Mayo 2026)
+
+**Retiro de productos del menú público (index.html):**
+- `Totopos Gosa` retirado de Entradas (Activo=FALSE en Sheets)
+- `Gosa Balsamica` (sencilla y doble) retirada de Hamburguesas (Activo=FALSE en Sheets)
+- `Menú Infantil` (Hamburguesa y Nuggets) retirado de Combos (Activo=FALSE en Sheets)
+
+### v4.2.1 (Mayo 2026)
 
 **Fixes de robustez en `google-apps-script.js` y `sistema.js`:**
 - `formatearPrecio` en `sistema.js` defiende contra `null`/`undefined` con `Number() || 0` — evita crash `Cannot read properties of null (reading 'toLocaleString')`
