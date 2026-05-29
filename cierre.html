@@ -917,9 +917,9 @@
 
                 // Guardar resumen por línea y mostrar toggle
                 resumenPorLinea = {
-                    total:    Object.assign({}, resumen.total, { cantidadPedidos: resumen.cantidadPedidos, ticketPromedio: resumen.ticketPromedio }),
-                    gosa:     resumen.gosa,
-                    ahumados: resumen.ahumados
+                    total:    Object.assign({}, resumen.total, { cantidadPedidos: resumen.cantidadPedidos, ticketPromedio: resumen.ticketPromedio, totalSueldos: 0 }),
+                    gosa:     Object.assign({}, resumen.gosa,     { totalSueldos: 0 }),
+                    ahumados: Object.assign({}, resumen.ahumados, { totalSueldos: 0 })
                 };
                 document.getElementById('lineaToggle').style.display = 'flex';
 
@@ -1149,10 +1149,14 @@
                     <div class="resumen-valor" style="color:#28a745">${GOSA.formatearPrecio(resumen.gananciaNeta)}</div>
                     <div class="resumen-label">Tu Ganancia</div>
                 </div>
-                ${resumen.totalSueldos > 0 ? `
+                ${resumen.totalSueldos !== undefined ? `
                 <div class="resumen-card" style="border-color:#ff6b35">
                     <div class="resumen-valor" style="color:#ff6b35">${GOSA.formatearPrecio(resumen.totalSueldos)}</div>
                     <div class="resumen-label">Sueldos del Día</div>
+                </div>
+                <div class="resumen-card destacado" style="border-color:#00d4aa">
+                    <div class="resumen-valor" style="color:#00d4aa">${GOSA.formatearPrecio((resumen.gananciaNeta || 0) - resumen.totalSueldos)}</div>
+                    <div class="resumen-label">Ganancia Real</div>
                 </div>
                 ` : ''}
                 ` : ''}
