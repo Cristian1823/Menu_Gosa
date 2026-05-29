@@ -1,4 +1,5 @@
-const SHEET_NAME = 'Pedidos';                                                                                                                                                                                                                           
+const SHEET_NAME = 'Pedidos';
+var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];                                                                                                                                                                                                                           
                                                                                                                                                                                                                                                           
   function doGet(e) {
     var result;
@@ -317,123 +318,156 @@ const SHEET_NAME = 'Pedidos';
   }
 
   function getResumenDia(fecha) {
-    var sheetPedidos = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    var sheetPedidos   = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
     var sheetProductos = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Productos');
 
-    // Construir lookup de costos por nombre (normalizado)
+    // Lookup: nombre → {costos} y nombre → linea ('gosa'|'ahumados')
     var costosPorNombre = {};
+    var lineaPorNombre  = {};
     if (sheetProductos) {
       var prodRows = sheetProductos.getDataRange().getValues();
       for (var k = 1; k < prodRows.length; k++) {
-        var nombreProd = String(prodRows[k][1]).trim().toUpperCase();
-        costosPorNombre[nombreProd] = {
+        var prodId    = String(prodRows[k][0]).trim().toLowerCase();
+        var nomProd   = String(prodRows[k][1]).trim().toUpperCase();
+        costosPorNombre[nomProd] = {
           precioVenta:    Number(prodRows[k][3]) || 0,
           costo:          Number(prodRows[k][4]) || 0,
-          gastoOperativo: Number(prodRows[k][5]) || 0,
-          sueldos:        Number(prodRows[k][7]) || 0
+          gastoOperativo: Number(prodRows[k][5]) || 0
         };
+        lineaPorNombre[nomProd] = IDS_AHUMADOS.indexOf(prodId) > -1 ? 'ahumados' : 'gosa';
       }
     }
+
+    function getCostoInfo(nombreKey) {
+      var info = costosPorNombre[nombreKey];
+      if (!info && nombreKey.indexOf(':') > -1) {
+        var partes     = nombreKey.split(':');
+        var nombreBase = partes[0].trim();
+        var composicion = partes[1] ? partes[1].trim() : '';
+        if (nombreBase.indexOf('COMBO DEL MES') > -1 && composicion) {
+          var subs = composicion.split('+');
+          var cc = 0, gc = 0;
+          for (var m = 0; m < subs.length; m++) {
+            var si = costosPorNombre[subs[m].trim().toUpperCase()] || { costo: 0, gastoOperativo: 0 };
+            cc += si.costo; gc += si.gastoOperativo;
+          }
+          return { costo: cc, gastoOperativo: gc, precioVenta: 0 };
+        }
+        info = costosPorNombre[nombreBase];
+      }
+      return info || { costo: 0, gastoOperativo: 0, precioVenta: 0 };
+    }
+
+    function getLinea(nombreKey) {
+      if (lineaPorNombre[nombreKey]) return lineaPorNombre[nombreKey];
+      if (nombreKey.indexOf(':') > -1) {
+        var base = nombreKey.split(':')[0].trim();
+        if (lineaPorNombre[base]) return lineaPorNombre[base];
+      }
+      return 'gosa';
+    }
+
+    // Acumuladores por línea
+    var acc = {
+      gosa:     { v: 0, c: 0, g: 0, prods: {} },
+      ahumados: { v: 0, c: 0, g: 0, prods: {} }
+    };
+    var totalVentas = 0, totalCosto = 0, totalGastoOp = 0, cantidadPedidos = 0;
 
     var data = sheetPedidos.getDataRange().getValues();
-    var totalVentas = 0;
-    var totalCosto = 0;
-    var totalGastoOp = 0;
-    var totalSueldos = 0;
-    var cantidadPedidos = 0;
-    var productosCantidad = {};
-    var productosIngreso = {};
-    var productosCosto = {};
-    var productosGastoOp = {};
-
     for (var i = 1; i < data.length; i++) {
       var fechaPedido = formatearFechaCell(data[i][1]);
-      var estado = String(data[i][5]).trim().toLowerCase();
+      var estado      = String(data[i][5]).trim().toLowerCase();
+      if (fechaPedido !== fecha || estado === 'cancelado') continue;
 
-      if (fechaPedido === fecha && estado !== 'cancelado') {
-        cantidadPedidos++;
-        totalVentas += Number(data[i][4]) || 0;
-        var itemsRaw = data[i][3];
-        if (!itemsRaw) continue;
-        var items;
-        try { items = JSON.parse(itemsRaw); } catch(e) { continue; }
+      cantidadPedidos++;
+      totalVentas += Number(data[i][4]) || 0;
 
-        for (var j = 0; j < items.length; j++) {
-          var item = items[j];
-          var nombreKey = String(item.nombre).trim().toUpperCase();
+      var itemsRaw = data[i][3];
+      if (!itemsRaw) continue;
+      var items;
+      try { items = JSON.parse(itemsRaw); } catch(e) { continue; }
 
-          // Buscar costo: nombre exacto, luego composicion de combo (parte tras ":"), luego nombre base
-          var info = costosPorNombre[nombreKey];
-          if (!info && nombreKey.indexOf(':') > -1) {
-            var partes = nombreKey.split(':');
-            var nombreBase = partes[0].trim();
-            var composicion = partes[1] ? partes[1].trim() : '';
-            // Si el base es un combo del mes, sumar costos de productos de la composicion
-            if (nombreBase.indexOf('COMBO DEL MES') > -1 && composicion) {
-              var subProductos = composicion.split('+');
-              var costoCombo = 0;
-              var gastoCombo = 0;
-              for (var k = 0; k < subProductos.length; k++) {
-                var subKey = subProductos[k].trim().toUpperCase();
-                var subInfo = costosPorNombre[subKey] || { costo: 0, gastoOperativo: 0 };
-                costoCombo += subInfo.costo;
-                gastoCombo += subInfo.gastoOperativo;
-              }
-              info = { costo: costoCombo, gastoOperativo: gastoCombo };
-            } else {
-              info = costosPorNombre[nombreBase] || { costo: 0, gastoOperativo: 0 };
-            }
-          }
-          if (!info) {
-            info = { costo: 0, gastoOperativo: 0 };
-          }
+      for (var j = 0; j < items.length; j++) {
+        var item      = items[j];
+        var nKey      = String(item.nombre).trim().toUpperCase();
+        var info      = getCostoInfo(nKey);
+        var linea     = getLinea(nKey);
+        var cant      = Number(item.cantidad) || 0;
+        var precio    = Number(item.precio) || (info.precioVenta || 0);
+        var ingreso   = precio * cant;
+        var costo     = info.costo * cant;
+        var gasto     = info.gastoOperativo * cant;
 
-          if (!productosCantidad[item.nombre]) {
-            productosCantidad[item.nombre] = 0;
-            productosIngreso[item.nombre] = 0;
-            productosCosto[item.nombre] = 0;
-            productosGastoOp[item.nombre] = 0;
-          }
-          var precioItem = Number(item.precio) || (info.precioVenta || 0);
-          var cantItem   = Number(item.cantidad) || 0;
-          productosCantidad[item.nombre] += cantItem;
-          productosIngreso[item.nombre]  += precioItem * cantItem;
-          productosCosto[item.nombre]    += info.costo * cantItem;
-          productosGastoOp[item.nombre]  += info.gastoOperativo * cantItem;
+        totalCosto   += costo;
+        totalGastoOp += gasto;
 
-          totalCosto    += info.costo * cantItem;
-          totalGastoOp  += info.gastoOperativo * cantItem;
-          totalSueldos  += (info.sueldos || 0) * cantItem;
+        var bucket = acc[linea];
+        bucket.v += ingreso;
+        bucket.c += costo;
+        bucket.g += gasto;
+
+        if (!bucket.prods[item.nombre]) {
+          bucket.prods[item.nombre] = { nombre: item.nombre, cantidad: 0, ingreso: 0, costo: 0, gastoOperativo: 0 };
         }
+        bucket.prods[item.nombre].cantidad     += cant;
+        bucket.prods[item.nombre].ingreso      += ingreso;
+        bucket.prods[item.nombre].costo        += costo;
+        bucket.prods[item.nombre].gastoOperativo += gasto;
       }
     }
 
-    var productos = [];
-    for (var nombre in productosCantidad) {
-      var ing = productosCosto[nombre]    !== undefined ? productosIngreso[nombre]  : 0;
-      var cos = productosCosto[nombre]    !== undefined ? productosCosto[nombre]    : 0;
-      var gop = productosGastoOp[nombre]  !== undefined ? productosGastoOp[nombre] : 0;
-      productos.push({
-        nombre: nombre,
-        cantidad: productosCantidad[nombre],
-        ingreso: ing || 0,
-        costo: cos || 0,
-        gastoOperativo: gop || 0,
-        gananciaNeta: (ing || 0) - (cos || 0)
-      });
+    function buildLinea(bucket) {
+      var prods = [];
+      for (var n in bucket.prods) {
+        var p = bucket.prods[n];
+        p.gananciaNeta = p.ingreso - p.costo;
+        prods.push(p);
+      }
+      prods.sort(function(a, b) { return b.cantidad - a.cantidad; });
+      return {
+        totalVentas:    bucket.v,
+        totalCosto:     bucket.c,
+        totalGastoOp:   bucket.g,
+        gananciaNeta:   bucket.v - bucket.c,
+        productos:      prods
+      };
     }
-    productos.sort(function(a, b) { return b.cantidad - a.cantidad; });
+
+    // Productos totales (gosa + ahumados)
+    var allProds = {};
+    function mergeProds(bucket) {
+      for (var n in bucket.prods) {
+        if (!allProds[n]) allProds[n] = { nombre: n, cantidad: 0, ingreso: 0, costo: 0, gastoOperativo: 0 };
+        allProds[n].cantidad       += bucket.prods[n].cantidad;
+        allProds[n].ingreso        += bucket.prods[n].ingreso;
+        allProds[n].costo          += bucket.prods[n].costo;
+        allProds[n].gastoOperativo += bucket.prods[n].gastoOperativo;
+      }
+    }
+    mergeProds(acc.gosa);
+    mergeProds(acc.ahumados);
+    var totalProds = [];
+    for (var nn in allProds) {
+      var tp = allProds[nn];
+      tp.gananciaNeta = tp.ingreso - tp.costo;
+      totalProds.push(tp);
+    }
+    totalProds.sort(function(a, b) { return b.cantidad - a.cantidad; });
 
     return {
-      fecha: fecha,
-      totalVentas: totalVentas || 0,
-      totalCosto: totalCosto || 0,
-      totalGastoOp: totalGastoOp || 0,
-      totalSueldos: totalSueldos || 0,
-      gananciaNeta: (totalVentas || 0) - (totalCosto || 0),
+      fecha:           fecha,
       cantidadPedidos: cantidadPedidos,
-      ticketPromedio: cantidadPedidos > 0 ? Math.round(totalVentas / cantidadPedidos) : 0,
-      productos: productos
+      ticketPromedio:  cantidadPedidos > 0 ? Math.round(totalVentas / cantidadPedidos) : 0,
+      gosa:            buildLinea(acc.gosa),
+      ahumados:        buildLinea(acc.ahumados),
+      total: {
+        totalVentas:  totalVentas,
+        totalCosto:   totalCosto,
+        totalGastoOp: totalGastoOp,
+        gananciaNeta: totalVentas - totalCosto,
+        productos:    totalProds
+      }
     };
   }
 
@@ -892,14 +926,15 @@ const SHEET_NAME = 'Pedidos';
     return sheet;
   }
 
-  function registrarSueldo(fecha, nombre, valor, nota) {
+  function registrarSueldo(fecha, nombre, valor, nota, linea) {
     var sheet = _getOCrearHojaSueldos();
     var lastRow = sheet.getLastRow();
     var nuevoId = 1;
     if (lastRow > 1) {
       nuevoId = parseInt(sheet.getRange(lastRow, 1).getValue()) + 1;
     }
-    sheet.appendRow([nuevoId, fecha, String(nombre).trim(), Number(valor) || 0, nota || '']);
+    var lineaVal = String(linea || 'gosa').trim().toLowerCase();
+    sheet.appendRow([nuevoId, fecha, String(nombre).trim(), Number(valor) || 0, nota || '', lineaVal]);
     return { success: true, id: nuevoId };
   }
 
@@ -932,7 +967,8 @@ const SHEET_NAME = 'Pedidos';
           fecha:  fechaRow,
           nombre: String(data[i][2]),
           valor:  valor,
-          nota:   String(data[i][4] || '')
+          nota:   String(data[i][4] || ''),
+          linea:  String(data[i][5] || 'gosa').trim().toLowerCase()
         });
       }
     }

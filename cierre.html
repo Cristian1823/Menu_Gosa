@@ -398,6 +398,59 @@
             margin-bottom: 14px;
         }
 
+        /* ===== TOGGLE LÍNEA DE NEGOCIO ===== */
+        .linea-toggle {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 18px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 12px;
+            padding: 5px;
+        }
+
+        .linea-btn {
+            flex: 1;
+            padding: 10px 8px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: var(--gray-light);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1em;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .linea-btn.active {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .linea-btn:hover:not(.active) {
+            background: rgba(255,215,0,0.1);
+            color: var(--gold);
+        }
+
+        /* ===== BADGE LÍNEA EN SUELDOS ===== */
+        .linea-badge-gosa {
+            font-size: 0.72em;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-family: 'Bebas Neue', sans-serif;
+            background: rgba(255,215,0,0.15);
+            color: var(--gold);
+        }
+
+        .linea-badge-ahumados {
+            font-size: 0.72em;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-family: 'Bebas Neue', sans-serif;
+            background: rgba(255,107,53,0.2);
+            color: #ff6b35;
+        }
+
         /* PIN Screen */
         .pin-screen {
             position: fixed;
@@ -529,6 +582,19 @@
         <!-- Título de fecha -->
         <h2 id="tituloFecha" style="font-family: 'Bebas Neue'; color: var(--gold); margin-bottom: 20px;"></h2>
 
+        <!-- Toggle línea de negocio -->
+        <div class="linea-toggle" id="lineaToggle" style="display:none;">
+            <button class="linea-btn active" onclick="cambiarLinea('total')">
+                <i class="fas fa-layer-group"></i> TOTAL
+            </button>
+            <button class="linea-btn" onclick="cambiarLinea('gosa')">
+                🍔 GOSA
+            </button>
+            <button class="linea-btn" onclick="cambiarLinea('ahumados')">
+                🔥 AHUMADOS
+            </button>
+        </div>
+
         <!-- Resumen -->
         <div class="resumen-cards" id="resumenCards">
             <!-- Se llena con JavaScript -->
@@ -558,6 +624,10 @@
                         <option value="__nuevo__" class="nuevo-empleado">➕ Nuevo empleado...</option>
                     </select>
                     <input type="text" id="sueldoNombreNuevo" placeholder="Escribe el nombre" style="display:none;">
+                    <select id="sueldoLinea">
+                        <option value="gosa">🍔 Gosa</option>
+                        <option value="ahumados">🔥 Ahumados</option>
+                    </select>
                 </div>
                 <input type="number" id="sueldoValor"  placeholder="$ Valor pagado" min="0">
                 <input type="text"   id="sueldoNota"   placeholder="Nota (opcional)">
@@ -659,6 +729,25 @@
 
         // Catálogo de costos para cálculos client-side (verTodos)
         let catalogoCostos = {};
+
+        // ===== ESTADO LÍNEA DE NEGOCIO =====
+        let lineaActiva    = 'total';
+        let resumenPorLinea = null;
+        let sueldosTodos   = [];
+
+        // ========== CAMBIAR LÍNEA ==========
+        function cambiarLinea(linea) {
+            lineaActiva = linea;
+            document.querySelectorAll('.linea-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${linea}'`));
+            });
+            if (resumenPorLinea) {
+                const vista = resumenPorLinea[linea] || resumenPorLinea.total;
+                renderizarResumen(vista);
+                renderizarProductos(vista.productos);
+            }
+            renderizarSueldosFiltrados(linea);
+        }
 
         // ========== INICIALIZACIÓN ==========
         async function inicializarCierre() {
@@ -826,14 +915,21 @@
                 // Obtener pedidos del día
                 const pedidos = await GOSA.getPedidosPorFecha(fecha);
 
+                // Guardar resumen por línea y mostrar toggle
+                resumenPorLinea = {
+                    total:    Object.assign({}, resumen.total, { cantidadPedidos: resumen.cantidadPedidos, ticketPromedio: resumen.ticketPromedio }),
+                    gosa:     resumen.gosa,
+                    ahumados: resumen.ahumados
+                };
+                document.getElementById('lineaToggle').style.display = 'flex';
+
                 // Mostrar título
                 document.getElementById('tituloFecha').textContent = GOSA.formatearFecha(fecha);
 
-                // Renderizar resumen
-                renderizarResumen(resumen);
-
-                // Renderizar productos
-                renderizarProductos(resumen.productos);
+                // Renderizar con línea activa
+                const vistaActual = resumenPorLinea[lineaActiva] || resumenPorLinea.total;
+                renderizarResumen(vistaActual);
+                renderizarProductos(vistaActual.productos);
 
                 // Renderizar lista de pedidos
                 renderizarPedidos(pedidos.pedidos || []);
@@ -910,10 +1006,19 @@
 
             try {
                 const res = await GOSA.getSueldosPorFecha(fecha);
-                renderizarSueldos(res.sueldos || [], res.total || 0);
+                sueldosTodos = res.sueldos || [];
+                renderizarSueldosFiltrados(lineaActiva);
             } catch(e) {
                 document.getElementById('sueldosLista').innerHTML = '<p style="color:var(--gray-light);font-size:0.9em">No se pudieron cargar los sueldos</p>';
             }
+        }
+
+        function renderizarSueldosFiltrados(linea) {
+            const filtrados = linea === 'total'
+                ? sueldosTodos
+                : sueldosTodos.filter(s => s.linea === linea);
+            const total = filtrados.reduce((sum, s) => sum + s.valor, 0);
+            renderizarSueldos(filtrados, total);
         }
 
         function renderizarSueldos(sueldos, total) {
@@ -931,10 +1036,15 @@
                 <div class="sueldo-row">
                     <div>
                         <div class="sueldo-nombre">${s.nombre}</div>
-                        ${s.nota ? `<div class="sueldo-nota">${s.nota}</div>` : ''}
+                        <div style="display:flex;gap:6px;align-items:center;margin-top:3px;flex-wrap:wrap;">
+                            <span class="${s.linea === 'ahumados' ? 'linea-badge-ahumados' : 'linea-badge-gosa'}">
+                                ${s.linea === 'ahumados' ? '🔥 Ahumados' : '🍔 Gosa'}
+                            </span>
+                            ${s.nota ? `<span class="sueldo-nota">${s.nota}</span>` : ''}
+                        </div>
                     </div>
                     <div class="sueldo-valor">${GOSA.formatearPrecio(s.valor)}</div>
-                    <div class="sueldo-nota" style="display:block">${s.nota || ''}</div>
+                    <div></div>
                     <button class="btn-del-sueldo" onclick="eliminarSueldoLocal('${s.id}')">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -957,12 +1067,14 @@
             if (!valor || valor <= 0) { alert('Ingresa un valor válido'); return; }
             if (!_fechaSueldosActual) { alert('Consulta un día primero'); return; }
 
+            const linea = document.getElementById('sueldoLinea').value || 'gosa';
+
             const btn = document.getElementById('btnAgregarSueldo');
             btn.disabled = true;
             btn.innerHTML = 'Guardando...';
 
             try {
-                const res = await GOSA.registrarSueldo(_fechaSueldosActual, nombre, valor, nota);
+                const res = await GOSA.registrarSueldo(_fechaSueldosActual, nombre, valor, nota, linea);
                 if (res.error) throw new Error(res.error);
 
                 // Limpiar campos
@@ -994,7 +1106,8 @@
                 const res = await GOSA.eliminarSueldo(id);
                 if (res.error) throw new Error(res.error);
                 _invalidarCacheMes(_fechaSueldosActual.substring(0, 7));
-                await cargarSueldosDia(_fechaSueldosActual);
+                sueldosTodos = sueldosTodos.filter(s => s.id !== String(id));
+                renderizarSueldosFiltrados(lineaActiva);
             } catch(e) {
                 alert('Error al eliminar: ' + e.message);
             }

@@ -220,8 +220,8 @@ async function getResumenMesCompleto(mes) {
 }
 
 // ========== SUELDOS ==========
-async function registrarSueldo(fecha, nombre, valor, nota) {
-    return await apiPost({ action: 'registrarSueldo', fecha, nombre, valor: Number(valor), nota: nota || '' });
+async function registrarSueldo(fecha, nombre, valor, nota, linea) {
+    return await apiPost({ action: 'registrarSueldo', fecha, nombre, valor: Number(valor), nota: nota || '', linea: linea || 'gosa' });
 }
 
 async function eliminarSueldo(id) {
