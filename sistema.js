@@ -39,6 +39,10 @@ const MENU = {
         { id: 's2', nombre: 'Salchi Gosa', precio: 14500 },
         { id: 's3', nombre: 'La Gosa Supreme', precio: 25000 }
     ],
+    picadas: [
+        { id: 'pica1', nombre: 'Picada Personal Gosa', precio: 33000 },
+        { id: 'pica2', nombre: 'Picada Gosa Para Dos', precio: 58000 }
+    ],
     adicionales: [
         { id: 'a1', nombre: 'Salchicha', precio: 1200 },
         { id: 'a2', nombre: 'Tocineta', precio: 1200 },
@@ -48,7 +52,13 @@ const MENU = {
         { id: 'a6', nombre: 'Queso Cheddar', precio: 2000 },
         { id: 'a7', nombre: 'Carne de Hamburguesa', precio: 3000 },
         { id: 'a8', nombre: 'Chicharron', precio: 3500 },
-        { id: 'a9', nombre: 'Porcion de Papa', precio: 4000 }
+        { id: 'a9', nombre: 'Porcion de Papa', precio: 4000 },
+        { id: 'a10', nombre: 'Alas Barbecue', precio: 8000 },
+        { id: 'a11', nombre: 'Chorizo Ahumado', precio: 4000 },
+        { id: 'a12', nombre: 'Papa Criolla Ahumada', precio: 5000 },
+        { id: 'a13', nombre: 'Guacamole', precio: 3500 },
+        { id: 'a14', nombre: 'Salsa Especial de la Casa', precio: 1500 },
+        { id: 'a15', nombre: 'Platano Maduro', precio: 2000 }
     ],
     combos: [
         { id: 'c1', nombre: 'Gaseosa o Jugo', precio: 2500 },
@@ -67,6 +77,7 @@ const MENU = {
 // Nombres de categorías para mostrar
 const CATEGORIAS_NOMBRES = {
     entradas: 'Entradas',
+    picadas: 'Ahumados Gosa',
     perros: 'Perros Calientes',
     hamburguesas: 'Hamburguesas',
     salchipapas: 'Salchipapas',
@@ -78,6 +89,7 @@ const CATEGORIAS_NOMBRES = {
 // Iconos de categorías
 const CATEGORIAS_ICONOS = {
     entradas: 'fa-fire',
+    picadas: 'fa-fire-flame-curved',
     perros: 'fa-hotdog',
     hamburguesas: 'fa-burger',
     salchipapas: 'fa-drumstick-bite',
