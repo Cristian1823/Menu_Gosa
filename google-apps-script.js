@@ -28,7 +28,7 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
         } else if (data.action === 'reponerIngrediente') {
           result = reponerIngrediente(data.id, Number(data.cantidad));
         } else if (data.action === 'registrarSueldo') {
-          result = registrarSueldo(data.fecha, data.nombre, data.valor, data.nota);
+          result = registrarSueldo(data.fecha, data.nombre, data.valor, data.nota, data.linea);
         } else if (data.action === 'eliminarSueldo') {
           result = eliminarSueldo(data.id);
         } else {

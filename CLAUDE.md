@@ -68,10 +68,11 @@ Gosa/
 El menú está organizado en categorías navegables con tabs sticky (ordenados por precio de menor a mayor):
 
 - **Entradas** - 3 opciones: Aritos Gosa, Bacon Gosa, Tender Gosa
+- **Ahumados Gosa** - 2 picadas: Picada Personal Gosa, Picada Gosa Para Dos
 - **Perros Calientes** - 5 variedades gourmet (Perro Ranchero, Chori Gosa, Tropical Gosa, Texas BBQ, Triple Gosa)
 - **Hamburguesas** - 5 tipos artesanales con opciones dobles (Gosa Burguer, Crispy Gosa, Madurita, Alfa Pretzel, Colby Bacon) — todas tienen versión doble (La Indomable y Gosa Balsamica retiradas del menú público)
 - **Salchipapas** - 3 variedades: Rapi Gosa, Salchi Gosa, La Gosa Supreme
-- **Adicionales** - 9 complementos desde $1,000 hasta $4,000 COP
+- **Adicionales** - 15 complementos desde $1,000 hasta $8,000 COP (incluye 6 adicionales ahumados)
 - **Combos** - 3 agrandados especiales (Gaseosa/Jugo, Papa, Combo Completo)
 - **Combo del Mes** - Combo especial con 3 opciones de precio ($35,000 / $38,000 / $42,000)
 
@@ -236,6 +237,18 @@ const observer = new IntersectionObserver(function(entries) {
 1. Aritos Gosa: $7,000
 2. Bacon Gosa: $7,600
 3. Tender Gosa: $8,000
+
+### Ahumados Gosa
+1. Picada Personal Gosa: $33,000
+2. Picada Gosa Para Dos: $58,000
+
+**Adicionales Ahumados:**
+- Salsa Especial de la Casa: $1,500
+- Plátano Maduro: $2,000
+- Guacamole: $3,500
+- Chorizo Ahumado: $4,000
+- Papa Criolla Ahumada: $5,000
+- Alas Barbecue: $8,000
 
 ### Perros Calientes
 1. Perro Ranchero: $10,000
@@ -580,11 +593,23 @@ Este proyecto es propiedad de GOSA Food Truck.
 ---
 
 **Última actualización:** Mayo 2026
-**Versión:** 4.2.3 - Nueva hamburguesa Colby Bacon
+**Versión:** 4.2.4 - Ahumados Gosa: Picadas con precios y nuevos adicionales
 
 ## Changelog
 
-### v4.2.3 (Mayo 2026) - ACTUAL
+### v4.2.4 (Mayo 2026) - ACTUAL
+
+**Ahumados Gosa — lanzamiento con precios:**
+- Badge "PRÓXIMAMENTE" eliminado de la sección Ahumados
+- Productos placeholder (Costi Chicharrón, Costillitas BBQ, Alitas Gosa) reemplazados por las 2 picadas oficiales
+- `Picada Personal Gosa` ($33,000) — costilla BBQ, bondiola, alas, chorizo ahumado, papa criolla, plátano, guacamole y salsa especial
+- `Picada Gosa Para Dos` ($58,000) — mismos ingredientes en porción doble
+- 6 nuevos adicionales ahumados en `index.html` y `sistema.js` (a10–a15): Alas Barbecue $8,000 · Chorizo Ahumado $4,000 · Papa Criolla Ahumada $5,000 · Guacamole $3,500 · Salsa Especial $1,500 · Plátano Maduro $2,000
+- Nueva categoría `picadas` en `MENU`, `CATEGORIAS_NOMBRES` ("Ahumados Gosa") y `CATEGORIAS_ICONOS` (`fa-fire-flame-curved`) de `sistema.js`
+- IDs en Sheets: `pica1`, `pica2`, `a10`–`a15`
+- **Nota inventario:** recetas de picadas no definidas aún — no descuenta ingredientes al correr "Descontar Consumo" (se agregarán cuando el cliente las defina)
+
+### v4.2.3 (Mayo 2026)
 
 **Nueva hamburguesa:**
 - `Colby Bacon` ($16,500) + `Colby Bacon Doble` ($22,000) agregados a Hamburguesas con badge NUEVO
