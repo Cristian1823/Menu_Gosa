@@ -526,15 +526,16 @@ const observer = new IntersectionObserver(function(entries) {
 
 ### 💰 Sueldos del Día (cierre.html)
 - **Propósito:** Registrar lo pagado a empleados para calcular la Ganancia Real
-- **Flujo:** El administrador ingresa nombre + valor + nota opcional → se guarda en hoja Sueldos de Sheets
+- **Flujo:** El administrador ingresa nombre + valor + nota opcional + línea → se guarda en hoja Sueldos de Sheets
 - **Dropdown de empleados:** Se puebla automáticamente con nombres únicos históricos de la hoja Sueldos; incluye opción "➕ Nuevo empleado..." para escribir nombre nuevo
 - **Comportamiento del dropdown:**
   - Primera vez (hoja vacía): solo muestra "➕ Nuevo empleado..." → aparece campo de texto
   - Veces siguientes: lista de empleados previos + opción de nuevo
+- **Línea de sueldo:** Select 🍔 Gosa / 🔥 Ahumados — se guarda en columna 6 de hoja Sueldos
 - **Eliminar sueldo:** Botón ✕ por registro con confirmación; invalida cache del mes automáticamente
-- **Total del día:** Se muestra suma de sueldos del día en tiempo real
+- **Total del día:** Se muestra suma de sueldos del día en tiempo real (filtrado por línea activa)
 - **Integración con reporte mensual:** Los sueldos del día se reflejan en la columna Sueldos y Ganancia Real de la tabla mensual
-- **CSS:** Color naranja `#ff6b35` para sueldos, turquesa `#00d4aa` para Ganancia Real
+- **CSS:** Color naranja `#ff6b35` para sueldos, turquesa `#00d4aa` para Ganancia Real; `.linea-toggle`, `.linea-btn`, `.linea-badge-gosa`, `.linea-badge-ahumados` para el filtro de línea
 
 ## Contacto y Redes Sociales
 
@@ -593,11 +594,26 @@ Este proyecto es propiedad de GOSA Food Truck.
 ---
 
 **Última actualización:** Mayo 2026
-**Versión:** 4.2.4 - Ahumados Gosa: Picadas con precios y nuevos adicionales
+**Versión:** 4.2.5 - Cierre de caja separado por línea de negocio (Gosa / Ahumados)
 
 ## Changelog
 
-### v4.2.4 (Mayo 2026) - ACTUAL
+### v4.2.5 (Mayo 2026) - ACTUAL
+
+**Separación por línea de negocio en cierre.html:**
+- Toggle TOTAL / GOSA / AHUMADOS en la sección de resumen del día
+- Las mismas cards (Total Vendido, Costos, Ganancia, etc.) actualizan su contenido según la línea seleccionada
+- La tabla de productos también filtra por línea
+- Los sueldos se registran con campo "línea" (Gosa o Ahumados) — select en el formulario
+- Cada registro de sueldo muestra badge de línea (🍔 Gosa / 🔥 Ahumados)
+- Al cambiar de línea, los sueldos mostrados también se filtran por esa línea
+- `IDS_AHUMADOS` en `google-apps-script.js`: array de IDs que pertenecen a Ahumados (`pica1`, `pica2`, `a10`–`a15`)
+- `getResumenDia` ahora retorna `{ gosa, ahumados, total, cantidadPedidos, ticketPromedio, fecha }` — cada sub-objeto tiene `totalVentas`, `totalCosto`, `totalGastoOp`, `gananciaNeta`, `productos[]`
+- `registrarSueldo` acepta 5° parámetro `linea`; `getSueldosPorFecha` retorna campo `linea` por registro
+- Hoja Sueldos: columna 6 guarda la línea (antes solo tenía 5 columnas: ID | Fecha | Nombre | Valor | Nota)
+- Variables de estado en cierre.html: `lineaActiva`, `resumenPorLinea`, `sueldosTodos`
+
+### v4.2.4 (Mayo 2026)
 
 **Ahumados Gosa — lanzamiento con precios:**
 - Badge "PRÓXIMAMENTE" eliminado de la sección Ahumados
