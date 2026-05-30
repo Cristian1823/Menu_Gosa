@@ -947,16 +947,22 @@
 
         // ========== EMPLEADOS (DESPLEGABLE) ==========
         async function cargarEmpleados() {
+            const select = document.getElementById('sueldoNombreSelect');
+            const optVacio = select.options[0];
+            const optNuevo = Array.from(select.options).find(o => o.value === '__nuevo__')
+                || (() => {
+                    const o = document.createElement('option');
+                    o.value = '__nuevo__';
+                    o.className = 'nuevo-empleado';
+                    o.textContent = '➕ Nuevo empleado...';
+                    return o;
+                })();
             try {
                 const res = await GOSA.getEmpleados();
-                const select = document.getElementById('sueldoNombreSelect');
-                // Guardar opciones fijas
-                const optVacio  = select.options[0];
-                const optNuevo  = select.options[1];
-                // Limpiar y reconstruir
+                const empleados = res.empleados || [];
                 select.innerHTML = '';
                 select.appendChild(optVacio);
-                (res.empleados || []).forEach(nombre => {
+                empleados.forEach(nombre => {
                     const opt = document.createElement('option');
                     opt.value = nombre;
                     opt.textContent = nombre;
@@ -964,7 +970,11 @@
                 });
                 select.appendChild(optNuevo);
             } catch(e) {
-                // Sin empleados previos, solo mostrará "Nuevo empleado..."
+                console.error('Error cargando empleados:', e);
+                // Restaurar opciones mínimas si falla
+                select.innerHTML = '';
+                select.appendChild(optVacio);
+                select.appendChild(optNuevo);
             }
         }
 
