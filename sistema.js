@@ -135,7 +135,7 @@ function apiRequest(params) {
             reject(new Error('Error de conexión'));
         };
 
-        // Timeout de 10 segundos
+        // Timeout de 30 segundos (Apps Script puede tardar en PC)
         setTimeout(() => {
             if (window[callbackName]) {
                 delete window[callbackName];
@@ -144,7 +144,7 @@ function apiRequest(params) {
                 }
                 reject(new Error('Timeout'));
             }
-        }, 10000);
+        }, 30000);
 
         document.body.appendChild(script);
     });
