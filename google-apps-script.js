@@ -997,9 +997,7 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
       var nombre = String(data[i][2]).trim();
       if (nombre) nombres[nombre] = true;
     }
-    var lista = Object.keys(nombres).sort(function(a, b) {
-      return a.localeCompare(b, 'es');
-    });
+    var lista = Object.keys(nombres).sort();
     return { empleados: lista };
   }
 

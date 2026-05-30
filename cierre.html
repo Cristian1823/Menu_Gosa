@@ -1017,6 +1017,24 @@
             try {
                 const res = await GOSA.getSueldosPorFecha(fecha);
                 sueldosTodos = res.sueldos || [];
+
+                // Complementar dropdown con nombres de sueldos del día (fallback si getEmpleados falla)
+                if (sueldosTodos.length > 0) {
+                    const select = document.getElementById('sueldoNombreSelect');
+                    const yaEnSelect = new Set(Array.from(select.options).map(o => o.value));
+                    sueldosTodos.forEach(s => {
+                        if (s.nombre && !yaEnSelect.has(s.nombre)) {
+                            const optNuevo = Array.from(select.options).find(o => o.value === '__nuevo__');
+                            const opt = document.createElement('option');
+                            opt.value = s.nombre;
+                            opt.textContent = s.nombre;
+                            if (optNuevo) select.insertBefore(opt, optNuevo);
+                            else select.appendChild(opt);
+                            yaEnSelect.add(s.nombre);
+                        }
+                    });
+                }
+
                 renderizarSueldosFiltrados(lineaActiva);
             } catch(e) {
                 document.getElementById('sueldosLista').innerHTML = '<p style="color:var(--gray-light);font-size:0.9em">No se pudieron cargar los sueldos</p>';
