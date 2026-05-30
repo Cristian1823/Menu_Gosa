@@ -525,16 +525,15 @@ const observer = new IntersectionObserver(function(entries) {
   - Botón 🔄 invalida cache y reconsulta desde Sheets
 
 ### 💰 Sueldos del Día (cierre.html)
-- **Propósito:** Registrar lo pagado a empleados para calcular la Ganancia Real
-- **Flujo:** El administrador ingresa nombre + valor + nota opcional + línea → se guarda en hoja Sueldos de Sheets
+- **Dos fuentes de sueldos (conceptos separados):**
+  1. **Cards del resumen** — `totalSueldos` calculado desde columna H de Productos × cantidad vendida (mano de obra por producto). Viene del servidor vía `getResumenDia`.
+  2. **Sección de registro** — pagos reales a empleados guardados en hoja Sueldos. Alimentan el reporte mensual.
+- **Flujo de registro:** El administrador ingresa nombre + valor + nota opcional + línea → se guarda en hoja Sueldos de Sheets
 - **Dropdown de empleados:** Se puebla automáticamente con nombres únicos históricos de la hoja Sueldos; incluye opción "➕ Nuevo empleado..." para escribir nombre nuevo
-- **Comportamiento del dropdown:**
-  - Primera vez (hoja vacía): solo muestra "➕ Nuevo empleado..." → aparece campo de texto
-  - Veces siguientes: lista de empleados previos + opción de nuevo
 - **Línea de sueldo:** Select 🍔 Gosa / 🔥 Ahumados — se guarda en columna 6 de hoja Sueldos
 - **Eliminar sueldo:** Botón ✕ por registro con confirmación; invalida cache del mes automáticamente
-- **Total del día:** Se muestra suma de sueldos del día en tiempo real (filtrado por línea activa)
-- **Integración con reporte mensual:** Los sueldos del día se reflejan en la columna Sueldos y Ganancia Real de la tabla mensual
+- **Total del día:** Se muestra suma de sueldos registrados del día en tiempo real (filtrado por línea activa)
+- **Integración con reporte mensual:** Los sueldos registrados se reflejan en la columna Sueldos y Ganancia Real de la tabla mensual
 - **CSS:** Color naranja `#ff6b35` para sueldos, turquesa `#00d4aa` para Ganancia Real; `.linea-toggle`, `.linea-btn`, `.linea-badge-gosa`, `.linea-badge-ahumados` para el filtro de línea
 
 ## Contacto y Redes Sociales
@@ -608,10 +607,17 @@ Este proyecto es propiedad de GOSA Food Truck.
 - Cada registro de sueldo muestra badge de línea (🍔 Gosa / 🔥 Ahumados)
 - Al cambiar de línea, los sueldos mostrados también se filtran por esa línea
 - `IDS_AHUMADOS` en `google-apps-script.js`: array de IDs que pertenecen a Ahumados (`pica1`, `pica2`, `a10`–`a15`)
-- `getResumenDia` ahora retorna `{ gosa, ahumados, total, cantidadPedidos, ticketPromedio, fecha }` — cada sub-objeto tiene `totalVentas`, `totalCosto`, `totalGastoOp`, `gananciaNeta`, `productos[]`
+- `getResumenDia` retorna `{ gosa, ahumados, total, cantidadPedidos, ticketPromedio, fecha }` — cada sub-objeto tiene `totalVentas`, `totalCosto`, `totalGastoOp`, `totalSueldos`, `gananciaNeta`, `productos[]`
+- `totalSueldos` en cada sub-objeto = `sum(columnaH × cantidad)` de la hoja Productos (costo de mano de obra por unidad vendida, columna H = índice 7)
+- Cards del resumen diario: **Sueldos del Día** (naranja) y **Ganancia Real** (turquesa = gananciaNeta − totalSueldos) siempre visibles al consultar un día
 - `registrarSueldo` acepta 5° parámetro `linea`; `getSueldosPorFecha` retorna campo `linea` por registro
 - Hoja Sueldos: columna 6 guarda la línea (antes solo tenía 5 columnas: ID | Fecha | Nombre | Valor | Nota)
 - Variables de estado en cierre.html: `lineaActiva`, `resumenPorLinea`, `sueldosTodos`
+
+**Hoja Productos — columna H (Sueldos):**
+- Columna H (índice 7) de la hoja Productos almacena el costo de mano de obra por unidad vendida
+- `getResumenDia` y `getResumenMes` leen esta columna para calcular `totalSueldos` por línea y por mes
+- Estructura completa: ID | Nombre | Categoria | PrecioVenta | Costo | GastoOperativo | Activo | Sueldos
 
 ### v4.2.4 (Mayo 2026)
 
