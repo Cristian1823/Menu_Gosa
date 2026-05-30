@@ -332,7 +332,8 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
         costosPorNombre[nomProd] = {
           precioVenta:    Number(prodRows[k][3]) || 0,
           costo:          Number(prodRows[k][4]) || 0,
-          gastoOperativo: Number(prodRows[k][5]) || 0
+          gastoOperativo: Number(prodRows[k][5]) || 0,
+          sueldos:        Number(prodRows[k][7]) || 0
         };
         lineaPorNombre[nomProd] = IDS_AHUMADOS.indexOf(prodId) > -1 ? 'ahumados' : 'gosa';
       }
@@ -369,10 +370,10 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
 
     // Acumuladores por línea
     var acc = {
-      gosa:     { v: 0, c: 0, g: 0, prods: {} },
-      ahumados: { v: 0, c: 0, g: 0, prods: {} }
+      gosa:     { v: 0, c: 0, g: 0, s: 0, prods: {} },
+      ahumados: { v: 0, c: 0, g: 0, s: 0, prods: {} }
     };
-    var totalVentas = 0, totalCosto = 0, totalGastoOp = 0, cantidadPedidos = 0;
+    var totalVentas = 0, totalCosto = 0, totalGastoOp = 0, totalSueldos = 0, cantidadPedidos = 0;
 
     var data = sheetPedidos.getDataRange().getValues();
     for (var i = 1; i < data.length; i++) {
@@ -398,14 +399,17 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
         var ingreso   = precio * cant;
         var costo     = info.costo * cant;
         var gasto     = info.gastoOperativo * cant;
+        var sueldo    = info.sueldos * cant;
 
-        totalCosto   += costo;
-        totalGastoOp += gasto;
+        totalCosto    += costo;
+        totalGastoOp  += gasto;
+        totalSueldos  += sueldo;
 
         var bucket = acc[linea];
         bucket.v += ingreso;
         bucket.c += costo;
         bucket.g += gasto;
+        bucket.s += sueldo;
 
         if (!bucket.prods[item.nombre]) {
           bucket.prods[item.nombre] = { nombre: item.nombre, cantidad: 0, ingreso: 0, costo: 0, gastoOperativo: 0 };
@@ -429,6 +433,7 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
         totalVentas:    bucket.v,
         totalCosto:     bucket.c,
         totalGastoOp:   bucket.g,
+        totalSueldos:   bucket.s,
         gananciaNeta:   bucket.v - bucket.c,
         productos:      prods
       };
@@ -465,6 +470,7 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
         totalVentas:  totalVentas,
         totalCosto:   totalCosto,
         totalGastoOp: totalGastoOp,
+        totalSueldos: totalSueldos,
         gananciaNeta: totalVentas - totalCosto,
         productos:    totalProds
       }

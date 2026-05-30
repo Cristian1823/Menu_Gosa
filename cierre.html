@@ -917,9 +917,9 @@
 
                 // Guardar resumen por línea y mostrar toggle
                 resumenPorLinea = {
-                    total:    Object.assign({}, resumen.total, { cantidadPedidos: resumen.cantidadPedidos, ticketPromedio: resumen.ticketPromedio, totalSueldos: 0 }),
-                    gosa:     Object.assign({}, resumen.gosa,     { totalSueldos: 0 }),
-                    ahumados: Object.assign({}, resumen.ahumados, { totalSueldos: 0 })
+                    total:    Object.assign({}, resumen.total, { cantidadPedidos: resumen.cantidadPedidos, ticketPromedio: resumen.ticketPromedio }),
+                    gosa:     resumen.gosa,
+                    ahumados: resumen.ahumados
                 };
                 document.getElementById('lineaToggle').style.display = 'flex';
 
@@ -1007,19 +1007,6 @@
             try {
                 const res = await GOSA.getSueldosPorFecha(fecha);
                 sueldosTodos = res.sueldos || [];
-
-                // Inyectar totalSueldos en cada vista para que aparezca la card en resumen
-                if (resumenPorLinea) {
-                    const calcTotal = (linea) => sueldosTodos
-                        .filter(s => linea === 'total' || s.linea === linea)
-                        .reduce((sum, s) => sum + s.valor, 0);
-                    resumenPorLinea.gosa.totalSueldos     = calcTotal('gosa');
-                    resumenPorLinea.ahumados.totalSueldos = calcTotal('ahumados');
-                    resumenPorLinea.total.totalSueldos    = calcTotal('total');
-                    const vista = resumenPorLinea[lineaActiva] || resumenPorLinea.total;
-                    renderizarResumen(vista);
-                }
-
                 renderizarSueldosFiltrados(lineaActiva);
             } catch(e) {
                 document.getElementById('sueldosLista').innerHTML = '<p style="color:var(--gray-light);font-size:0.9em">No se pudieron cargar los sueldos</p>';
