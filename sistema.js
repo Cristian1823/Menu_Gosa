@@ -105,11 +105,14 @@ function apiConfigurada() {
     return API_URL && API_URL !== 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI';
 }
 
+// Contador para garantizar nombres únicos de callback aunque Date.now() colisione
+let _cbCounter = 0;
+
 // Función para hacer peticiones usando JSONP (evita CORS)
 function apiRequest(params) {
     return new Promise((resolve, reject) => {
-        // Crear nombre único para el callback
-        const callbackName = 'gosaCallback_' + Date.now();
+        // Crear nombre único para el callback (contador + timestamp)
+        const callbackName = 'gosaCallback_' + Date.now() + '_' + (++_cbCounter);
 
         // Crear la función callback global
         window[callbackName] = function(data) {
