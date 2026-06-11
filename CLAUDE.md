@@ -67,10 +67,10 @@ Gosa/
 ### 2. Sistema de Navegación por Tabs
 El menú está organizado en categorías navegables con tabs sticky (ordenados por precio de menor a mayor):
 
-- **Entradas** - 3 opciones: Aritos Gosa, Bacon Gosa, Tender Gosa
+- **Entradas** - 4 opciones: Aritos Gosa, Bacon Gosa, Tender Gosa, La Gallego 🇪🇸
 - **Ahumados Gosa** - 2 picadas: Picada Personal Gosa, Picada Gosa Para Dos
 - **Perros Calientes** - 5 variedades gourmet (Perro Ranchero, Chori Gosa, Tropical Gosa, Texas BBQ, Triple Gosa)
-- **Hamburguesas** - 5 tipos artesanales con opciones dobles (Gosa Burguer, Crispy Gosa, Madurita, Alfa Pretzel, Colby Bacon) — todas tienen versión doble (La Indomable y Gosa Balsamica retiradas del menú público)
+- **Hamburguesas** - 7 tipos artesanales con opciones dobles (Gosa Burguer, Crispy Gosa, Madurita, Alfa Pretzel, La Bacana 🇨🇴, La Guerita 🇲🇽, La Gringa 🇺🇸) — todas tienen versión doble (Colby Bacon, La Indomable y Gosa Balsamica retiradas del menú público)
 - **Salchipapas** - 3 variedades: Rapi Gosa, Salchi Gosa, La Gosa Supreme
 - **Adicionales** - 15 complementos desde $1,000 hasta $8,000 COP (incluye 6 adicionales ahumados)
 - **Combos** - 3 agrandados especiales (Gaseosa/Jugo, Papa, Combo Completo)
@@ -237,6 +237,7 @@ const observer = new IntersectionObserver(function(entries) {
 1. Aritos Gosa: $7,000
 2. Bacon Gosa: $7,600
 3. Tender Gosa: $8,000
+4. 🇪🇸 La Gallego: $8,500 ⭐ **MUNDIALISTA** (ID: e5)
 
 ### Ahumados Gosa
 1. Picada Personal Gosa: $33,000
@@ -262,7 +263,10 @@ const observer = new IntersectionObserver(function(entries) {
 2. Crispy Gosa: $13,000 → Doble: $17,500
 3. Madurita: $13,500 → Doble: $18,000 ⭐ **ESPECIAL**
 4. Alfa Pretzel: $16,000 → Doble: $22,000 ⭐ **NUEVO**
-5. Colby Bacon: $16,500 → Doble: $22,000 ⭐ **NUEVO**
+5. 🇨🇴 La Bacana: $16,000 → Doble: $22,000 ⭐ **MUNDIALISTA** (ID: h8/h8d)
+6. 🇲🇽 La Guerita: $16,000 → Doble: $22,000 ⭐ **MUNDIALISTA** (ID: h9/h9d)
+7. 🇺🇸 La Gringa: $16,000 → Doble: $22,000 ⭐ **MUNDIALISTA** (ID: h10/h10d)
+- Colby Bacon retirada del menú público (Activo=FALSE en Sheets)
 
 ### Salchipapas
 1. Rapi Gosa: $9,000
@@ -592,12 +596,30 @@ Este proyecto es propiedad de GOSA Food Truck.
 
 ---
 
-**Última actualización:** Mayo 2026
-**Versión:** 4.2.5 - Cierre de caja separado por línea de negocio (Gosa / Ahumados)
+**Última actualización:** Junio 2026
+**Versión:** 4.3.0 - Menú Mundial 2026 + fixes de producción
 
 ## Changelog
 
-### v4.2.5 (Mayo 2026) - ACTUAL
+### v4.3.0 (Junio 2026) - ACTUAL
+
+**Menú Mundial 2026:**
+- 3 nuevas hamburguesas Mundialistas con banderas reales (flagcdn.com) y badge "MUNDIALISTA":
+  - 🇨🇴 La Bacana ($16,000 / $22,000 doble) — IDs h8/h8d
+  - 🇲🇽 La Guerita ($16,000 / $22,000 doble) — IDs h9/h9d
+  - 🇺🇸 La Gringa ($16,000 / $22,000 doble) — IDs h10/h10d
+- Nueva entrada Mundialista: 🇪🇸 La Gallego ($8,500) — ID e5
+- Colby Bacon retirada del menú público (index.html)
+- Animación de bienvenida Mundial: confeti dorado desde laterales + banner al abrir el menú (canvas-confetti CDN, dura 4s)
+- Imagen de Promoción actualizada (Promocion_v3.jpeg)
+
+**Fixes de producción:**
+- JSONP callback collision: `Date.now()` devolvía el mismo valor en PC rápido → agregado contador `_cbCounter` en `sistema.js` — resuelve pantallas vacías y error "gosaCallback is not defined"
+- Timeout JSONP aumentado de 10s a 30s para Apps Script lento en PC
+- `cargarEmpleados` busca opción "Nuevo empleado" por valor (`__nuevo__`) en vez de índice fijo
+- Fallback: `cargarSueldosDia` agrega nombres del día al dropdown si `getEmpleados` falla
+
+### v4.2.5 (Mayo 2026)
 
 **Separación por línea de negocio en cierre.html:**
 - Toggle TOTAL / GOSA / AHUMADOS en la sección de resumen del día
