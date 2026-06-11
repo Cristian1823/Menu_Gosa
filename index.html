@@ -52,7 +52,7 @@
             PROMOCIÓN DEL MES
             <i class="fas fa-star"></i>
         </div>
-        <img src="images/Promocion_v2.jpeg" alt="Promoción GOSA" class="promotion-img">
+        <img src="images/Promocion_v3.jpeg" alt="Promoción GOSA" class="promotion-img">
         <p class="promotion-text">¡Oferta válida todo el mes! No te la pierdas</p>
     </div>
 
@@ -124,9 +124,9 @@
                         <p class="description">Crujientes nuggets de pollo apanados servidos con el toque único de la salsa artesanal de la casa</p>
                     </div>
                     <div class="menu-card featured">
-                        <div class="featured-badge">NUEVO</div>
+                        <div class="featured-badge">MUNDIALISTA</div>
                         <div class="card-header">
-                            <h3>🇪🇸 LA GALLEGO</h3>
+                            <h3><img src="https://flagcdn.com/24x18/es.png" alt="España" style="height:18px;vertical-align:middle;margin-right:6px;border-radius:2px;"> LA GALLEGO</h3>
                             <span class="price">$8,500</span>
                         </div>
                         <p class="description">Crujientes papas a la francesa acompañadas de tocineta crocante y nuestra salsa picante de la casa. La combinación perfecta entre textura, intensidad y ese toque especial que abre el apetito para una gran experiencia Gosa.</p>
@@ -280,9 +280,9 @@
                         </div>
                     </div>
                     <div class="menu-card featured">
-                        <div class="featured-badge">NUEVO</div>
+                        <div class="featured-badge">MUNDIALISTA</div>
                         <div class="card-header">
-                            <h3>🇨🇴 LA BACANA</h3>
+                            <h3><img src="https://flagcdn.com/24x18/co.png" alt="Colombia" style="height:18px;vertical-align:middle;margin-right:6px;border-radius:2px;"> LA BACANA</h3>
                             <span class="price">$16,000</span>
                         </div>
                         <p class="description">El sabor que representa nuestra tierra. Pan brioche suave y dorado, carne artesanal jugosa, vegetales frescos, cebolla morada encurtida, queso doble crema fundido, crocante chicharrón y aguacate fresco que le da el toque perfecto. Una combinación auténticamente colombiana que reúne tradición, sabor y textura en cada mordisco.</p>
@@ -292,9 +292,9 @@
                         </div>
                     </div>
                     <div class="menu-card featured">
-                        <div class="featured-badge">NUEVO</div>
+                        <div class="featured-badge">MUNDIALISTA</div>
                         <div class="card-header">
-                            <h3>🇲🇽 LA GUERITA</h3>
+                            <h3><img src="https://flagcdn.com/24x18/mx.png" alt="México" style="height:18px;vertical-align:middle;margin-right:6px;border-radius:2px;"> LA GUERITA</h3>
                             <span class="price">$16,000</span>
                         </div>
                         <p class="description">Atrévete a probar el verdadero sabor mexicano. Preparada con pan brioche, carne artesanal, vegetales frescos, cebolla encurtida, doble queso (cheddar y doble crema), coronada con nachos crujientes bañados en nuestra salsa de chipotle picante. Una combinación llena de carácter, textura y ese toque picante que la hace inolvidable.</p>
@@ -304,9 +304,9 @@
                         </div>
                     </div>
                     <div class="menu-card featured">
-                        <div class="featured-badge">NUEVO</div>
+                        <div class="featured-badge">MUNDIALISTA</div>
                         <div class="card-header">
-                            <h3>🇺🇸 LA GRINGA</h3>
+                            <h3><img src="https://flagcdn.com/24x18/us.png" alt="USA" style="height:18px;vertical-align:middle;margin-right:6px;border-radius:2px;"> LA GRINGA</h3>
                             <span class="price">$16,000</span>
                         </div>
                         <p class="description">La esencia de las hamburguesas clásicas de Estados Unidos. Preparada con pan pretzel, carne artesanal jugosa, vegetales frescos, cebolla encurtida, doble queso cheddar fundido y doble tocineta crocante. Una combinación irresistible de sabor, textura y contundencia que conquista desde el primer bocado.</p>
@@ -461,5 +461,61 @@
     </a>
 
     <script src="script.js"></script>
+
+    <!-- ⚽ Mundial 2026 celebration -->
+    <div id="mundialBanner" style="
+        position:fixed; top:0; left:0; right:0; z-index:9999;
+        background:linear-gradient(135deg,#1a1a1a 0%,#2a2a2a 100%);
+        border-bottom:2px solid #FFD700;
+        color:#FFD700; font-family:'Bebas Neue',sans-serif;
+        font-size:1.4em; letter-spacing:3px;
+        text-align:center; padding:10px 20px;
+        display:flex; align-items:center; justify-content:center; gap:12px;
+        transform:translateY(-100%); transition:transform 0.5s ease;
+        box-shadow:0 4px 20px rgba(255,215,0,0.3);">
+        ⚽ &nbsp;¡MUNDIAL 2026 — GOSA LO CELEBRA CONTIGO!&nbsp; ⚽
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script>
+        window.addEventListener('load', function() {
+            // Mostrar banner
+            var banner = document.getElementById('mundialBanner');
+            setTimeout(function() {
+                banner.style.transform = 'translateY(0)';
+            }, 500);
+            setTimeout(function() {
+                banner.style.transform = 'translateY(-100%)';
+            }, 4500);
+
+            // Confeti desde los laterales (cornetas) — colores de marca
+            var colors = ['#FFD700', '#FFC107', '#FFFFFF', '#ff6b35', '#FFD700', '#FFD700'];
+            var end = Date.now() + 4000;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 65,
+                    origin: { x: 0, y: 0.55 },
+                    colors: colors,
+                    gravity: 0.9,
+                    scalar: 1.1
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 65,
+                    origin: { x: 1, y: 0.55 },
+                    colors: colors,
+                    gravity: 0.9,
+                    scalar: 1.1
+                });
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        });
+    </script>
 </body>
 </html>

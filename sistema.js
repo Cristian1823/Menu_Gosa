@@ -34,12 +34,12 @@ const MENU = {
         { id: 'h4d', nombre: 'Madurita Doble', precio: 18000 },
         { id: 'h6', nombre: 'Alfa Pretzel', precio: 16000 },
         { id: 'h6d', nombre: 'Alfa Pretzel Doble', precio: 22000 },
-        { id: 'h7', nombre: 'La Bacana', precio: 16000 },
-        { id: 'h7d', nombre: 'La Bacana Doble', precio: 22000 },
-        { id: 'h8', nombre: 'La Guerita', precio: 16000 },
-        { id: 'h8d', nombre: 'La Guerita Doble', precio: 22000 },
-        { id: 'h9', nombre: 'La Gringa', precio: 16000 },
-        { id: 'h9d', nombre: 'La Gringa Doble', precio: 22000 }
+        { id: 'h8', nombre: 'La Bacana', precio: 16000 },
+        { id: 'h8d', nombre: 'La Bacana Doble', precio: 22000 },
+        { id: 'h9', nombre: 'La Guerita', precio: 16000 },
+        { id: 'h9d', nombre: 'La Guerita Doble', precio: 22000 },
+        { id: 'h10', nombre: 'La Gringa', precio: 16000 },
+        { id: 'h10d', nombre: 'La Gringa Doble', precio: 22000 }
     ],
     salchipapas: [
         { id: 's1', nombre: 'Rapi Gosa', precio: 9000 },
