@@ -47,8 +47,8 @@ const MENU = {
         { id: 's3', nombre: 'La Gosa Supreme', precio: 25000 }
     ],
     picadas: [
-        { id: 'pica1', nombre: 'Picada Personal Gosa', precio: 33000 },
-        { id: 'pica2', nombre: 'Picada Gosa Para Dos', precio: 58000 }
+        { id: 'pica1', nombre: 'Picada Personal Gosa', precio: 22000 },
+        { id: 'pica2', nombre: 'Picada Gosa Para Dos', precio: 40000 }
     ],
     adicionales: [
         { id: 'a1', nombre: 'Salchicha', precio: 1200 },

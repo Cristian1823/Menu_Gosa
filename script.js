@@ -296,6 +296,8 @@ document.addEventListener('DOMContentLoaded', function() {
         promoActual = (index + promoSlides.length) % promoSlides.length;
         promoSlides[promoActual].classList.add('active');
         promoDots[promoActual].classList.add('active');
+        const badgeText = document.getElementById('promoBadgeText');
+        if (badgeText) badgeText.textContent = promoSlides[promoActual].dataset.badge || 'PROMOCIÓN';
     }
 
     const prevBtn = document.getElementById('promo-prev');

@@ -394,6 +394,7 @@
                     precio: modoCosto ? precioCosto : precioVenta,
                     precioVenta: precioVenta,
                     precioCosto: precioCosto,
+                    esAlCosto: modoCosto,
                     cantidad: 1
                 });
             }
@@ -451,7 +452,12 @@
                 <div class="pedido-item">
                     <div class="pedido-item-info">
                         <div class="pedido-item-nombre">${item.nombre}</div>
-                        <div class="pedido-item-precio">${GOSA.formatearPrecio(item.precio)} c/u</div>
+                        <div class="pedido-item-precio" style="${item.esAlCosto ? 'color:#ff9966' : ''}">
+                            ${GOSA.formatearPrecio(item.precio)} c/u
+                            <button class="btn-item-costo ${item.esAlCosto ? 'activo' : ''}"
+                                onclick="toggleItemCosto('${item.id}')"
+                                title="${item.esAlCosto ? 'Volver a precio normal' : 'Aplicar precio al costo'}">💰</button>
+                        </div>
                     </div>
                     <div class="pedido-item-controles">
                         <button class="cantidad-btn menos" onclick="modificarCantidad('${item.id}', -1)">-</button>
@@ -553,6 +559,16 @@
             document.getElementById('pedidoPanel').classList.remove('expandido');
         }
 
+        // ========== AL COSTO POR ÍTEM ==========
+        function toggleItemCosto(id) {
+            const item = pedidoActual.find(i => i.id === id);
+            if (!item) return;
+            item.esAlCosto = !item.esAlCosto;
+            item.precio = item.esAlCosto ? item.precioCosto : item.precioVenta;
+            GOSA.vibrar(30);
+            actualizarPanelPedido();
+        }
+
         // ========== SELECCIONAR TIPO DE PEDIDO ==========
         function seleccionarTipo(tipo) {
             const eraModoCosto = modoCosto;
@@ -579,9 +595,10 @@
             document.getElementById('costoLabel').classList.toggle('activo', tipo === 'costo');
             document.getElementById('bannerCosto').style.display = tipo === 'costo' ? 'block' : 'none';
 
-            // Actualizar precios del carrito si cambió el modo costo
+            // Actualizar precios del carrito si cambió el modo costo global
             if (eraModoCosto !== modoCosto) {
                 pedidoActual.forEach(item => {
+                    item.esAlCosto = modoCosto;
                     item.precio = modoCosto ? item.precioCosto : item.precioVenta;
                 });
                 actualizarPanelPedido();

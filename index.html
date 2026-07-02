@@ -45,14 +45,30 @@
         </div>
     </div>
 
-    <!-- Banner promocional -->
+    <!-- Banner promocional con slider -->
     <div class="promotion">
         <div class="promotion-badge">
             <i class="fas fa-star"></i>
-            PROMOCIÓN DEL MES
+            <span id="promoBadgeText">PROMOCIÓN DEL MES</span>
             <i class="fas fa-star"></i>
         </div>
-        <img src="images/Promocion_v3.jpeg" alt="Promoción GOSA" class="promotion-img">
+
+        <div class="promo-slide active" data-badge="PROMOCIÓN DEL MES">
+            <img src="images/Promocion_v3.jpeg" alt="Promoción GOSA" class="promotion-img">
+        </div>
+        <div class="promo-slide" data-badge="PROMO ESPECIAL">
+            <img src="images/promocion perro.jpeg" alt="Promo Perro GOSA" class="promotion-img">
+        </div>
+
+        <div class="promo-nav">
+            <button class="promo-arrow" id="promo-prev">&#8249;</button>
+            <div class="promo-dots">
+                <div class="promo-dot active"></div>
+                <div class="promo-dot"></div>
+            </div>
+            <button class="promo-arrow" id="promo-next">&#8250;</button>
+        </div>
+
         <p class="promotion-text">¡Oferta válida todo el mes! No te la pierdas</p>
     </div>
 
@@ -144,14 +160,14 @@
                     <div class="menu-card ahumados-card">
                         <div class="card-header">
                             <h3>PICADA PERSONAL GOSA</h3>
-                            <span class="price">$33,000</span>
+                            <span class="price">$22,000</span>
                         </div>
                         <p class="description">Nuestra picada personal está pensada para quienes disfrutan del verdadero sabor ahumado. Incluye costilla de cerdo en salsa barbecue, bondiola de cerdo ahumada, alas barbecue, chorizo ahumado, papa criolla ahumada, plátano maduro, porción de guacamole y nuestra salsa especial de la casa.</p>
                     </div>
                     <div class="menu-card ahumados-card">
                         <div class="card-header">
                             <h3>PICADA GOSA PARA DOS</h3>
-                            <span class="price">$58,000</span>
+                            <span class="price">$40,000</span>
                         </div>
                         <p class="description">Nuestra picada para dos está hecha para compartir buenos momentos alrededor del sabor ahumado de la casa. Incluye costilla de cerdo en salsa barbecue, bondiola de cerdo ahumada, alas barbecue, chorizo ahumado, papa criolla ahumada, plátano maduro, porción de guacamole y nuestra salsa especial de la casa, en una porción ideal para disfrutar entre dos.</p>
                     </div>

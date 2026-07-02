@@ -217,6 +217,28 @@ body {
     gap: 8px;
 }
 
+.btn-item-costo {
+    background: none;
+    border: none;
+    font-size: 0.8em;
+    cursor: pointer;
+    padding: 1px 4px;
+    border-radius: 4px;
+    opacity: 0.35;
+    transition: all 0.2s;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.btn-item-costo.activo {
+    opacity: 1;
+    background: rgba(255, 107, 53, 0.18);
+}
+
+.btn-item-costo:hover {
+    opacity: 0.75;
+}
+
 .cantidad-btn {
     width: 28px;
     height: 28px;
