@@ -371,6 +371,9 @@
                         <button class="btn-editar" onclick="abrirEditar(${pedido.id})">
                             <i class="fas fa-pen"></i>
                         </button>
+                        <button class="btn-eliminar-pedido" onclick="pedirPinEliminar(${pedido.id})" title="Eliminar pedido">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     `;
                 case 'preparando':
                     return `
@@ -380,11 +383,17 @@
                         <button class="btn-editar" onclick="abrirEditar(${pedido.id})">
                             <i class="fas fa-pen"></i>
                         </button>
+                        <button class="btn-eliminar-pedido" onclick="pedirPinEliminar(${pedido.id})" title="Eliminar pedido">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     `;
                 case 'listo':
                     return `
                         <button class="btn-estado btn-entregado" onclick="cambiarEstado(${pedido.id}, 'entregado')">
                             <i class="fas fa-hand-holding"></i> ENTREGADO
+                        </button>
+                        <button class="btn-eliminar-pedido" onclick="pedirPinEliminar(${pedido.id})" title="Eliminar pedido">
+                            <i class="fas fa-trash"></i>
                         </button>
                     `;
                 default:
@@ -656,6 +665,69 @@
                 await cargarPedidos();
             }
         }
+
+        // ========== ELIMINAR PEDIDO CON PIN ==========
+        let _pedidoAEliminar = null;
+
+        function pedirPinEliminar(id) {
+            _pedidoAEliminar = id;
+            document.getElementById('pinEliminarInputs').querySelectorAll('input').forEach(i => i.value = '');
+            document.getElementById('pinEliminarError').style.display = 'none';
+            document.getElementById('modalPinEliminar').style.display = 'flex';
+            document.getElementById('pinEliminarInputs').querySelector('input').focus();
+        }
+
+        function cerrarPinEliminar() {
+            document.getElementById('modalPinEliminar').style.display = 'none';
+            _pedidoAEliminar = null;
+        }
+
+        function avanzarPinEliminar(el) {
+            const inputs = Array.from(document.getElementById('pinEliminarInputs').querySelectorAll('input'));
+            const idx = inputs.indexOf(el);
+            if (el.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+            if (inputs.every(i => i.value)) validarPinEliminar();
+        }
+
+        async function validarPinEliminar() {
+            const inputs = document.getElementById('pinEliminarInputs').querySelectorAll('input');
+            const pin = Array.from(inputs).map(i => i.value).join('');
+            if (pin !== '1034') {
+                document.getElementById('pinEliminarError').style.display = 'block';
+                document.getElementById('pinEliminarInputs').classList.add('shake');
+                setTimeout(() => {
+                    document.getElementById('pinEliminarInputs').classList.remove('shake');
+                    inputs.forEach(i => i.value = '');
+                    inputs[0].focus();
+                }, 600);
+                return;
+            }
+            const idAEliminar = _pedidoAEliminar;
+            cerrarPinEliminar();
+            try {
+                const res = await eliminarPedido(idAEliminar);
+                if (res && res.error) throw new Error(res.error);
+                await cargarPedidos();
+            } catch(e) {
+                alert('Error al eliminar el pedido: ' + e.message);
+            }
+        }
     </script>
+
+    <!-- Modal PIN Eliminar -->
+    <div id="modalPinEliminar" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:#1a1a1a; border:2px solid #dc3545; border-radius:16px; padding:32px 28px; text-align:center; max-width:320px; width:90%;">
+            <div style="font-family:'Bebas Neue',sans-serif; font-size:1.4em; color:#dc3545; letter-spacing:2px; margin-bottom:6px;">🔒 ELIMINAR PEDIDO</div>
+            <div style="color:#aaa; font-size:0.85rem; margin-bottom:20px;">Ingresa la clave de administrador</div>
+            <div id="pinEliminarInputs" style="display:flex; gap:10px; justify-content:center; margin-bottom:12px;">
+                <input type="tel" maxlength="1" pattern="[0-9]" autocomplete="off" style="width:48px;height:56px;text-align:center;font-size:1.6em;background:#111;border:2px solid #333;border-radius:8px;color:#fff;" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/,'').slice(0,1); avanzarPinEliminar(this)">
+                <input type="tel" maxlength="1" pattern="[0-9]" autocomplete="off" style="width:48px;height:56px;text-align:center;font-size:1.6em;background:#111;border:2px solid #333;border-radius:8px;color:#fff;" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/,'').slice(0,1); avanzarPinEliminar(this)">
+                <input type="tel" maxlength="1" pattern="[0-9]" autocomplete="off" style="width:48px;height:56px;text-align:center;font-size:1.6em;background:#111;border:2px solid #333;border-radius:8px;color:#fff;" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/,'').slice(0,1); avanzarPinEliminar(this)">
+                <input type="tel" maxlength="1" pattern="[0-9]" autocomplete="off" style="width:48px;height:56px;text-align:center;font-size:1.6em;background:#111;border:2px solid #333;border-radius:8px;color:#fff;" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/,'').slice(0,1); avanzarPinEliminar(this)">
+            </div>
+            <div id="pinEliminarError" style="display:none; color:#dc3545; font-size:0.82rem; margin-bottom:10px;">PIN incorrecto</div>
+            <button onclick="cerrarPinEliminar()" style="background:none;border:1px solid #555;color:#aaa;padding:8px 24px;border-radius:8px;cursor:pointer;font-size:0.9rem;">Cancelar</button>
+        </div>
+    </div>
 </body>
 </html>

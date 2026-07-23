@@ -31,6 +31,8 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
           result = registrarSueldo(data.fecha, data.nombre, data.valor, data.nota, data.linea);
         } else if (data.action === 'eliminarSueldo') {
           result = eliminarSueldo(data.id);
+        } else if (data.action === 'eliminarPedido') {
+          result = eliminarPedido(data.id);
         } else {
           result = { error: 'Accion POST no valida' };
         }
@@ -176,6 +178,22 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
         return { success: true, mensaje: 'Pedido #' + id + ' actualizado' };
       }
     }
+    return { error: 'Pedido no encontrado' };
+  }
+
+  function eliminarPedido(id) {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    if (!sheet) return { error: 'Hoja Pedidos no encontrada' };
+    var data = sheet.getDataRange().getValues();
+    var idStr = String(id).trim();
+
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === idStr) {
+        sheet.deleteRow(i + 1);
+        return { success: true, mensaje: 'Pedido #' + id + ' eliminado' };
+      }
+    }
+
     return { error: 'Pedido no encontrado' };
   }
 

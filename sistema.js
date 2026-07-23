@@ -8,76 +8,81 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxVj9EO3hoX4VLMyf75Hv-M
 // ========== PRODUCTOS DEL MENÚ ==========
 const MENU = {
     entradas: [
-        { id: 'e1', nombre: 'Aritos Gosa', precio: 7000 },
-        { id: 'e2', nombre: 'Bacon Gosa', precio: 7600 },
-        { id: 'e4', nombre: 'Totopos Gosa', precio: 7600 },
-        { id: 'e3', nombre: 'Tender Gosa', precio: 8000 },
+        { id: 'e1', nombre: 'Aritos Gosa', precio: 8000 },
+        { id: 'e2', nombre: 'Bacon Gosa', precio: 8000 },
+        { id: 'e4', nombre: 'Totopos Gosa', precio: 8000 },
+        { id: 'e3', nombre: 'Tender Gosa', precio: 8500 },
         { id: 'e5', nombre: 'La Gallego', precio: 8500 }
     ],
     perros: [
         { id: 'p1', nombre: 'Perro Ranchero', precio: 10000 },
-        { id: 'p7', nombre: 'Chori Gosa', precio: 11500 },
+        { id: 'p7', nombre: 'Chori Gosa', precio: 12000 },
         { id: 'p2', nombre: 'Tropical Gosa', precio: 12000 },
-        { id: 'p3', nombre: 'Texas BBQ', precio: 13500 },
+        { id: 'p3', nombre: 'Texas BBQ', precio: 14000 },
         { id: 'p5', nombre: 'Triple Gosa', precio: 14000 }
     ],
     hamburguesas: [
         { id: 'h1', nombre: 'Gosa Burguer', precio: 10000 },
-        { id: 'h1d', nombre: 'Gosa Burguer Doble', precio: 14500 },
-        { id: 'h2', nombre: 'Crispy Gosa', precio: 13000 },
-        { id: 'h2d', nombre: 'Crispy Gosa Doble', precio: 17500 },
-        { id: 'h3', nombre: 'Gosa Balsamica', precio: 13000 },
-        { id: 'h3d', nombre: 'Gosa Balsamica Doble', precio: 17500 },
-        { id: 'h5', nombre: 'La Indomable', precio: 13500 },
+        { id: 'h1d', nombre: 'Gosa Burguer Doble', precio: 16000 },
+        { id: 'h11t', nombre: 'Gosa Burguer Triple', precio: 23000 },
+        { id: 'h2', nombre: 'Crispy Gosa', precio: 14000 },
+        { id: 'h2d', nombre: 'Crispy Gosa Doble', precio: 19000 },
+        { id: 'h12t', nombre: 'Crispy Gosa Triple', precio: 26000 },
+        { id: 'h3', nombre: 'Gosa Balsamica', precio: 14000 },
+        { id: 'h3d', nombre: 'Gosa Balsamica Doble', precio: 19000 },
+        { id: 'h5', nombre: 'La Indomable', precio: 14000 },
         { id: 'h5d', nombre: 'La Indomable Doble', precio: 18000 },
-        { id: 'h4', nombre: 'Madurita', precio: 13500 },
-        { id: 'h4d', nombre: 'Madurita Doble', precio: 18000 },
+        { id: 'h4', nombre: 'Madurita', precio: 14000 },
+        { id: 'h4d', nombre: 'Madurita Doble', precio: 19000 },
+        { id: 'h13t', nombre: 'Madurita Triple', precio: 26000 },
         { id: 'h6', nombre: 'Alfa Pretzel', precio: 16000 },
         { id: 'h6d', nombre: 'Alfa Pretzel Doble', precio: 22000 },
+        { id: 'h14t', nombre: 'Alfa Pretzel Triple', precio: 30000 },
         { id: 'h8', nombre: 'La Bacana', precio: 16000 },
         { id: 'h8d', nombre: 'La Bacana Doble', precio: 22000 },
         { id: 'h9', nombre: 'La Guerita', precio: 16000 },
         { id: 'h9d', nombre: 'La Guerita Doble', precio: 22000 },
+        { id: 'h15t', nombre: 'La Guerita Triple', precio: 30000 },
         { id: 'h10', nombre: 'La Gringa', precio: 16000 },
         { id: 'h10d', nombre: 'La Gringa Doble', precio: 22000 }
     ],
     salchipapas: [
-        { id: 's1', nombre: 'Rapi Gosa', precio: 9000 },
+        { id: 's1', nombre: 'Rapi Gosa', precio: 10000 },
         { id: 's2', nombre: 'Salchi Gosa', precio: 14500 },
-        { id: 's3', nombre: 'La Gosa Supreme', precio: 25000 }
+        { id: 's3', nombre: 'La Gosa Supreme', precio: 26000 }
     ],
     picadas: [
         { id: 'pica1', nombre: 'Picada Personal Gosa', precio: 22000 },
         { id: 'pica2', nombre: 'Picada Gosa Para Dos', precio: 40000 }
     ],
     adicionales: [
-        { id: 'a1', nombre: 'Salchicha', precio: 1200 },
-        { id: 'a2', nombre: 'Tocineta', precio: 1200 },
+        { id: 'a1', nombre: 'Salchicha', precio: 1500 },
+        { id: 'a2', nombre: 'Tocineta', precio: 1500 },
         { id: 'a3', nombre: 'Agua', precio: 1000 },
         { id: 'a4', nombre: 'Queso Mozzarella', precio: 1500 },
-        { id: 'a5', nombre: 'Chorizo', precio: 2000 },
+        { id: 'a5', nombre: 'Chorizo', precio: 3000 },
         { id: 'a6', nombre: 'Queso Cheddar', precio: 2000 },
-        { id: 'a7', nombre: 'Carne de Hamburguesa', precio: 3000 },
+        { id: 'a7', nombre: 'Carne de Hamburguesa', precio: 3500 },
         { id: 'a8', nombre: 'Chicharron', precio: 3500 },
-        { id: 'a9', nombre: 'Porcion de Papa', precio: 4000 },
+        { id: 'a9', nombre: 'Porcion de Papa', precio: 5000 },
         { id: 'a10', nombre: 'Alas Barbecue', precio: 8000 },
-        { id: 'a11', nombre: 'Chorizo Ahumado', precio: 4000 },
-        { id: 'a12', nombre: 'Papa Criolla Ahumada', precio: 5000 },
-        { id: 'a13', nombre: 'Guacamole', precio: 3500 },
+        { id: 'a11', nombre: 'Chorizo Ahumado', precio: 4500 },
+        { id: 'a12', nombre: 'Papa Criolla Ahumada', precio: 5500 },
+        { id: 'a13', nombre: 'Guacamole', precio: 4000 },
         { id: 'a14', nombre: 'Salsa Especial de la Casa', precio: 1500 },
         { id: 'a15', nombre: 'Platano Maduro', precio: 2000 }
     ],
     combos: [
         { id: 'c1', nombre: 'Gaseosa o Jugo', precio: 2500 },
         { id: 'c2', nombre: 'Porcion de Papa (Combo)', precio: 4000 },
-        { id: 'c3', nombre: 'El Combo Completo', precio: 5000 },
+        { id: 'c3', nombre: 'El Combo Completo', precio: 6000 },
         { id: 'c4h', nombre: 'Menu Infantil Hamburguesa', precio: 14500 },
         { id: 'c4n', nombre: 'Menu Infantil Nuggets', precio: 14500 }
     ],
     comboDelMes: [
-        { id: 'cm1', nombre: 'Combo del Mes', precio: 35000 },
-        { id: 'cm2', nombre: 'Combo del Mes (1 Doble)', precio: 38000 },
-        { id: 'cm3', nombre: 'Combo del Mes (2 Dobles)', precio: 42000 }
+        { id: 'cm1', nombre: 'Combo del Mes', precio: 40000 },
+        { id: 'cm2', nombre: 'Combo del Mes (1 Doble)', precio: 43000 },
+        { id: 'cm3', nombre: 'Combo del Mes (2 Dobles)', precio: 47000 }
     ]
 };
 
@@ -316,6 +321,11 @@ async function actualizarEstadoPedido(id, estado) {
         id: id,
         estado: estado
     });
+}
+
+// Eliminar pedido (marca como cancelado)
+async function eliminarPedido(id) {
+    return await apiPost({ action: 'eliminarPedido', id: id });
 }
 
 // Actualizar items, total y notas de un pedido existente

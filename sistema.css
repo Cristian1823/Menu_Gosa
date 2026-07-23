@@ -217,6 +217,64 @@ body {
     gap: 8px;
 }
 
+.btn-eliminar-pedido {
+    background: rgba(220, 53, 69, 0.12);
+    border: 1px solid rgba(220, 53, 69, 0.4);
+    color: #dc3545;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.btn-eliminar-pedido:hover {
+    background: rgba(220, 53, 69, 0.25);
+    border-color: #dc3545;
+}
+
+.btn-descuento {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #ccc;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+}
+
+.btn-descuento:hover {
+    border-color: #00b4c8;
+    color: #00d4e8;
+}
+
+.btn-descuento.activo {
+    background: rgba(0, 180, 200, 0.15);
+    border-color: #00b4c8;
+    color: #00d4e8;
+}
+
+.btn-descuento-quitar {
+    border-color: rgba(220,53,69,0.4);
+    color: #dc3545;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-descuento-quitar:hover {
+    border-color: #dc3545;
+    color: #dc3545;
+    background: rgba(220,53,69,0.1);
+}
+
 .btn-item-costo {
     background: none;
     border: none;
