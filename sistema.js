@@ -24,7 +24,6 @@ const MENU = {
     hamburguesas: [
         { id: 'h1', nombre: 'Gosa Burguer', precio: 10000 },
         { id: 'h1d', nombre: 'Gosa Burguer Doble', precio: 16000 },
-        { id: 'h11t', nombre: 'Gosa Burguer Triple', precio: 23000 },
         { id: 'h2', nombre: 'Crispy Gosa', precio: 14000 },
         { id: 'h2d', nombre: 'Crispy Gosa Doble', precio: 19000 },
         { id: 'h12t', nombre: 'Crispy Gosa Triple', precio: 26000 },
@@ -38,13 +37,12 @@ const MENU = {
         { id: 'h6', nombre: 'Alfa Pretzel', precio: 16000 },
         { id: 'h6d', nombre: 'Alfa Pretzel Doble', precio: 22000 },
         { id: 'h14t', nombre: 'Alfa Pretzel Triple', precio: 30000 },
-        { id: 'h8', nombre: 'La Bacana', precio: 16000 },
-        { id: 'h8d', nombre: 'La Bacana Doble', precio: 22000 },
         { id: 'h9', nombre: 'La Guerita', precio: 16000 },
         { id: 'h9d', nombre: 'La Guerita Doble', precio: 22000 },
         { id: 'h15t', nombre: 'La Guerita Triple', precio: 30000 },
-        { id: 'h10', nombre: 'La Gringa', precio: 16000 },
-        { id: 'h10d', nombre: 'La Gringa Doble', precio: 22000 }
+        { id: 'h11', nombre: 'La Cucurella', precio: 16000 },
+        { id: 'h11d', nombre: 'La Cucurella Doble', precio: 22000 },
+        { id: 'h11t', nombre: 'La Cucurella Triple', precio: 30000 }
     ],
     salchipapas: [
         { id: 's1', nombre: 'Rapi Gosa', precio: 10000 },

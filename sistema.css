@@ -238,6 +238,48 @@ body {
     border-color: #dc3545;
 }
 
+.descuento-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: #aaa;
+    letter-spacing: 1px;
+    cursor: pointer;
+    padding: 4px 2px;
+    user-select: none;
+}
+
+.descuento-header:hover { color: #ccc; }
+
+.descuento-header .fa-chevron-down {
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+}
+
+.descuento-header.abierto .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+#descuentoBody {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.25s ease;
+}
+
+#descuentoBody.visible {
+    max-height: 200px;
+}
+
+@media (min-width: 901px) {
+    #descuentoBody {
+        max-height: 200px !important;
+    }
+    .descuento-header .fa-chevron-down {
+        display: none;
+    }
+}
+
 .btn-descuento {
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.15);
