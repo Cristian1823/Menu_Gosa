@@ -1,0 +1,30 @@
+Nuevos productos
+
+h6	Alfa pretzel 	hamburguesas	16000	7310	1000	TRUE
+h6d	Alfa pretzel doble	hamburguesas	22000	9757	1000	TRUE
+e4	Totopos gosa 	entradas	7600	3500	1000	TRUE
+c4	Menu Infantil	combos	14500	6950	1000	TRUE
+
+
+ingredientes 
+ING17	Pan de pretzel	unidad	48	20
+ING18	Queso amarillo	unidad	186	20
+ING19	Pan pequeño	unidad	12	10
+ING20	Nugguets	unidad	16	10
+
+
+Descripciones
+
+Alfa pretzel 
+Pan pretzel acompañado de nuestra jugosa carne ,con doble queso americano y cheddar fundido, coronada con crujientes aros de cebolla y tocineta dorada. Todo bañado en nuestras salsas de la casa, con un toque extra de nuestra nueva salsa de tocineta aparte para llevarla al siguiente nivel.
+
+Totopos gosa 
+Totopos de maíz bañados en salsa chedar 
+
+
+
+Menú infantil 
+La diversión también viene en pequeño. Elige entre una deliciosa hamburguesa en pan brioche con carne, queso, tocineta y vegetales frescos, o 6 crujientes nuggets.
+Acompañado de papas a la francesa y jugo Hit para completar la felicidad.
+
+Perfecto para los más pequeños… ¡pero con todo el sabor GOSA! 😋🔥
