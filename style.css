@@ -390,7 +390,7 @@ main {
 
 .accordion-header-hamburguesas {
     padding: 8px 24px;
-    height: 75px;
+    height: 90px;
     background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/fondo hamburguesas.jpeg');
     background-size: cover;
     background-position: center;
