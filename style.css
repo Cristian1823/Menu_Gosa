@@ -1116,3 +1116,10 @@ html {
     background-position: center;
     background-repeat: no-repeat;
 }
+
+.accordion-header-ahumados {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/asados fondo.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
