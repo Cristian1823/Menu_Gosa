@@ -365,9 +365,13 @@ main {
 .accordion-item[data-category="hamburguesas"] {
     background-image: url('images/fondo hamburguesas.webp');
     background-size: cover;
-    background-position: center;
+    background-position: top center;
     background-repeat: no-repeat;
-    background-attachment: scroll;
+    background-attachment: fixed;
+}
+
+.accordion-item[data-category="hamburguesas"] .accordion-content {
+    background: rgba(0, 0, 0, 0.85);
 }
 
 .accordion-header-hamburguesas {
