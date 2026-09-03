@@ -279,83 +279,112 @@ main {
     text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
 }
 
-/* ========== Tabs Sistema ========== */
-.tabs-container {
+/* ========== Acordeón Sistema ========== */
+.accordion-menu {
     display: flex;
-    justify-content: center;
-    gap: 10px;
+    flex-direction: column;
+    gap: 12px;
     margin-bottom: 40px;
-    padding: 0 10px;
-    flex-wrap: wrap;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.98), rgba(0,0,0,0.95));
-    padding: 20px 10px;
-    backdrop-filter: blur(10px);
-    border-bottom: 2px solid var(--gold-dark);
 }
 
-.tab-btn {
+.accordion-item {
     background: var(--card-bg);
     border: 2px solid var(--gray-dark);
-    color: var(--gray-light);
-    padding: 12px 20px;
     border-radius: 12px;
-    cursor: pointer;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1em;
-    letter-spacing: 1px;
+    overflow: hidden;
     transition: var(--transition);
+}
+
+.accordion-item:hover {
+    border-color: var(--gold-dark);
+    box-shadow: 0 4px 16px rgba(255, 215, 0, 0.15);
+}
+
+.accordion-header {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), transparent);
+    border: none;
+    color: var(--white);
+    padding: 18px 24px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3em;
+    letter-spacing: 2px;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    white-space: nowrap;
+    justify-content: space-between;
+    gap: 16px;
+    transition: var(--transition);
+    width: 100%;
+    text-align: left;
 }
 
-.tab-btn i {
-    font-size: 1.2em;
-}
-
-.tab-btn:hover {
-    border-color: var(--gold-dark);
+.accordion-header:hover {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.12), rgba(255, 215, 0, 0.02));
     color: var(--gold);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(255, 215, 0, 0.2);
 }
 
-.tab-btn.active {
-    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-    border-color: var(--gold);
-    color: var(--black);
-    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
-    font-weight: 600;
+.accordion-header i:first-child {
+    font-size: 1.4em;
+    color: var(--gold);
+    min-width: 30px;
 }
 
-/* ========== Tab Panels ========== */
-.tabs-content {
+.accordion-header span {
+    flex: 1;
+}
+
+.accordion-icon {
+    font-size: 1.2em;
+    color: var(--gold);
+    transition: transform 0.3s ease;
+}
+
+.accordion-item.active .accordion-icon {
+    transform: rotate(-180deg);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+}
+
+.accordion-item.active .accordion-content {
+    max-height: 5000px;
+    padding: 20px;
+}
+
+.accordion-barril-emoji {
+    font-size: 1.4em;
+    display: inline-block;
+    min-width: 30px;
+    text-align: center;
+}
+
+/* ========== Fondos Especiales de Categorías ========== */
+.accordion-header-hamburguesas {
+    background-image: url('images/fondo hamburguesas.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     position: relative;
-    min-height: 400px;
 }
 
-.tab-panel {
-    display: none;
-    animation: fadeIn 0.4s ease-in-out;
+.accordion-header-hamburguesas::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    pointer-events: none;
 }
 
-.tab-panel.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.accordion-header-hamburguesas i,
+.accordion-header-hamburguesas span {
+    position: relative;
+    z-index: 2;
 }
 
 /* ========== Menu Grid ========== */
@@ -657,22 +686,18 @@ footer {
         font-size: 2.2em;
     }
 
-    .tabs-container {
-        gap: 8px;
-        padding: 15px 5px;
+    .accordion-header {
+        padding: 14px 16px;
+        font-size: 1.1em;
+        letter-spacing: 1px;
     }
 
-    .tab-btn {
-        padding: 10px 15px;
-        font-size: 0.95em;
+    .accordion-header i:first-child {
+        font-size: 1.2em;
     }
 
-    .tab-btn span {
-        display: none;
-    }
-
-    .tab-btn i {
-        font-size: 1.4em;
+    .accordion-header .accordion-icon {
+        font-size: 1em;
     }
 
     .menu-grid {
@@ -747,13 +772,9 @@ footer {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .tabs-container {
-        gap: 8px;
-    }
-
-    .tab-btn {
-        padding: 10px 16px;
-        font-size: 1em;
+    .accordion-header {
+        padding: 16px 20px;
+        font-size: 1.2em;
     }
 }
 

@@ -60,51 +60,21 @@
         <p class="promotion-text">¡Oferta válida todo el mes! No te la pierdas</p>
     </div>
 
-    <!-- Menú con tabs -->
+    <!-- Menú con acordeón -->
     <main>
         <h2 class="menu-title">NUESTRO MENÚ</h2>
 
-        <!-- Tabs de navegación -->
-        <div class="tabs-container">
-            <button class="tab-btn active" data-tab="entradas">
-                <i class="fas fa-fire"></i>
-                <span>Entradas</span>
-            </button>
-            <button class="tab-btn tab-ahumados" data-tab="ahumados">
-                <span class="tab-barril-emoji">🛢️</span>
-                <span>Ahumados</span>
-            </button>
-            <button class="tab-btn" data-tab="perros">
-                <i class="fas fa-hotdog"></i>
-                <span>Perros</span>
-            </button>
-            <button class="tab-btn" data-tab="hamburguesas">
-                <i class="fas fa-hamburger"></i>
-                <span>Hamburguesas</span>
-            </button>
-            <button class="tab-btn" data-tab="salchipapas">
-                <i class="fas fa-drumstick-bite"></i>
-                <span>Salchipapas</span>
-            </button>
-            <button class="tab-btn" data-tab="adicionales">
-                <i class="fas fa-plus-circle"></i>
-                <span>Adicionales</span>
-            </button>
-            <button class="tab-btn" data-tab="agrandados">
-                <i class="fas fa-glass-cheers"></i>
-                <span>Combos</span>
-            </button>
-            <button class="tab-btn" data-tab="comboDelMes">
-                <i class="fas fa-crown"></i>
-                <span>Combo del Mes</span>
-            </button>
-        </div>
+        <!-- Acordeón de categorías -->
+        <div class="accordion-menu">
 
-        <!-- Contenido de tabs -->
-        <div class="tabs-content">
-
-            <!-- Tab: Entradas -->
-            <div class="tab-panel active" id="entradas">
+            <!-- Acordeón: Entradas -->
+            <div class="accordion-item active">
+                <button class="accordion-header">
+                    <i class="fas fa-fire"></i>
+                    <span>Entradas</span>
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </button>
+                <div class="accordion-content">
                 <div class="menu-grid">
                     <div class="menu-card">
                         <div class="card-header">
@@ -143,10 +113,17 @@
                         <p class="description">Crujientes papas a la francesa acompañadas de tocineta crocante y nuestra salsa picante de la casa. La combinación perfecta entre textura, intensidad y ese toque especial que abre el apetito para una gran experiencia Gosa.</p>
                     </div>
                 </div>
+                </div>
             </div>
 
-            <!-- Tab: Ahumados Gosa -->
-            <div class="tab-panel" id="ahumados">
+            <!-- Acordeón: Ahumados Gosa -->
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span class="accordion-barril-emoji">🛢️</span>
+                    <span>Ahumados</span>
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </button>
+                <div class="accordion-content">
                 <div class="ahumados-header">
                     <img src="images/logo_barril.jpeg" alt="Ahumados GOSA" class="ahumados-logo">
                     <p class="ahumados-desc">Ahumados artesanales GOSA</p>
@@ -196,10 +173,17 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
 
-            <!-- Tab: Perros Calientes -->
-            <div class="tab-panel" id="perros">
+            <!-- Acordeón: Perros Calientes -->
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <i class="fas fa-hotdog"></i>
+                    <span>Perros</span>
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </button>
+                <div class="accordion-content">
                 <div class="menu-grid">
                     <div class="menu-card">
                         <div class="card-header">
@@ -239,17 +223,24 @@
                         <p class="description">Salchicha premium envuelta en tocineta, pan brioche artesanal con chorizo a la parrilla, chicharrones crujientes, papa ripio, queso fundido, cebolla fresca y 1 huevo frito</p>
                     </div>
                 </div>
+                </div>
             </div>
 
-            <!-- Tab: Hamburguesas -->
-            <div class="tab-panel" id="hamburguesas">
+            <!-- Acordeón: Hamburguesas -->
+            <div class="accordion-item" data-category="hamburguesas">
+                <button class="accordion-header accordion-header-hamburguesas">
+                    <i class="fas fa-hamburger"></i>
+                    <span>Hamburguesas</span>
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </button>
+                <div class="accordion-content">
                 <div class="menu-grid">
                     <div class="menu-card">
                         <div class="card-header">
                             <h3>GOSA BURGUER</h3>
                             <span class="price">$10,000</span>
                         </div>
-                        <p class="description">Carne de brisket molida, papa ripio, huevo frito, vegetales frescos y nuestras salsas secretas, coronados en un pan brioche que lo abraza todo</p>
+                        <p class="description">150 gramos de carne , pan brioche huevo frito o tocineta  queso americano , papa ripio salsas de las casa , lechuga y tomate</p>
                         <div class="double-option">
                             <span class="double-name">Gosa Burguer Doble</span>
                             <span class="double-price">$16,000</span>
@@ -264,7 +255,7 @@
                             <h3>CRISPY GOSA</h3>
                             <span class="price">$14,000</span>
                         </div>
-                        <p class="description">Pan brioche artesanal, carne brisket molida, vegetales, queso mozzarella, cebolla crispy, tocineta y salsa BBQ de la casa</p>
+                        <p class="description">150 gramos de carne , pan brioche , queso chedar , tocineta , cebolla crispy , bbq , salsa de la casa , lechuga y tomate</p>
                         <div class="double-option">
                             <span class="double-name">Crispy Gosa Doble</span>
                             <span class="double-price">$19,000</span>
@@ -280,7 +271,7 @@
                             <h3>MADURITA</h3>
                             <span class="price">$14,000</span>
                         </div>
-                        <p class="description">Pan brioche artesanal, carne brisket molida, vegetales, queso mozzarella, plátano maduro y chorizo, complementado con nuestras salsas de la casa</p>
+                        <p class="description">150 gramos de carne , pan brioche , queso americano , plátano maduro y chorizo , salsa de la casa , lechuga y tomate .</p>
                         <div class="double-option">
                             <span class="double-name">Madurita Doble</span>
                             <span class="double-price">$19,000</span>
@@ -290,13 +281,12 @@
                             <span class="double-price">$26,000</span>
                         </div>
                     </div>
-                    <div class="menu-card featured">
-                        <div class="featured-badge">NUEVO</div>
+                    <div class="menu-card">
                         <div class="card-header">
                             <h3>ALFA PRETZEL</h3>
                             <span class="price">$16,000</span>
                         </div>
-                        <p class="description">Pan pretzel acompañado de nuestra jugosa carne, con doble queso americano y cheddar fundido, coronada con crujientes aros de cebolla y tocineta dorada. Todo bañado en nuestras salsas de la casa, con un toque extra de nuestra nueva salsa de tocineta a parte.</p>
+                        <p class="description">150 gramos de carne  , pan pretzel, tocineta , aros de cebolla , queso  americano , queso chedar salsa de la casa , lechuga y tomate</p>
                         <div class="double-option">
                             <span class="double-name">Alfa Pretzel Doble</span>
                             <span class="double-price">$22,000</span>
@@ -312,7 +302,7 @@
                             <h3><img src="https://flagcdn.com/24x18/mx.png" alt="México" style="height:18px;vertical-align:middle;margin-right:6px;border-radius:2px;"> LA GUERITA</h3>
                             <span class="price">$16,000</span>
                         </div>
-                        <p class="description">Atrévete a probar el verdadero sabor mexicano. Preparada con pan brioche, carne artesanal, vegetales frescos, cebolla encurtida, doble queso (cheddar y doble crema), coronada con nachos crujientes bañados en nuestra salsa de chipotle picante. Una combinación llena de carácter, textura y ese toque picante que la hace inolvidable.</p>
+                        <p class="description">150 gramos de carne , pan brioche , salsa de chipotle picante , queso americano , queso chedar nachos , lechuga y tomate</p>
                         <div class="double-option">
                             <span class="double-name">La Guerita Doble</span>
                             <span class="double-price">$22,000</span>
@@ -325,24 +315,31 @@
                     <div class="menu-card featured">
                         <div class="featured-badge">NUEVO</div>
                         <div class="card-header">
-                            <h3><img src="https://flagcdn.com/24x18/es.png" alt="España" style="height:18px;vertical-align:middle;margin-right:6px;border-radius:2px;"> LA CUCURELLA</h3>
+                            <h3>TOM LOVER</h3>
                             <span class="price">$16,000</span>
                         </div>
-                        <p class="description">Inspirada en España y creada para los verdaderos amantes del buen sabor. Una hamburguesa con pan pretzel artesanal, jugosa carne de res, salami, chorizo, cebolla caramelizada, queso doble crema fundido, lechuga fresca y tomate. Una combinación intensa, ahumada y llena de carácter que convierte cada mordisco en una experiencia inolvidable.</p>
+                        <p class="description">150 gramos de carne , pan brioche  rojo , queso americano , mermelada de tomate , crocante de plátano verde , sour cream , lechuga</p>
                         <div class="double-option">
-                            <span class="double-name">La Cucurella Doble</span>
+                            <span class="double-name">Tom Lover Doble</span>
                             <span class="double-price">$22,000</span>
                         </div>
                         <div class="double-option">
-                            <span class="double-name">La Cucurella Triple</span>
+                            <span class="double-name">Tom Lover Triple</span>
                             <span class="double-price">$30,000</span>
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
 
-            <!-- Tab: Salchipapas -->
-            <div class="tab-panel" id="salchipapas">
+            <!-- Acordeón: Salchipapas -->
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <i class="fas fa-drumstick-bite"></i>
+                    <span>Salchipapas</span>
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </button>
+                <div class="accordion-content">
                 <div class="menu-grid">
                     <div class="menu-card">
                         <div class="card-header">
@@ -367,10 +364,17 @@
                         <p class="description">Papas a la francesa con salchicha de cerdo y ranchera, chorizo jugoso y carne BBQ al punto, acompañadas de papa ripio crocante, maíz tierno y queso doble crema, todo bañado con nuestras irresistibles salsas de la casa</p>
                     </div>
                 </div>
+                </div>
             </div>
 
-            <!-- Tab: Adicionales -->
-            <div class="tab-panel" id="adicionales">
+            <!-- Acordeón: Adicionales -->
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Adicionales</span>
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </button>
+                <div class="accordion-content">
                 <div class="extras-grid">
                     <div class="extra-item">
                         <span class="extra-name">Salchicha</span>
@@ -409,10 +413,17 @@
                         <span class="extra-price">$5,000</span>
                     </div>
                 </div>
+                </div>
             </div>
 
-            <!-- Tab: Agrandados -->
-            <div class="tab-panel" id="agrandados">
+            <!-- Acordeón: Combos -->
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <i class="fas fa-glass-cheers"></i>
+                    <span>Combos</span>
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </button>
+                <div class="accordion-content">
                 <div class="combos-grid">
                     <div class="combo-card">
                         <i class="fas fa-glass-martini-alt combo-icon"></i>
@@ -432,10 +443,17 @@
                         <p class="combo-price">$6,000</p>
                     </div>
                 </div>
+                </div>
             </div>
 
-            <!-- Tab: Combo del Mes -->
-            <div class="tab-panel" id="comboDelMes">
+            <!-- Acordeón: Combo del Mes -->
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <i class="fas fa-crown"></i>
+                    <span>Combo del Mes</span>
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </button>
+                <div class="accordion-content">
                 <div class="menu-grid">
                     <div class="menu-card featured">
                         <div class="featured-badge">DEL MES</div>
@@ -453,6 +471,7 @@
                             <span class="double-price">$47,000</span>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
 

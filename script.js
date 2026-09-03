@@ -2,50 +2,43 @@
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    // ========== Sistema de Tabs ==========
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabPanels = document.querySelectorAll('.tab-panel');
+    // ========== Sistema de Acordeón ==========
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+    const accordionItems = document.querySelectorAll('.accordion-item');
 
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const targetTab = this.getAttribute('data-tab');
+    // Establecer el primer acordeón abierto por defecto
+    if (accordionItems.length > 0) {
+        accordionItems[0].classList.add('active');
+    }
 
-            // Remover clase active de todos los botones y paneles
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabPanels.forEach(panel => panel.classList.remove('active'));
+    accordionHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const accordionItem = this.closest('.accordion-item');
+            const isActive = accordionItem.classList.contains('active');
 
-            // Agregar clase active al botón clickeado
-            this.classList.add('active');
+            // Cerrar todos los acordeones
+            accordionItems.forEach(item => {
+                item.classList.remove('active');
+            });
 
-            // Mostrar el panel correspondiente
-            const targetPanel = document.getElementById(targetTab);
-            if (targetPanel) {
-                targetPanel.classList.add('active');
-            }
-
-            // Scroll suave hacia el inicio del menú
-            const main = document.querySelector('main');
-            if (main) {
-                const offsetTop = main.offsetTop - 100;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
+            // Abrir el acordeón clickeado si no estaba abierto
+            if (!isActive) {
+                accordionItem.classList.add('active');
             }
         });
     });
 
-    // ========== Teclado de navegación ==========
-    let currentTabIndex = 0;
+    // ========== Navegación con teclado (Arriba/Abajo) ==========
+    let currentAccordionIndex = 0;
 
     document.addEventListener('keydown', function(e) {
-        // Navegar con flechas izquierda/derecha
-        if (e.key === 'ArrowRight') {
-            currentTabIndex = (currentTabIndex + 1) % tabButtons.length;
-            tabButtons[currentTabIndex].click();
-        } else if (e.key === 'ArrowLeft') {
-            currentTabIndex = (currentTabIndex - 1 + tabButtons.length) % tabButtons.length;
-            tabButtons[currentTabIndex].click();
+        // Navegar con flechas arriba/abajo en acordeones
+        if (e.key === 'ArrowDown') {
+            currentAccordionIndex = (currentAccordionIndex + 1) % accordionItems.length;
+            accordionHeaders[currentAccordionIndex].click();
+        } else if (e.key === 'ArrowUp') {
+            currentAccordionIndex = (currentAccordionIndex - 1 + accordionItems.length) % accordionItems.length;
+            accordionHeaders[currentAccordionIndex].click();
         }
     });
 
@@ -76,58 +69,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuCards = document.querySelectorAll('.menu-card, .extra-item, .combo-card');
     menuCards.forEach(card => observer.observe(card));
 
-    // ========== Scroll reveal para tabs ==========
-    let lastScrollTop = 0;
-    const tabsContainer = document.querySelector('.tabs-container');
-
-    window.addEventListener('scroll', function() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-        // Si hacemos scroll hacia abajo y pasamos cierto punto
-        if (scrollTop > 400) {
-            tabsContainer.style.boxShadow = '0 4px 20px rgba(255, 215, 0, 0.2)';
-        } else {
-            tabsContainer.style.boxShadow = 'none';
-        }
-
-        lastScrollTop = scrollTop;
-    });
-
-    // ========== Prevenir zoom en mobile en tabs ==========
-    tabButtons.forEach(button => {
-        button.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            this.click();
-        }, { passive: false });
-    });
-
-    // ========== Contador de items por categoría ==========
-    function updateTabCounters() {
-        tabButtons.forEach(button => {
-            const tabId = button.getAttribute('data-tab');
-            const panel = document.getElementById(tabId);
-
-            if (panel) {
-                const itemsCount = panel.querySelectorAll('.menu-card, .extra-item, .combo-card').length;
-
-                // Crear badge con contador (opcional)
-                // Puedes descomentar esto si quieres mostrar el número de items
-                /*
-                const existingBadge = button.querySelector('.count-badge');
-                if (existingBadge) {
-                    existingBadge.remove();
-                }
-
-                const countBadge = document.createElement('span');
-                countBadge.className = 'count-badge';
-                countBadge.textContent = itemsCount;
-                button.appendChild(countBadge);
-                */
-            }
-        });
-    }
-
-    updateTabCounters();
 
     // ========== Easter Egg: Konami Code ==========
     let konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
@@ -309,6 +250,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // ========== Log de inicio ==========
     console.log('%c🍔 GOSA Food Truck - Menú Digital 🍔', 'color: #FFD700; font-size: 20px; font-weight: bold;');
     console.log('%cDesarrollado con ❤️ para GOSA', 'color: #E0E0E0; font-size: 12px;');
-    console.log('%c💡 Tip: Usa las flechas ← → para navegar entre categorías', 'color: #FFC107; font-style: italic;');
+    console.log('%c💡 Tip: Usa las flechas ↑ ↓ para navegar entre categorías', 'color: #FFC107; font-style: italic;');
     console.log('%c📱 Tip: Haz clic en el botón de WhatsApp para hacer tu pedido', 'color: #25D366; font-style: italic;');
 });
