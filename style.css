@@ -1087,3 +1087,32 @@ html {
 .extra-item.ahumados-extra .extra-name {
     color: #d4824a;
 }
+
+/* ========== Headers con Fondos de Imagen Personalizados ========== */
+.accordion-header-entradas {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/entradas fondo.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.accordion-header-perros {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/fondo perro.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.accordion-header-salchipapas {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/salchipapa fondo.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.accordion-header-hamburguesas {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/fondo hamburguesas.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
