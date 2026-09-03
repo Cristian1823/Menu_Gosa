@@ -81,6 +81,20 @@ const MENU = {
         { id: 'cm1', nombre: 'Combo del Mes', precio: 40000 },
         { id: 'cm2', nombre: 'Combo del Mes (1 Doble)', precio: 43000 },
         { id: 'cm3', nombre: 'Combo del Mes (2 Dobles)', precio: 47000 }
+    ],
+    bebidas: [
+        { id: 'be1', nombre: 'Coca Cola 250 ml', precio: 2500 },
+        { id: 'be2', nombre: 'Coca Cola 400 ml', precio: 4000 },
+        { id: 'be3', nombre: 'Coca Cola 0 400 ml', precio: 3600 },
+        { id: 'be4', nombre: 'Coca Cola 1.5 L', precio: 8500 },
+        { id: 'be5', nombre: 'Coca Cola 0 1.5 L', precio: 8000 },
+        { id: 'be6', nombre: 'Quatro 400 ml', precio: 4000 },
+        { id: 'be7', nombre: 'Quattro 1.5 L', precio: 7500 },
+        { id: 'be8', nombre: 'Juego Hit 500', precio: 3200 },
+        { id: 'be9', nombre: 'Agua', precio: 2000 },
+        { id: 'be10', nombre: 'Corona', precio: 6500 },
+        { id: 'be11', nombre: 'Coronita', precio: 5000 },
+        { id: 'be12', nombre: 'Agua del día', precio: 1000 }
     ]
 };
 
@@ -93,7 +107,8 @@ const CATEGORIAS_NOMBRES = {
     salchipapas: 'Salchipapas',
     adicionales: 'Adicionales',
     combos: 'Combos',
-    comboDelMes: 'Combo del Mes'
+    comboDelMes: 'Combo del Mes',
+    bebidas: 'Bebidas'
 };
 
 // Iconos de categorías
@@ -105,7 +120,8 @@ const CATEGORIAS_ICONOS = {
     salchipapas: 'fa-drumstick-bite',
     adicionales: 'fa-plus',
     combos: 'fa-glass-water',
-    comboDelMes: 'fa-crown'
+    comboDelMes: 'fa-crown',
+    bebidas: 'fa-bottle-water'
 };
 
 // ========== FUNCIONES DE API ==========
