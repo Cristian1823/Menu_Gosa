@@ -1132,3 +1132,18 @@ html {
     background-repeat: no-repeat !important;
     background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/bebidas.jpeg') !important;
 }
+
+.bebidas-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: var(--black);
+}
+
+.bebidas-imagen {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(255, 215, 0, 0.2);
+}
