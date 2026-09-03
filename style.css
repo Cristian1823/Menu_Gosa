@@ -1123,3 +1123,15 @@ html {
     background-position: center;
     background-repeat: no-repeat;
 }
+
+/* Asegurar 90px en todos los headers personalizados */
+.accordion-header-entradas,
+.accordion-header-perros,
+.accordion-header-salchipapas,
+.accordion-header-hamburguesas,
+.accordion-header-ahumados {
+    height: 90px !important;
+    padding: 8px 24px;
+    display: flex;
+    align-items: center;
+}
