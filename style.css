@@ -1115,3 +1115,11 @@ html {
 .accordion-header-adicionales {
     background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/fondo-adicionales.jpeg') !important;
 }
+
+.accordion-header-adicionales {
+    height: 90px !important;
+    padding: 8px 24px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
