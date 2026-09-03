@@ -388,31 +388,6 @@ main {
     z-index: 2;
 }
 
-.accordion-header-hamburguesas {
-    padding: 8px 24px;
-    height: 90px;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/fondo hamburguesas.jpeg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.accordion-header-hamburguesas::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
-    pointer-events: none;
-}
-
-.accordion-header-hamburguesas i,
-.accordion-header-hamburguesas span {
     position: relative;
     z-index: 2;
 }
@@ -1114,24 +1089,52 @@ html {
     background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/fondo hamburguesas.jpeg');
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
-}
 
-.accordion-header-ahumados {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/asados fondo.jpeg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-/* Asegurar 90px en todos los headers personalizados */
+/* ========== Headers Personalizados con Fondos - 90px ========== */
 .accordion-header-entradas,
 .accordion-header-perros,
 .accordion-header-salchipapas,
 .accordion-header-hamburguesas,
 .accordion-header-ahumados {
+    padding: 8px 24px !important;
     height: 90px !important;
-    padding: 8px 24px;
-    display: flex;
-    align-items: center;
+    display: flex !important;
+    align-items: center !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+.accordion-header-entradas {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/entradas fondo.jpeg') !important;
+}
+
+.accordion-header-perros {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/fondo perro.jpeg') !important;
+}
+
+.accordion-header-salchipapas {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/salchipapa fondo.jpeg') !important;
+}
+
+.accordion-header-hamburguesas {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/fondo hamburguesas.jpeg') !important;
+}
+
+.accordion-header-ahumados {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('images/asados fondo.jpeg') !important;
+}
+
+.accordion-header-entradas i,
+.accordion-header-entradas span,
+.accordion-header-perros i,
+.accordion-header-perros span,
+.accordion-header-salchipapas i,
+.accordion-header-salchipapas span,
+.accordion-header-hamburguesas i,
+.accordion-header-hamburguesas span,
+.accordion-header-ahumados i,
+.accordion-header-ahumados span {
+    position: relative;
+    z-index: 2;
 }
