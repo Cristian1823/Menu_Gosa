@@ -362,12 +362,21 @@ main {
 }
 
 /* ========== Fondos Especiales de Categorías ========== */
-.accordion-header-hamburguesas {
-    background-image: url('images/fondo hamburguesas.jpeg');
+.accordion-item[data-category="hamburguesas"] {
+    background-image: url('images/fondo hamburguesas.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-attachment: scroll;
+}
+
+.accordion-header-hamburguesas {
+    padding: 8px 24px;
+    height: 45px;
+    background: rgba(0, 0, 0, 0.7);
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .accordion-header-hamburguesas::before {
@@ -377,7 +386,7 @@ main {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.3);
     pointer-events: none;
 }
 
@@ -429,7 +438,7 @@ main {
 
 .menu-card.featured {
     border-color: var(--gold-dark);
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(20, 20, 20, 0.9));
+    background: var(--card-bg);
 }
 
 .featured-badge {
