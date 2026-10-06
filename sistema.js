@@ -16,6 +16,7 @@ const MENU = {
     ],
     perros: [
         { id: 'p1', nombre: 'Perro Ranchero', precio: 10000 },
+        { id: 'p8', nombre: 'Ecoli Dog', precio: 15000 },
         { id: 'p7', nombre: 'Chori Gosa', precio: 12000 },
         { id: 'p2', nombre: 'Tropical Gosa', precio: 12000 },
         { id: 'p3', nombre: 'Texas BBQ', precio: 14000 },
@@ -42,7 +43,9 @@ const MENU = {
         { id: 'h15t', nombre: 'La Guerita Triple', precio: 30000 },
         { id: 'h11', nombre: 'La Cucurella', precio: 16000 },
         { id: 'h11d', nombre: 'La Cucurella Doble', precio: 22000 },
-        { id: 'h11t', nombre: 'La Cucurella Triple', precio: 30000 }
+        { id: 'h11t', nombre: 'La Cucurella Triple', precio: 30000 },
+        { id: 'h13', nombre: 'Ecoli Burguer', precio: 19000 },
+        { id: 'h13d', nombre: 'Ecoli Burguer Doble', precio: 26000 }
     ],
     salchipapas: [
         { id: 's1', nombre: 'Rapi Gosa', precio: 10000 },
