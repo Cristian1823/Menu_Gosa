@@ -70,7 +70,8 @@ const MENU = {
         { id: 'a12', nombre: 'Papa Criolla Ahumada', precio: 5500 },
         { id: 'a13', nombre: 'Guacamole', precio: 4000 },
         { id: 'a14', nombre: 'Salsa Especial de la Casa', precio: 1500 },
-        { id: 'a15', nombre: 'Platano Maduro', precio: 2000 }
+        { id: 'a15', nombre: 'Platano Maduro', precio: 2000 },
+        { id: 'a16', nombre: 'Salchicha Americana Zenu', precio: 2500 }
     ],
     combos: [
         { id: 'c1', nombre: 'Gaseosa o Jugo', precio: 2500 },
