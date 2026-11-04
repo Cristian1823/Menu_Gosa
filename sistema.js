@@ -16,7 +16,6 @@ const MENU = {
     ],
     perros: [
         { id: 'p1', nombre: 'Perro Ranchero', precio: 10000 },
-        { id: 'p8', nombre: 'Ecoli Dog', precio: 15000 },
         { id: 'p7', nombre: 'Chori Gosa', precio: 12000 },
         { id: 'p2', nombre: 'Tropical Gosa', precio: 12000 },
         { id: 'p3', nombre: 'Texas BBQ', precio: 14000 },
@@ -44,8 +43,8 @@ const MENU = {
         { id: 'h11', nombre: 'La Cucurella', precio: 16000 },
         { id: 'h11d', nombre: 'La Cucurella Doble', precio: 22000 },
         { id: 'h11t', nombre: 'La Cucurella Triple', precio: 30000 },
-        { id: 'h13', nombre: 'Ecoli Burguer', precio: 19000 },
-        { id: 'h13d', nombre: 'Ecoli Burguer Doble', precio: 26000 }
+        { id: 'h14', nombre: '360 Hamburguer', precio: 16000 },
+        { id: 'h14d', nombre: '360 Hamburguer Doble', precio: 22000 }
     ],
     salchipapas: [
         { id: 's1', nombre: 'Rapi Gosa', precio: 10000 },
@@ -332,12 +331,16 @@ async function cargarProductos(forzar = false) {
 }
 
 // Actualizar estado de pedido
-async function actualizarEstadoPedido(id, estado) {
-    return await apiPost({
+async function actualizarEstadoPedido(id, estado, metodoPago) {
+    const data = {
         action: 'actualizarEstado',
         id: id,
         estado: estado
-    });
+    };
+    if (metodoPago) {
+        data.metodoPago = metodoPago;
+    }
+    return await apiPost(data);
 }
 
 // Eliminar pedido (marca como cancelado)

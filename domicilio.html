@@ -69,6 +69,18 @@
         .btn-cobrado:hover {
             opacity: 0.85;
         }
+
+        .btn-metodo-pago {
+            width: 100%;
+            padding: 16px;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5em;
+            letter-spacing: 1px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -82,6 +94,7 @@
             <a href="pedidos.html" class="nav-btn">Pedidos</a>
             <a href="cocina.html" class="nav-btn">Cocina</a>
             <a href="domicilio.html" class="nav-btn active">Para Pago</a>
+            <a href="ventas.html" class="nav-btn">Ventas</a>
             <a href="cierre.html" class="nav-btn">Cierre</a>
             <a href="clientes.html" class="nav-btn">Clientes</a>
             <a href="inventario.html" class="nav-btn">Inventario</a>
@@ -263,7 +276,7 @@
                         ` : ''}
 
                         <div class="pedido-acciones">
-                            <button class="btn-cobrado" onclick="marcarCobrado(${pedido.id})">
+                            <button class="btn-cobrado" onclick="abrirMetodoPago(${pedido.id})">
                                 <i class="fas fa-circle-check"></i> COBRADO
                             </button>
                             <button class="btn-eliminar-pedido" onclick="pedirPinEliminar(${pedido.id})" title="Eliminar pedido">
@@ -287,8 +300,30 @@
             return String(hora).substring(0, 5);
         }
 
+        // ========== MÉTODO DE PAGO ==========
+        let _pedidoACobrar = null;
+
+        function abrirMetodoPago(id) {
+            const pedido = pedidosActuales.find(p => p.id === id);
+            _pedidoACobrar = id;
+            document.getElementById('metodoPagoPedido').textContent =
+                `Pedido #${id}` + (pedido ? ` — ${GOSA.formatearPrecio(pedido.total)}` : '');
+            document.getElementById('modalMetodoPago').style.display = 'flex';
+        }
+
+        function cerrarMetodoPago() {
+            document.getElementById('modalMetodoPago').style.display = 'none';
+            _pedidoACobrar = null;
+        }
+
+        function elegirMetodoPago(metodo) {
+            const id = _pedidoACobrar;
+            cerrarMetodoPago();
+            if (id !== null) marcarCobrado(id, metodo);
+        }
+
         // ========== MARCAR COMO COBRADO ==========
-        async function marcarCobrado(id) {
+        async function marcarCobrado(id, metodoPago) {
             GOSA.vibrar();
 
             const cards = document.querySelectorAll('.pedido-card');
@@ -300,7 +335,7 @@
             });
 
             try {
-                const resultado = await GOSA.actualizarEstadoPedido(id, 'entregado');
+                const resultado = await GOSA.actualizarEstadoPedido(id, 'entregado', metodoPago);
                 if (resultado.success) {
                     GOSA.reproducirSonido('success');
                     await cargarPedidos();
@@ -340,7 +375,7 @@
         async function validarPinEliminar() {
             const inputs = document.getElementById('pinEliminarInputs').querySelectorAll('input');
             const pin = Array.from(inputs).map(i => i.value).join('');
-            if (pin !== '1034') {
+            if (pin !== '1130') {
                 document.getElementById('pinEliminarError').style.display = 'block';
                 document.getElementById('pinEliminarInputs').classList.add('shake');
                 setTimeout(() => {
@@ -361,6 +396,20 @@
             }
         }
     </script>
+
+    <!-- Modal Método de Pago -->
+    <div id="modalMetodoPago" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:#1a1a1a; border:2px solid var(--gold); border-radius:16px; padding:28px 24px; text-align:center; max-width:360px; width:90%;">
+            <div style="font-family:'Bebas Neue',sans-serif; font-size:1.5em; color:var(--gold); letter-spacing:2px; margin-bottom:4px;">¿CÓMO PAGÓ?</div>
+            <div id="metodoPagoPedido" style="color:#aaa; font-size:0.95rem; margin-bottom:20px;"></div>
+            <div style="display:grid; gap:12px; margin-bottom:16px;">
+                <button onclick="elegirMetodoPago('efectivo')" class="btn-metodo-pago" style="background:#28a745;"><i class="fas fa-money-bill-wave"></i> EFECTIVO</button>
+                <button onclick="elegirMetodoPago('qr')" class="btn-metodo-pago" style="background:#0d6efd;"><i class="fas fa-qrcode"></i> QR</button>
+                <button onclick="elegirMetodoPago('tarjeta')" class="btn-metodo-pago" style="background:#6f42c1;"><i class="fas fa-credit-card"></i> TARJETA</button>
+            </div>
+            <button onclick="cerrarMetodoPago()" style="background:none;border:1px solid #555;color:#aaa;padding:8px 24px;border-radius:8px;cursor:pointer;font-size:0.9rem;">Cancelar</button>
+        </div>
+    </div>
 
     <!-- Modal PIN Eliminar -->
     <div id="modalPinEliminar" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center;">

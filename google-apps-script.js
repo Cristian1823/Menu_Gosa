@@ -12,7 +12,7 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
         if (data.action === 'nuevoPedido') {
           result = crearPedido(data.items, data.total, data.notas || '');
         } else if (data.action === 'actualizarEstado') {
-          result = actualizarEstado(data.id, data.estado);
+          result = actualizarEstado(data.id, data.estado, data.metodoPago);
         } else if (data.action === 'actualizarPedido') {
           result = actualizarPedido(data.id, data.items, data.total, data.notas);
         } else if (data.action === 'registrarCliente') {
@@ -168,13 +168,17 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
     return { success: true, id: nuevoId, mensaje: 'Pedido #' + nuevoId + ' creado' };
   }
 
-  function actualizarEstado(id, nuevoEstado) {
+  function actualizarEstado(id, nuevoEstado, metodoPago) {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
     var data = sheet.getDataRange().getValues();
 
     for (var i = 1; i < data.length; i++) {
       if (data[i][0] == id) {
         sheet.getRange(i + 1, 6).setValue(nuevoEstado);
+        // Columna 8 = MetodoPago (efectivo | qr | tarjeta), solo si se envía
+        if (metodoPago) {
+          sheet.getRange(i + 1, 8).setValue(String(metodoPago).toLowerCase());
+        }
         return { success: true, mensaje: 'Pedido #' + id + ' actualizado' };
       }
     }
@@ -230,7 +234,8 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
           items: JSON.parse(data[i][3]),
           total: data[i][4],
           estado: estado,
-          notas: data[i][6] || ''
+          notas: data[i][6] || '',
+          metodoPago: String(data[i][7] || '')
         });
       }
     }
@@ -261,7 +266,8 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
           items: items,
           total: Number(data[i][4]) || 0,
           estado: String(data[i][5]).trim().toLowerCase(),
-          notas: data[i][6] || ''
+          notas: data[i][6] || '',
+          metodoPago: String(data[i][7] || '')
         });
       }
     }
@@ -287,7 +293,8 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
         items: items,
         total: Number(data[i][4]) || 0,
         estado: String(data[i][5]).trim().toLowerCase(),
-        notas: data[i][6] || ''
+        notas: data[i][6] || '',
+          metodoPago: String(data[i][7] || '')
       });
     }
     return { pedidos: pedidos };
@@ -306,7 +313,8 @@ var IDS_AHUMADOS = ['pica1', 'pica2', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15'];
         items: JSON.parse(data[i][3]),
         total: data[i][4],
         estado: String(data[i][5]).trim().toLowerCase(),
-        notas: data[i][6] || ''
+        notas: data[i][6] || '',
+          metodoPago: String(data[i][7] || '')
       });
     }
     return { pedidos: pedidos };
