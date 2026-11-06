@@ -16,10 +16,10 @@ const MENU = {
     ],
     perros: [
         { id: 'p1', nombre: 'Perro Ranchero', precio: 10000 },
-        { id: 'p7', nombre: 'Chori Gosa', precio: 12000 },
+        { id: 'p7', nombre: 'Chori Gosa', precio: 12500 },
         { id: 'p2', nombre: 'Tropical Gosa', precio: 12000 },
-        { id: 'p3', nombre: 'Texas BBQ', precio: 14000 },
-        { id: 'p5', nombre: 'Triple Gosa', precio: 14000 }
+        { id: 'p3', nombre: 'Texas BBQ', precio: 15000 },
+        { id: 'p5', nombre: 'Triple Gosa', precio: 15000 }
     ],
     hamburguesas: [
         { id: 'h1', nombre: 'Gosa Burguer', precio: 10000 },
@@ -43,26 +43,26 @@ const MENU = {
         { id: 'h11', nombre: 'La Cucurella', precio: 16000 },
         { id: 'h11d', nombre: 'La Cucurella Doble', precio: 22000 },
         { id: 'h11t', nombre: 'La Cucurella Triple', precio: 30000 },
-        { id: 'h14', nombre: '360 Hamburguer', precio: 16000 },
-        { id: 'h14d', nombre: '360 Hamburguer Doble', precio: 22000 }
+        { id: 'h14', nombre: '390 Hamburguer', precio: 17000 },
+        { id: 'h14d', nombre: '390 Hamburguer Doble', precio: 24000 }
     ],
     salchipapas: [
         { id: 's1', nombre: 'Rapi Gosa', precio: 10000 },
         { id: 's2', nombre: 'Salchi Gosa', precio: 14500 },
-        { id: 's3', nombre: 'La Gosa Supreme', precio: 26000 }
+        { id: 's3', nombre: 'La Gosa Supreme', precio: 27000 }
     ],
     picadas: [
-        { id: 'pica1', nombre: 'Picada Personal Gosa', precio: 22000 },
-        { id: 'pica2', nombre: 'Picada Gosa Para Dos', precio: 40000 }
+        { id: 'pica1', nombre: 'Picada Personal Gosa', precio: 24000 },
+        { id: 'pica2', nombre: 'Picada Gosa Para Dos', precio: 42000 }
     ],
     adicionales: [
-        { id: 'a1', nombre: 'Salchicha', precio: 1500 },
-        { id: 'a2', nombre: 'Tocineta', precio: 1500 },
+        { id: 'a1', nombre: 'Salchicha Americana', precio: 2500 },
+        { id: 'a2', nombre: 'Tocineta', precio: 2000 },
         { id: 'a3', nombre: 'Agua', precio: 1000 },
         { id: 'a4', nombre: 'Queso Mozzarella', precio: 1500 },
-        { id: 'a5', nombre: 'Chorizo', precio: 3000 },
+        { id: 'a5', nombre: 'Chorizo', precio: 3500 },
         { id: 'a6', nombre: 'Queso Cheddar', precio: 2000 },
-        { id: 'a7', nombre: 'Carne de Hamburguesa', precio: 3500 },
+        { id: 'a7', nombre: 'Carne de Hamburguesa', precio: 4000 },
         { id: 'a8', nombre: 'Chicharron', precio: 3500 },
         { id: 'a9', nombre: 'Porcion de Papa', precio: 5000 },
         { id: 'a10', nombre: 'Alas Barbecue', precio: 8000 },
@@ -70,8 +70,7 @@ const MENU = {
         { id: 'a12', nombre: 'Papa Criolla Ahumada', precio: 5500 },
         { id: 'a13', nombre: 'Guacamole', precio: 4000 },
         { id: 'a14', nombre: 'Salsa Especial de la Casa', precio: 1500 },
-        { id: 'a15', nombre: 'Platano Maduro', precio: 2000 },
-        { id: 'a16', nombre: 'Salchicha Americana Zenu', precio: 2500 }
+        { id: 'a15', nombre: 'Platano Maduro', precio: 2000 }
     ],
     combos: [
         { id: 'c1', nombre: 'Gaseosa o Jugo', precio: 2500 },
@@ -88,12 +87,12 @@ const MENU = {
     bebidas: [
         { id: 'be1', nombre: 'Coca Cola 250 ml', precio: 2500 },
         { id: 'be2', nombre: 'Coca Cola 400 ml', precio: 4000 },
-        { id: 'be3', nombre: 'Coca Cola 0 400 ml', precio: 3600 },
+        { id: 'be3', nombre: 'Coca Cola 0 400 ml', precio: 4000 },
         { id: 'be4', nombre: 'Coca Cola 1.5 L', precio: 8500 },
         { id: 'be5', nombre: 'Coca Cola 0 1.5 L', precio: 8000 },
         { id: 'be6', nombre: 'Quatro 400 ml', precio: 4000 },
         { id: 'be7', nombre: 'Quattro 1.5 L', precio: 7500 },
-        { id: 'be8', nombre: 'Juego Hit 500', precio: 3200 },
+        { id: 'be8', nombre: 'Juego Hit 500', precio: 3600 },
         { id: 'be9', nombre: 'Agua', precio: 2000 },
         { id: 'be10', nombre: 'Corona', precio: 6500 },
         { id: 'be11', nombre: 'Coronita', precio: 5000 },
